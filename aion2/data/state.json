@@ -1,6 +1,6 @@
 {
   "version": 99,
-  "game": "아이온2",
+  "game": "패스오브엑자일",
   "logoUrl": "https://mode82.github.io/MAPMODE/assets/logo/MAPMODELOGO2.png",
   "games": [
     "아이온2",
@@ -50,9 +50,9 @@
     "imgDataUrl": "",
     "naturalW": 1125,
     "naturalH": 1125,
-    "scale": 0.7939391806865248,
-    "tx": 302.3627841437386,
-    "ty": 19.5538682035978
+    "scale": 0.9980865402275503,
+    "tx": 245.4576960535012,
+    "ty": 17.83193862860753
   },
   "markers": [
     {
@@ -206,6 +206,25 @@
       "labelColor": "#e7eef8",
       "chainId": "c_2yd67ylm",
       "chainIndex": 2
+    },
+    {
+      "id": "m_4k8nr6kv",
+      "pageId": "p_all",
+      "x": 0.5738683806112383,
+      "y": 0.26828035635587677,
+      "name": "111111",
+      "cat": "큐브",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "111111",
+      "memo": "111111",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "chainId": "c_dyg2ifnp",
+      "chainIndex": 1
     }
   ],
   "chains": [],
