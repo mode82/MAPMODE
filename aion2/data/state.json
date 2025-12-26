@@ -50,9 +50,9 @@
     "imgDataUrl": "",
     "naturalW": 1,
     "naturalH": 1,
-    "scale": 2.635971132874969,
-    "tx": 1215.3829533679168,
-    "ty": 762.5132250877925
+    "scale": 3.0119418637965154,
+    "tx": 490.9789840227513,
+    "ty": 452.5690759094662
   },
   "markers": [
     {
@@ -117,13 +117,13 @@
       "pageId": "p_all",
       "x": 1,
       "y": 0,
-      "name": "정말 되는거야?",
+      "name": "정말 되는거야???",
       "cat": "보스",
       "colorOverride": "",
       "useCatColor": true,
       "yt": "",
-      "ytTitle": "정말 되는거야?",
-      "memo": "정말 되는거야?",
+      "ytTitle": "정말 되는거야???",
+      "memo": "정말 되는거야???",
       "r": 10,
       "fs": 15,
       "fw": 900,
@@ -148,6 +148,25 @@
       "fw": 900,
       "labelColor": "#e7eef8",
       "chainId": "c_vtx1veg6",
+      "chainIndex": 1
+    },
+    {
+      "id": "m_15peczn9",
+      "pageId": "p_all",
+      "x": 0,
+      "y": 0,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "chainId": "c_qzj19hzx",
       "chainIndex": 1
     }
   ],
