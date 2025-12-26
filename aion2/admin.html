@@ -24,6 +24,7 @@
       --ok:#39d98a;
       --warn:#ffd60a;
 
+      --r12:12px;
       --r14:14px;
       --r16:16px;
       --r18:18px;
@@ -38,6 +39,11 @@
 
       /* ✅ 스샷 느낌 기본 폰트/굵기 */
       --uiFont: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
+
+      /* ✅ (요청) 마커 기본값(4번 스샷 느낌으로 더 작게) */
+      --mR: 6;        /* 기본 원 반지름(world px) */
+      --mFs: 11;      /* 기본 라벨 폰트(world px) */
+      --mNumScale: 1.25; /* 숫자 크기 = r * scale */
     }
 
     *{ box-sizing:border-box; }
@@ -112,12 +118,12 @@
       transform: translateY(1px);
     }
 
-    /* ✅ (요청 5) 게임 선택 UI를 “카테고리 칩” 느낌으로 */
+    /* ✅ (요청) 게임 선택 UI: 글씨 더 크게 / + 옆 버튼 크기 맞춤 */
     .gamePill{
-      height:34px;
+      height:36px;
       display:inline-flex; align-items:center; justify-content:center;
       gap:10px;
-      padding:0 12px;
+      padding:0 14px;
       border-radius:999px;
       background: rgba(10,15,24,.35);
       border:1px solid rgba(39,52,74,.65);
@@ -126,16 +132,33 @@
       cursor:pointer;
       user-select:none;
       font-weight:900;
-      font-size:13px;
+      font-size:15px;     /* ✅ 더 큼 */
+      line-height:1;
     }
     .gamePill:hover{ border-color: rgba(124,196,255,.55); }
     .gamePill .chev{
       width:0;height:0;
       border-left:5px solid transparent;
       border-right:5px solid transparent;
-      border-top:6px solid rgba(231,238,248,.75);
-      transform: translateY(1px);
+      border-top:7px solid rgba(231,238,248,.75);
+      transform: translateY(2px);
     }
+
+    .miniBtn{
+      height:36px;             /* ✅ gamePill과 맞춤 */
+      padding:0 12px;
+      border-radius:999px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(10,15,24,.35);
+      color: rgba(231,238,248,.92);
+      cursor:pointer;
+      font-weight:900;
+      font-size:14px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .miniBtn.icon{ width:36px; padding:0; }
+    .miniBtn.edit{ border-color: rgba(124,196,255,.55); }
+
     .gameMenu{
       position:fixed;
       z-index:160;
@@ -195,23 +218,8 @@
     .pill.danger{ border-color: rgba(255,93,93,.55); }
     .pill.ok{ border-color: rgba(57,217,138,.55); }
 
-    .miniBtn{
-      height:34px;
-      padding:0 12px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      color: rgba(231,238,248,.92);
-      cursor:pointer;
-      font-weight:900;
-      font-size:13px;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .miniBtn.icon{ width:34px; padding:0; }
-    .miniBtn.edit{ border-color: rgba(124,196,255,.55); }
-
-    /* ✅ 5번: 아이콘/버튼 겹침 방지 */
-    .top-right{ flex-wrap:wrap; justify-content:flex-end; }
+    /* ✅ (요청) 상단 아이콘/버튼은 4슬롯 이후(오른쪽)에서 시작 */
+    .top-right{ flex-wrap:nowrap; justify-content:flex-end; gap:10px; }
     .top-right .pill{ flex: 0 0 auto; }
 
     /* ========== LAYOUT ========== */
@@ -439,6 +447,30 @@
       margin-top:10px;
     }
 
+    /* ✅ select/option 스타일(가능한 범위 내) */
+    select.field{
+      appearance:none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, rgba(231,238,248,.8) 50%),
+        linear-gradient(135deg, rgba(231,238,248,.8) 50%, transparent 50%),
+        linear-gradient(to right, transparent, transparent);
+      background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 12px) 50%,
+        0 0;
+      background-size:
+        6px 6px,
+        6px 6px,
+        100% 100%;
+      background-repeat:no-repeat;
+      padding-right:38px;
+    }
+    option{
+      background:#0e1626;
+      color:#e7eef8;
+      font-weight:900;
+    }
+
     /* ========== MODAL ========== */
     .modalBack{
       position:fixed; inset:0;
@@ -601,6 +633,71 @@
       font-family: var(--uiFont);
     }
 
+    /* ========== MINI PROMPT (prompt 대체) ========== */
+    .pBack{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      z-index:260;
+      align-items:center; justify-content:center;
+      backdrop-filter: blur(6px);
+    }
+    .pBack.show{ display:flex; }
+    .pBox{
+      width:min(560px, calc(100vw - 28px));
+      border-radius:22px;
+      border:1px solid rgba(39,52,74,.75);
+      background: linear-gradient(180deg, rgba(14,22,38,.96), rgba(10,15,24,.92));
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .pTitle{
+      font-size:16px;
+      font-weight:900;
+      margin:0 0 10px 0;
+    }
+    .pHint{
+      margin:0 0 12px 0;
+      color: rgba(159,176,198,.92);
+      font-size:12px;
+      font-weight:900;
+      line-height:1.45;
+    }
+    .pRow{ display:flex; gap:10px; align-items:center; }
+    .pRow .field{ flex:1; }
+    .pBtns{ display:flex; gap:10px; justify-content:flex-end; margin-top:12px; }
+
+    /* rgb picker row */
+    .rgbRow{
+      display:grid;
+      grid-template-columns: 48px 1fr 1fr 1fr;
+      gap:10px;
+      align-items:center;
+      margin-top:10px;
+    }
+    .rgbRow .rgb{
+      width:100%;
+      padding:12px 10px;
+      border-radius:16px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(10,15,24,.35);
+      color: rgba(231,238,248,.95);
+      outline:none;
+      font-weight:900;
+      font-size:14px;
+      font-family: var(--uiFont);
+      text-align:center;
+    }
+    .rgbRow input[type="color"]{
+      width:48px;
+      height:44px;
+      border-radius:14px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(10,15,24,.35);
+      padding:0;
+      cursor:pointer;
+    }
+
     /* responsive */
     @media (max-width: 1200px){
       body{ overflow:auto; }
@@ -633,6 +730,21 @@
     </div>
   </div>
 
+  <!-- MINI PROMPT (브라우저 prompt 제거 = 5번 위치 글씨 제거 효과) -->
+  <div class="pBack" id="pBack" aria-hidden="true">
+    <div class="pBox">
+      <div class="pTitle" id="pTitle">입력</div>
+      <p class="pHint" id="pHint">값을 입력하세요</p>
+      <div class="pRow" id="pRow">
+        <input class="field" id="pInput" />
+      </div>
+      <div class="pBtns">
+        <button class="pill ghost" id="pCancel">취소</button>
+        <button class="pill ok" id="pOk">확인</button>
+      </div>
+    </div>
+  </div>
+
   <!-- GAME MENU (custom) -->
   <div class="gameMenu" id="gameMenu"></div>
 
@@ -657,26 +769,27 @@
 
       <!-- Slot 3: Admin label -->
       <div class="slot fixed">
-        <div style="font-weight:900; color:rgba(57,217,138,.95);">ADMIN</div>
+        <div style="font-weight:900; color:rgba(57,217,138,.95); font-size:15px;">ADMIN</div>
       </div>
 
-      <!-- Slot 4: Controls -->
+      <!-- Slot 4: Breadcrumb (4번째 카테고리 슬롯) -->
       <div class="slot fixed" style="justify-content:center; gap:8px;">
-        <label class="pill small ghost" style="cursor:pointer;">
-          지도 업로드
-          <input id="fileMap" type="file" accept="image/*" style="display:none;" />
-        </label>
-        <button class="pill small ghost" id="btnExport">state99.json 내보내기</button>
-        <button class="pill small danger" id="btnResetAll">전체 초기화</button>
+        <span style="opacity:.95; font-weight:900;">관리자</span>
+        <span style="opacity:.55;">/</span>
+        <span id="pathGameTop" style="opacity:.9;">아이온2</span>
+        <span style="opacity:.55;">/</span>
+        <span id="pathPageTop" style="opacity:.9;">전체지도</span>
       </div>
     </div>
 
+    <!-- ✅ 상단 버튼들은 4슬롯 이후(오른쪽) -->
     <div class="top-right">
-      <span class="pill small ghost" title="현재 페이지">
-        관리자
-        <span style="opacity:.7;">/</span>
-        <span id="pathGameTop">아이온2</span>
-      </span>
+      <label class="pill small ghost" style="cursor:pointer;">
+        지도 업로드
+        <input id="fileMap" type="file" accept="image/*" style="display:none;" />
+      </label>
+      <button class="pill small ghost" id="btnExport">state내보내기</button>
+      <button class="pill small danger" id="btnResetAll">전체 초기화</button>
     </div>
   </div>
 
@@ -811,10 +924,20 @@
           </div>
         </div>
 
-        <div class="labelRow" style="margin-top:12px;">마커 원 색상</div>
-        <div style="display:flex; align-items:center; gap:12px; justify-content:space-between;">
-          <input class="field" id="mfColor" placeholder="개별 오버라이드 색상 (예: #ff0000)" />
-          <div style="display:flex; align-items:center; gap:10px;">
+        <div class="labelRow" style="margin-top:12px;">마커 원 색상 (RGB 선택 가능)</div>
+        <div style="display:flex; align-items:flex-start; gap:12px; justify-content:space-between; flex-wrap:wrap;">
+          <div style="flex:1; min-width:260px;">
+            <input class="field" id="mfColor" placeholder="개별 오버라이드 색상 (예: #ff0000)" />
+            <div class="rgbRow">
+              <input type="color" id="mfColorPick" value="#2b8cff" title="색 선택" />
+              <input class="rgb" id="mfR" inputmode="numeric" pattern="[0-9]*" placeholder="R" />
+              <input class="rgb" id="mfG" inputmode="numeric" pattern="[0-9]*" placeholder="G" />
+              <input class="rgb" id="mfB" inputmode="numeric" pattern="[0-9]*" placeholder="B" />
+            </div>
+            <div class="subtle" style="margin-top:10px;">* RGB를 수정하면 자동으로 색상 코드가 반영됩니다.</div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:10px; margin-left:auto;">
             <div class="colorChip" id="mfColorChip" style="--c:#2b8cff;"></div>
             <div class="checkRow">
               <input type="checkbox" id="mfUseCatColor" />
@@ -846,19 +969,19 @@
           <div class="styleCard">
             <h4>원 크기 <span class="subtle" style="float:right;">px</span></h4>
             <div class="rangeRow">
-              <input type="range" id="mfR" min="4" max="40" step="1" />
-              <div class="numBox" id="mfRVal">9</div>
+              <input type="range" id="mfRSize" min="3" max="40" step="1" />
+              <div class="numBox" id="mfRVal">6</div>
             </div>
-            <div class="subtle" style="margin-top:10px;">* 원 크기 변경 시 글씨 크기가 같은 비율로 자동 변경됩니다.</div>
+            <div class="subtle" style="margin-top:10px;">* 원 크기 변경 시 숫자/라벨 크기가 같은 비율로 자동 변경됩니다.</div>
           </div>
 
           <div class="styleCard">
-            <h4>글씨 크기 <span class="subtle" style="float:right;">라벨</span></h4>
+            <h4>라벨 크기 <span class="subtle" style="float:right;">px</span></h4>
             <div class="rangeRow">
               <input type="range" id="mfFs" min="8" max="40" step="1" />
-              <div class="numBox" id="mfFsVal">13</div>
+              <div class="numBox" id="mfFsVal">11</div>
             </div>
-            <div class="subtle" style="margin-top:10px;">* 현재는 자동 동기화 우선</div>
+            <div class="subtle" style="margin-top:10px;">* 기본은 자동 동기화</div>
           </div>
 
           <div class="styleCard">
@@ -992,6 +1115,51 @@
   const mMarker = $("mMarker");
   const mCats = $("mCats");
 
+  /* ====== prompt 대체 ====== */
+  const pBack = $("pBack");
+  const pTitle = $("pTitle");
+  const pHint  = $("pHint");
+  const pInput = $("pInput");
+  const pOk    = $("pOk");
+  const pCancel= $("pCancel");
+  const pRow   = $("pRow");
+  let _promptResolve = null;
+
+  function openPrompt({title="입력", hint="", value="", placeholder="", type="text"}){
+    return new Promise((resolve)=>{
+      _promptResolve = resolve;
+
+      pTitle.textContent = title;
+      pHint.textContent = hint || "";
+      pInput.type = type;
+      pInput.value = value ?? "";
+      pInput.placeholder = placeholder ?? "";
+
+      pRow.style.display = "flex";
+      pRow.style.gap = "10px";
+
+      pBack.classList.add("show");
+      pBack.setAttribute("aria-hidden","false");
+      setTimeout(()=>pInput.focus(), 0);
+    });
+  }
+  function closePrompt(ret){
+    pBack.classList.remove("show");
+    pBack.setAttribute("aria-hidden","true");
+    const r = _promptResolve;
+    _promptResolve = null;
+    if(r) r(ret);
+  }
+  pCancel.addEventListener("click", ()=>closePrompt(null));
+  pOk.addEventListener("click", ()=>closePrompt(pInput.value));
+  pBack.addEventListener("click", (e)=>{
+    if(e.target === pBack) closePrompt(null);
+  });
+  pInput.addEventListener("keydown", (e)=>{
+    if(e.key==="Enter"){ e.preventDefault(); closePrompt(pInput.value); }
+    if(e.key==="Escape"){ closePrompt(null); }
+  });
+
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const safeParse = (json, fallback) => { try{ return JSON.parse(json); }catch(e){ return fallback; } };
   const uid = () => Math.random().toString(36).slice(2,10);
@@ -1091,12 +1259,17 @@
       logoBox.innerHTML = `<div class="brand"><div class="word">MAPM<span class="o"></span>DE</div></div>`;
     }
   }
-  logoBox.addEventListener("click", ()=>{
+  logoBox.addEventListener("click", async ()=>{
     requireAuth();
     if(!isAuthed()) return;
 
     const cur = S.logoUrl || "";
-    const next = prompt("로고 이미지 URL을 입력하세요 (비우면 기본 로고)", cur);
+    const next = await openPrompt({
+      title: "로고 URL",
+      hint: "로고 이미지 URL을 입력하세요. 비우면 기본 로고가 표시됩니다.",
+      value: cur,
+      placeholder: "https://.../logo.png"
+    });
     if(next === null) return;
     S.logoUrl = (next || "").trim();
     saveLocal();
@@ -1150,10 +1323,16 @@
   });
 
   const btnAddGame = $("btnAddGame");
-  btnAddGame.addEventListener("click", ()=>{
+  btnAddGame.addEventListener("click", async ()=>{
     requireAuth();
     if(!isAuthed()) return;
-    const name = prompt("추가할 게임 이름을 입력하세요");
+
+    const name = await openPrompt({
+      title: "게임 추가",
+      hint: "추가할 게임 이름을 입력하세요.",
+      value: "",
+      placeholder: "예) 아이온2"
+    });
     if(!name) return;
     const g = name.trim();
     if(!g) return;
@@ -1177,6 +1356,7 @@
     pageList.innerHTML = "";
     const cur = curPageObj();
     $("pathPage").textContent = cur ? cur.name : "전체지도";
+    $("pathPageTop").textContent = cur ? cur.name : "전체지도";
 
     for(const p of S.pages){
       const item = document.createElement("div");
@@ -1201,26 +1381,37 @@
 
       const [bUrl, bEdit, bDel] = item.querySelectorAll("button");
 
-      bUrl.addEventListener("click", (e)=>{
+      bUrl.addEventListener("click", async (e)=>{
         e.stopPropagation();
         requireAuth();
         if(!isAuthed()) return;
-        const next = prompt("이 페이지 지도 이미지 URL(예: GitHub Pages URL)을 입력하세요", p.url || "");
+
+        const next = await openPrompt({
+          title:"페이지 지도 URL",
+          hint:"이 페이지의 지도 이미지 URL을 입력하세요.",
+          value: p.url || "",
+          placeholder:"https://.../map.png"
+        });
         if(next === null) return;
         p.url = (next || "").trim();
         saveLocal();
         toast("페이지 URL 저장");
-        // ✅ URL 넣자마자 어드민 캔버스에 보이도록
         if(p.id === S.currentPageId){
           loadMapForCurrentPage(true);
         }
       });
 
-      bEdit.addEventListener("click", (e)=>{
+      bEdit.addEventListener("click", async (e)=>{
         e.stopPropagation();
         requireAuth();
         if(!isAuthed()) return;
-        const next = prompt("페이지 이름을 수정하세요", p.name);
+
+        const next = await openPrompt({
+          title:"페이지 이름 수정",
+          hint:"페이지 이름을 입력하세요.",
+          value: p.name,
+          placeholder:"예) 도망자마을"
+        });
         if(!next) return;
         p.name = next.trim();
         saveLocal();
@@ -1251,10 +1442,16 @@
     }
   }
 
-  $("btnAddPage").addEventListener("click", ()=>{
+  $("btnAddPage").addEventListener("click", async ()=>{
     requireAuth();
     if(!isAuthed()) return;
-    const name = prompt("추가할 페이지 이름을 입력하세요 (예: 도망자마을)");
+
+    const name = await openPrompt({
+      title:"페이지 추가",
+      hint:"추가할 페이지 이름을 입력하세요. (예: 도망자마을)",
+      value:"",
+      placeholder:"도망자마을"
+    });
     if(!name) return;
     const p = { id:"p_"+uid(), name:name.trim(), url:"" };
     S.pages.push(p);
@@ -1327,6 +1524,10 @@
       ensureCat(name, "#ffffff");
       selectedMarker.cat = name;
       selectedMarker.useCatColor = true;
+
+      // ✅ 같은 카테고리는 같은 스타일/색(1번 기준)을 더 강하게 유지
+      applyCatStyleDefaultsFromFirst(selectedMarker);
+
       saveLocal();
       syncSelectedPanel();
       draw();
@@ -1367,7 +1568,6 @@
     else if(dataUrl) src = dataUrl;
 
     if(!src){
-      // placeholder
       mapImg = new Image();
       mapImg.crossOrigin = "anonymous";
       mapImg.onload = ()=>{
@@ -1426,7 +1626,7 @@
     a.download = "state99.json";
     a.click();
     URL.revokeObjectURL(a.href);
-    toast("state99.json 다운로드");
+    toast("state 내보내기 완료");
   });
 
   $("btnResetAll").addEventListener("click", ()=>{
@@ -1498,10 +1698,31 @@
     return { nx: clamp(wx/iw, 0, 1), ny: clamp(wy/ih, 0, 1) };
   }
 
+  // ---------- (요청) 같은 카테고리는 같은 색/크기/폰트(각 1번 기준) ----------
+  function findFirstMarkerStyleByCat(cat){
+    const ms = (S.markers||[])
+      .filter(m=>m.pageId===S.currentPageId && m.cat===cat && (m.chainIndex===1));
+    if(!ms.length) return null;
+    ms.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+    const m = ms[0];
+    return { r:m.r, fs:m.fs, fw:m.fw, labelColor:m.labelColor, useCatColor:m.useCatColor, colorOverride:m.colorOverride };
+  }
+  function applyCatStyleDefaultsFromFirst(m){
+    const st = findFirstMarkerStyleByCat(m.cat);
+    if(!st) return;
+    m.r = st.r ?? m.r;
+    m.fs = st.fs ?? m.fs;
+    m.fw = st.fw ?? m.fw;
+    m.labelColor = st.labelColor ?? m.labelColor;
+
+    // 색은 "같은 카테고리 = 같은 색"이므로 기본은 카테고리 색 사용 유지
+    m.useCatColor = true;
+    m.colorOverride = "";
+  }
+
   // ---------- drawing ----------
   let circleHitboxes = []; // {id,sx,sy,rPx}
   function drawArrowHead(x2, y2, x1, y1, size){
-    // arrow at (x2,y2) pointing from (x1,y1)->(x2,y2)
     const ang = Math.atan2(y2 - y1, x2 - x1);
     const a1 = ang + Math.PI * 0.85;
     const a2 = ang - Math.PI * 0.85;
@@ -1511,6 +1732,7 @@
     ctx.lineTo(x2 + Math.cos(a2)*size, y2 + Math.sin(a2)*size);
     ctx.closePath();
     ctx.fill();
+    ctx.stroke();
   }
 
   function draw(){
@@ -1535,7 +1757,7 @@
 
     const ms = getVisibleMarkers();
 
-    // (요청 4) 체인 라인 + 화살표 (흰색)
+    // 체인 라인 + 화살표 (확대해도 식별되게)
     const showLines = !!S.showLinesWithCatFilter;
     if(showLines){
       const byChain = new Map();
@@ -1545,17 +1767,16 @@
         byChain.get(m.chainId).push(m);
       }
 
-      const lw = 2 / S.map.scale;
+      const lw = 2.2 / S.map.scale;
       ctx.lineWidth = lw;
-      ctx.strokeStyle = "rgba(255,255,255,.85)";
-      ctx.fillStyle = "rgba(255,255,255,.85)";
-      ctx.globalAlpha = 0.95;
+      ctx.strokeStyle = "rgba(255,255,255,.88)";
+      ctx.fillStyle = "rgba(255,255,255,.92)";
+      ctx.globalAlpha = 0.98;
 
       for(const arr of byChain.values()){
         arr.sort((a,b)=>(a.chainIndex||0)-(b.chainIndex||0));
         if(arr.length<2) continue;
 
-        // lines
         ctx.beginPath();
         for(let i=0;i<arr.length;i++){
           const p = worldFromNorm(arr[i].x, arr[i].y);
@@ -1564,17 +1785,19 @@
         }
         ctx.stroke();
 
-        // arrows each segment
-        const ah = 10 / S.map.scale; // arrow size in world-space
+        // ✅ 화살표: 화면 픽셀 기준으로 더 크게 + 테두리(검정)로 식별성 강화
+        const ah = 14 / S.map.scale; // screen≈14px
+        ctx.lineWidth = 2.0 / S.map.scale;
+        ctx.strokeStyle = "rgba(0,0,0,.35)";
+        ctx.fillStyle = "rgba(255,255,255,.95)";
         for(let i=0;i<arr.length-1;i++){
           const a = worldFromNorm(arr[i].x, arr[i].y);
           const b = worldFromNorm(arr[i+1].x, arr[i+1].y);
-          // put arrow near the end (slightly before b)
           const dx = b.x - a.x, dy = b.y - a.y;
           const len = Math.hypot(dx,dy) || 1;
           const ux = dx/len, uy = dy/len;
-          const bx = b.x - ux*(ah*1.4);
-          const by = b.y - uy*(ah*1.4);
+          const bx = b.x - ux*(ah*1.55);
+          const by = b.y - uy*(ah*1.55);
           drawArrowHead(bx, by, a.x, a.y, ah);
         }
       }
@@ -1584,8 +1807,7 @@
     for(const m of ms){
       const p = worldFromNorm(m.x, m.y);
 
-      // (요청 2) 마커 크기/글씨 기본값을 스샷 느낌으로
-      const r = (m.r ?? 9);
+      const r = (m.r ?? Number(getComputedStyle(document.documentElement).getPropertyValue("--mR")) || 6);
       const col = markerColor(m);
 
       // circle
@@ -1595,18 +1817,19 @@
       ctx.arc(p.x, p.y, r, 0, Math.PI*2);
       ctx.fillStyle = col;
       ctx.fill();
-      ctx.lineWidth = 2 / S.map.scale;
+      ctx.lineWidth = 1.6 / S.map.scale;
       ctx.strokeStyle = "rgba(0,0,0,.35)";
       ctx.stroke();
       ctx.restore();
 
-      // number
+      // number (✅ 원 크기에 비례)
       const num = (m.chainIndex != null) ? String(m.chainIndex) : "";
       if(num){
         ctx.save();
         ctx.globalAlpha = 0.98;
         ctx.fillStyle = "rgba(0,0,0,.78)";
-        ctx.font = `${m.fw ?? 900} ${Math.max(10, Math.round((m.fs ?? 13) * 0.95))}px ui-sans-serif`;
+        const numFs = Math.max(8, Math.round(r * (Number(getComputedStyle(document.documentElement).getPropertyValue("--mNumScale")) || 1.25)));
+        ctx.font = `${m.fw ?? 900} ${numFs}px ui-sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(num, p.x, p.y + 0.5);
@@ -1618,10 +1841,11 @@
         ctx.save();
         ctx.globalAlpha = 0.98;
         ctx.fillStyle = m.labelColor || "#e7eef8";
-        ctx.font = `${m.fw ?? 900} ${m.fs ?? 13}px ui-sans-serif`;
+        const fs = (m.fs ?? Number(getComputedStyle(document.documentElement).getPropertyValue("--mFs")) || 11);
+        ctx.font = `${m.fw ?? 900} ${fs}px ui-sans-serif`;
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
-        const off = r + 8;
+        const off = r + 7;
         ctx.fillText(m.name, p.x + off, p.y);
         ctx.restore();
       }
@@ -1649,11 +1873,9 @@
   // ---------- pan/zoom + marker drag ----------
   let isPanning=false, lastX=0,lastY=0;
 
-  // (요청 3) 좌클릭 누른 상태에서 “마커를 이동”
   let isDraggingMarker = false;
   let draggingId = null;
 
-  // 클릭 위치와 마커 중심의 오프셋(월드 좌표)
   let dragOffWX = 0, dragOffWY = 0;
 
   function setMarkerPosByWorld(marker, wx, wy){
@@ -1674,7 +1896,6 @@
 
     const hit = pickCircleAt(sx, sy);
     if(hit && e.button === 0){
-      // start dragging marker
       const m = S.markers.find(x=>x.id===hit.id);
       if(m){
         isDraggingMarker = true;
@@ -1686,13 +1907,11 @@
         dragOffWX = wm.x - w.wx;
         dragOffWY = wm.y - w.wy;
 
-        // 드래그 중에는 패닝 금지
         isPanning = false;
         return;
       }
     }
 
-    // else: panning on empty
     if(e.button === 0){
       isPanning=true;
     }
@@ -1715,11 +1934,8 @@
       setMarkerPosByWorld(m, wx, wy);
 
       draw();
-      // 저장은 너무 잦지 않게
       clearTimeout(draw._dragSaveT);
-      draw._dragSaveT = setTimeout(()=>{
-        saveLocal();
-      }, 120);
+      draw._dragSaveT = setTimeout(()=>{ saveLocal(); }, 120);
       return;
     }
 
@@ -1767,11 +1983,9 @@
   let selectedMarker = null;
   let insertAfterMarkerId = null;
 
-  // ✅ 우클릭 생성시 1,2,3 순차 증가를 위해 "페이지별 마지막 체인" 유지
   let lastChainIdByPage = new Map();
   function getOrCreateDefaultChainId(pageId){
     if(lastChainIdByPage.has(pageId)) return lastChainIdByPage.get(pageId);
-    // 기존 마커가 있다면 가장 큰 chainIndex의 chainId를 따라가도록
     const ms = (S.markers||[]).filter(m=>m.pageId===pageId && m.chainId && m.chainIndex);
     if(ms.length){
       ms.sort((a,b)=>(b.chainIndex||0)-(a.chainIndex||0));
@@ -1790,11 +2004,13 @@
     return max + 1;
   }
 
+  function defaultCatForNewMarker(){
+    return (S.categories.find(c=>c.on && c.id!=="전체")?.id) || "기텔";
+  }
+
   function newMarkerAt(normX, normY){
     const pid = S.currentPageId;
-
-    // 기본 cat
-    const defaultCat = (S.categories.find(c=>c.on && c.id!=="전체")?.id) || "기텔";
+    const defaultCat = defaultCatForNewMarker();
 
     const m = {
       id:"m_"+uid(),
@@ -1807,14 +2023,13 @@
       yt:"",
       ytTitle:"",
       memo:"",
-      // (요청2) 기본 사이즈를 스샷 쪽으로
-      r:9,
-      fs:13,
+      r:Number(getComputedStyle(document.documentElement).getPropertyValue("--mR")) || 6,
+      fs:Number(getComputedStyle(document.documentElement).getPropertyValue("--mFs")) || 11,
       fw:900,
       labelColor:"#e7eef8",
-      // (요청3) 우클릭 생성 번호: 1,2,3…
       chainId:null,
       chainIndex:null,
+      createdAt: Date.now()
     };
 
     if(insertAfterMarkerId){
@@ -1833,17 +2048,55 @@
         m.chainIndex = nextChainIndex(pid, cid);
       }
     }else{
-      // ✅ 기본: 같은 페이지에서 계속 1→2→3… 이어지게
       const cid = getOrCreateDefaultChainId(pid);
       m.chainId = cid;
       m.chainIndex = nextChainIndex(pid, cid);
     }
 
+    // ✅ (요청) 우클릭 생성 시 텍스트 자동 생성: "n번 + 카테고리"
+    m.name = `${m.chainIndex}번 ${m.cat}`;
+
+    // ✅ (요청) 같은 카테고리는 같은 스타일(각 1번 기준)
+    // 1번이 이미 있으면 그 스타일을 복사
+    applyCatStyleDefaultsFromFirst(m);
+
+    // ✅ 체인 1번이면 "그 자체가 기준"이 되므로 기본값 유지
+    if(m.chainIndex === 1){
+      m.useCatColor = true;
+      m.colorOverride = "";
+    }
+
     S.markers.push(m);
+
+    // ✅ 같은 체인에서 1번 스타일을 후순위에도 강제(요청)
+    propagateStyleFromChainFirst(m.chainId);
+
     saveLocal();
     selectMarker(m.id);
     renderKpi();
     draw();
+  }
+
+  function propagateStyleFromChainFirst(chainId){
+    if(!chainId) return;
+    const list = (S.markers||[])
+      .filter(x=>x.pageId===S.currentPageId && x.chainId===chainId && x.chainIndex!=null)
+      .sort((a,b)=>(a.chainIndex||0)-(b.chainIndex||0));
+    const first = list.find(x=>x.chainIndex===1);
+    if(!first) return;
+
+    for(const mm of list){
+      if(mm===first) continue;
+      // ✅ 크기/폰트/굵기/라벨색: 1번 기준
+      mm.r = first.r ?? mm.r;
+      mm.fs = first.fs ?? mm.fs;
+      mm.fw = first.fw ?? mm.fw;
+      mm.labelColor = first.labelColor ?? mm.labelColor;
+
+      // ✅ 같은 카테고리는 같은 색(카테고리색 사용)
+      mm.useCatColor = true;
+      mm.colorOverride = "";
+    }
   }
 
   function selectMarker(id){
@@ -1860,7 +2113,6 @@
     $("btnUseCatColor").disabled = !selectedMarker;
   }
 
-  // click to select (드래그와 충돌 안 나게: click에서는 선택만)
   cv.addEventListener("click", (e)=>{
     requireAuth(); if(!isAuthed()) return;
     if(isDraggingMarker) return;
@@ -1879,7 +2131,6 @@
     syncSelectedPanel();
   });
 
-  // (요청3) 우클릭 = 번호 마커 생성
   cv.addEventListener("contextmenu", (e)=>{
     e.preventDefault();
     requireAuth(); if(!isAuthed()) return;
@@ -1894,7 +2145,6 @@
     toast("마커 추가");
   });
 
-  // selected quick edit fields
   $("selLink").addEventListener("input", ()=>{
     if(!selectedMarker) return;
     selectedMarker.yt = $("selLink").value.trim();
@@ -1971,7 +2221,6 @@
         m.chainIndex = null;
       }
     }
-    // reset default chain for page
     lastChainIdByPage.delete(S.currentPageId);
     insertAfterMarkerId = null;
     saveLocal();
@@ -1989,6 +2238,8 @@
       m.chainIndex = idx++;
     }
     lastChainIdByPage.set(S.currentPageId, chainId);
+    // ✅ 다시 체인 후에도 1번 스타일 기준으로 전파
+    propagateStyleFromChainFirst(chainId);
     saveLocal();
     draw();
     toast("선 다시 체인(전체)");
@@ -2037,18 +2288,22 @@
     $("mfYtTitle").value = m.ytTitle || "";
     $("mfMemo").value = m.memo || "";
 
-    $("mfR").value = m.r ?? 9;
-    $("mfFs").value = m.fs ?? 13;
+    $("mfRSize").value = m.r ?? (Number(getComputedStyle(document.documentElement).getPropertyValue("--mR"))||6);
+    $("mfFs").value = m.fs ?? (Number(getComputedStyle(document.documentElement).getPropertyValue("--mFs"))||11);
     $("mfFw").value = String(m.fw ?? 900);
     $("mfLabelColor").value = m.labelColor || "#e7eef8";
 
-    $("mfRVal").textContent = $("mfR").value;
+    $("mfRVal").textContent = $("mfRSize").value;
     $("mfFsVal").textContent = $("mfFs").value;
 
     $("mfPos").textContent = `좌표(비율): ${m.x.toFixed(6)}, ${m.y.toFixed(6)}`;
 
+    // color picker sync
+    syncRgbFromHex(getEffectiveEditColor());
     updateColorChip();
+
     mMarker.classList.add("show");
+    setTimeout(()=>$("mfName").focus(), 0);
   }
 
   function closeMarkerModal(){
@@ -2070,16 +2325,99 @@
     }
   });
 
-  function updateColorChip(){
+  function getEditing(){
+    if(!editingId) return null;
+    return S.markers.find(x=>x.id===editingId) || null;
+  }
+
+  function getEffectiveEditColor(){
     const m = getEditing();
-    if(!m) return;
+    if(!m) return "#2b8cff";
+    if($("mfUseCatColor").checked){
+      return getCat($("mfCat").value)?.color || "#7cc4ff";
+    }
+    return ($("mfColor").value || m.colorOverride || markerColor(m) || "#2b8cff");
+  }
+
+  function updateColorChip(){
     const chip = $("mfColorChip");
-    const col = $("mfUseCatColor").checked ? (getCat($("mfCat").value)?.color || "#7cc4ff") : ($("mfColor").value || markerColor(m));
+    const col = getEffectiveEditColor();
     chip.style.setProperty("--c", col);
   }
-  $("mfColor").addEventListener("input", updateColorChip);
-  $("mfUseCatColor").addEventListener("change", updateColorChip);
-  $("mfCat").addEventListener("change", updateColorChip);
+
+  function hexToRgb(hex){
+    const h = (hex||"").trim();
+    const m = /^#?([0-9a-fA-F]{6})$/.exec(h);
+    if(!m) return null;
+    const n = parseInt(m[1], 16);
+    return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+  }
+  function rgbToHex(r,g,b){
+    const rr = clamp(Number(r)||0, 0, 255).toString(16).padStart(2,"0");
+    const gg = clamp(Number(g)||0, 0, 255).toString(16).padStart(2,"0");
+    const bb = clamp(Number(b)||0, 0, 255).toString(16).padStart(2,"0");
+    return "#"+rr+gg+bb;
+  }
+
+  function syncRgbFromHex(hex){
+    const rgb = hexToRgb(hex) || {r:43,g:140,b:255};
+    $("mfR").value = rgb.r;
+    $("mfG").value = rgb.g;
+    $("mfB").value = rgb.b;
+    $("mfColorPick").value = rgbToHex(rgb.r, rgb.g, rgb.b);
+  }
+
+  function syncHexFromRgbInputs(){
+    const r = clamp(parseInt($("mfR").value||"0",10),0,255);
+    const g = clamp(parseInt($("mfG").value||"0",10),0,255);
+    const b = clamp(parseInt($("mfB").value||"0",10),0,255);
+    const hex = rgbToHex(r,g,b);
+    $("mfColorPick").value = hex;
+    $("mfColor").value = hex;
+    updateColorChip();
+  }
+
+  $("mfColor").addEventListener("input", ()=>{
+    // hex 직접 입력 -> rgb 동기화
+    const v = $("mfColor").value.trim();
+    const rgb = hexToRgb(v);
+    if(rgb){
+      $("mfColorPick").value = rgbToHex(rgb.r,rgb.g,rgb.b);
+      $("mfR").value = rgb.r;
+      $("mfG").value = rgb.g;
+      $("mfB").value = rgb.b;
+    }
+    updateColorChip();
+  });
+  $("mfColorPick").addEventListener("input", ()=>{
+    $("mfColor").value = $("mfColorPick").value;
+    syncRgbFromHex($("mfColorPick").value);
+    updateColorChip();
+  });
+  ["mfR","mfG","mfB"].forEach(id=>{
+    $(id).addEventListener("input", syncHexFromRgbInputs);
+  });
+  $("mfUseCatColor").addEventListener("change", ()=>{
+    // 카테고리색 사용이면 override 비활성처럼 보이게
+    updateColorChip();
+  });
+  $("mfCat").addEventListener("change", ()=>{
+    updateColorChip();
+    // 카테고리 변경시 "같은 카테고리 스타일" 미리 반영(편집창에서도)
+    const m = getEditing();
+    if(m){
+      // 아직 저장 전이지만 preview용
+      const st = findFirstMarkerStyleByCat($("mfCat").value);
+      if(st){
+        $("mfRSize").value = st.r ?? $("mfRSize").value;
+        $("mfFs").value = st.fs ?? $("mfFs").value;
+        $("mfFw").value = String(st.fw ?? $("mfFw").value);
+        $("mfLabelColor").value = (st.labelColor ?? $("mfLabelColor").value);
+        $("mfRVal").textContent = $("mfRSize").value;
+        $("mfFsVal").textContent = $("mfFs").value;
+      }
+    }
+  });
 
   let ytTouched = false, memoTouched = false;
   $("mfYtTitle").addEventListener("input", ()=>{ ytTouched = true; syncSelectedPanelLive(); });
@@ -2101,21 +2439,16 @@
     }
   }
 
-  $("mfR").addEventListener("input", ()=>{
-    $("mfRVal").textContent = $("mfR").value;
-    const r = Number($("mfR").value);
-    const fs = clamp(Math.round(r * 1.45), 8, 40);
+  $("mfRSize").addEventListener("input", ()=>{
+    $("mfRVal").textContent = $("mfRSize").value;
+    const r = Number($("mfRSize").value);
+    const fs = clamp(Math.round(r * 1.8), 8, 40); // ✅ 비율 더 안정적으로
     $("mfFs").value = fs;
     $("mfFsVal").textContent = fs;
   });
   $("mfFs").addEventListener("input", ()=>{ $("mfFsVal").textContent = $("mfFs").value; });
 
   $("mfLabelDefault").addEventListener("click", ()=>{ $("mfLabelColor").value = "#e7eef8"; });
-
-  function getEditing(){
-    if(!editingId) return null;
-    return S.markers.find(x=>x.id===editingId) || null;
-  }
 
   function saveMarkerModal(){
     requireAuth(); if(!isAuthed()) return;
@@ -2133,10 +2466,17 @@
     m.ytTitle = ($("mfYtTitle").value || "").trim();
     m.memo = ($("mfMemo").value || "").trim();
 
-    m.r = Number($("mfR").value);
+    m.r = Number($("mfRSize").value);
     m.fs = Number($("mfFs").value);
     m.fw = Number($("mfFw").value);
     m.labelColor = ($("mfLabelColor").value || "#e7eef8").trim();
+
+    // ✅ 같은 카테고리는 카테고리색 고정(요청)
+    m.useCatColor = true;
+    m.colorOverride = "";
+
+    // ✅ 체인 1번 스타일을 같은 체인 후순위에 전파(요청)
+    propagateStyleFromChainFirst(m.chainId);
 
     saveLocal();
     selectMarker(m.id);
@@ -2144,6 +2484,9 @@
     renderKpi();
     draw();
     toast("저장 완료");
+
+    // ✅ (요청) 저장(또는 Enter) 시 편집창 닫기
+    closeMarkerModal();
   }
 
   function deleteMarkerModal(){
@@ -2175,13 +2518,22 @@
     requireAuth(); if(!isAuthed()) return;
     const m = getEditing();
     if(!m) return;
+
     m.chainId = "c_"+uid();
     m.chainIndex = 1;
     lastChainIdByPage.set(m.pageId, m.chainId);
     insertAfterMarkerId = null;
+
+    // ✅ 새 1번이니까 카테고리색/기본 스타일 유지
+    m.useCatColor = true;
+    m.colorOverride = "";
+
     saveLocal();
     draw();
     toast("새 체인 시작");
+
+    // ✅ (요청) 버튼 누르면 편집창 닫기
+    closeMarkerModal();
   });
 
   $("btnInsertAfter").addEventListener("click", ()=>{
@@ -2190,6 +2542,9 @@
     if(!m) return;
     insertAfterMarkerId = m.id;
     toast("중간 삽입 모드 활성화");
+
+    // ✅ (요청) 버튼 누르면 편집창 닫기
+    closeMarkerModal();
   });
 
   cv.addEventListener("dblclick", (e)=>{
@@ -2271,9 +2626,14 @@
         c.name = inp.value;
       });
 
-      chip.addEventListener("click", ()=>{
+      chip.addEventListener("click", async ()=>{
         catSelectedRowId = c.id;
-        const next = prompt("색상 코드 입력 (#rrggbb)", c.color);
+        const next = await openPrompt({
+          title:"카테고리 색상",
+          hint:"색상 코드(#rrggbb)를 입력하세요.",
+          value: c.color,
+          placeholder:"#ff0000"
+        });
         if(next===null) return;
         c.color = (next||"").trim() || c.color;
         renderCatRows();
@@ -2297,8 +2657,13 @@
     }
   }
 
-  $("btnAddCat").addEventListener("click", ()=>{
-    const name = prompt("카테고리 이름");
+  $("btnAddCat").addEventListener("click", async ()=>{
+    const name = await openPrompt({
+      title:"카테고리 추가",
+      hint:"카테고리 이름을 입력하세요.",
+      value:"",
+      placeholder:"예) 보스"
+    });
     if(!name) return;
     const id = name.trim();
     if(!id) return;
@@ -2332,6 +2697,9 @@
     const fb = valid.has("기텔") ? "기텔" : (S.categories[1]?.id || "전체");
     for(const m of S.markers){
       if(!valid.has(m.cat)) m.cat = fb;
+      // ✅ 같은 카테고리 색 고정 위해 useCatColor 강제
+      m.useCatColor = true;
+      m.colorOverride = "";
     }
 
     saveLocal();
@@ -2383,8 +2751,6 @@
 
     if(typeof S.showLinesWithCatFilter !== "boolean") S.showLinesWithCatFilter = true;
 
-    // 페이지별 체인 기억 초기화
-    // (현재 페이지는 기존 마커 기반으로 자동 추적)
     lastChainIdByPage = new Map();
 
     renderAll();
