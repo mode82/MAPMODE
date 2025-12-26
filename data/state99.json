@@ -1,7 +1,7 @@
 {
   "version": 99,
   "game": "아이온2",
-  "logoUrl": "https://mode82.github.io/Mode_Map/assets/logo/MAPMODELOGO2.png",
+  "logoUrl": "https://mode82.github.io/MAPMODE/assets/logo/MAPMODELOGO2.png",
   "games": [
     "아이온2",
     "패스오브엑자일"
@@ -10,12 +10,12 @@
     {
       "id": "p_all",
       "name": "전체지도",
-      "url": "https://mode82.github.io/Mode_Map/assets/maps/aion2map.jpg"
+      "url": "https://mode82.github.io/MAPMODE/assets/maps/aion2map.jpg"
     },
     {
       "id": "p_c808f23eb9594819b58a59afe",
       "name": "도망자마을",
-      "url": "https://mode82.github.io/Mode_Map/assets/maps/aion2test.jpg"
+      "url": "https://mode82.github.io/MAPMODE/assets/maps/aion2test.jpg"
     }
   ],
   "currentPageId": "p_all",
