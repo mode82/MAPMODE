@@ -36,7 +36,7 @@
       --sideW:320px;
       --sideW2:360px;
 
-      /* ✅ [ADD] 상단 슬롯 폭(게임 4개 + 컨트롤 3개 정렬용) */
+      /* ✅ [ADD] 상단 슬롯 폭 */
       --topSlotW:170px;
     }
 
@@ -52,7 +52,6 @@
         linear-gradient(180deg, #0a0f18 0%, var(--bg) 100%);
       color:var(--text);
 
-      /* ✅ 1번 이미지 느낌: UI 글씨 굵고 또렷(마커 관련은 별도 클래스에서 제외) */
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
       font-weight: 800;
       letter-spacing: .1px;
@@ -136,7 +135,7 @@
     .pill.danger{ border-color: rgba(255,93,93,.55); }
     .pill.ok{ border-color: rgba(57,217,138,.55); }
 
-    /* ✅ 1번: 게임(카테고리) 4개 슬롯 */
+    /* ✅ 게임 슬롯(단일) */
     .gameSlot{
       width:100%;
       height:38px;
@@ -158,21 +157,68 @@
       background: rgba(57,217,138,.10);
       box-shadow: var(--shadow2);
     }
-    .gameSlot.empty{
-      opacity:.65;
-      border-style:dashed;
+
+    /* ✅ 게임 드롭다운 */
+    .gameDropWrap{
+      position:fixed;
+      left:14px;
+      top:calc(var(--topH) + 8px);
+      width:calc(var(--topSlotW) + 20px);
+      z-index:120;
+      display:none;
     }
-    .gameSlot .miniIcon{
-      width:24px; height:24px;
-      display:flex; align-items:center; justify-content:center;
+    .gameDropWrap.show{ display:block; }
+    .gameDrop{
+      width:100%;
+      background: linear-gradient(180deg, rgba(14,22,38,.96), rgba(10,15,24,.92));
+      border:1px solid rgba(39,52,74,.75);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(var(--blur));
+    }
+    .gameDropHead{
+      padding:12px 12px 10px;
+      border-bottom:1px solid rgba(39,52,74,.55);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .gameDropHead .t{ font-weight:900; font-size:13px; color:rgba(231,238,248,.92); }
+    .gameDropList{ padding:10px; display:flex; flex-direction:column; gap:8px; }
+    .gRow{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 10px;
+      border-radius:16px;
+      border:1px solid rgba(39,52,74,.6);
+      background: rgba(14,22,38,.35);
+      cursor:pointer;
+    }
+    .gRow.active{
+      outline:2px solid rgba(57,217,138,.35);
+      border-color: rgba(57,217,138,.55);
+      background: rgba(14,22,38,.55);
+    }
+    .gRow .nm{ font-weight:900; font-size:14px; }
+    .gRow .acts{ display:flex; gap:8px; }
+    .miniBtn{
+      height:34px;
+      padding:0 12px;
       border-radius:999px;
       border:1px solid rgba(39,52,74,.65);
       background: rgba(10,15,24,.35);
-      font-size:14px;
-      flex:0 0 auto;
+      color: rgba(231,238,248,.92);
+      cursor:pointer;
+      font-weight:900;
+      font-size:13px;
+      display:flex; align-items:center; justify-content:center;
     }
+    .miniBtn.icon{
+      width:34px;
+      padding:0;
+    }
+    .miniBtn.url{ border-color: rgba(57,217,138,.55); }
+    .miniBtn.edit{ border-color: rgba(124,196,255,.55); }
+    .miniBtn.del{ border-color: rgba(255,93,93,.55); }
 
-    /* ✅ 5번: 아이콘/버튼 겹침 방지 */
     .top-right{ flex-wrap:wrap; justify-content:flex-end; }
     .top-right .pill{ flex: 0 0 auto; }
 
@@ -224,11 +270,7 @@
       font-weight:800;
     }
 
-    /* ========== LEFT: Pages (1번 이미지 형태) ========== */
-    .pageHeader{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-bottom:10px;
-    }
+    /* ========== LEFT: Pages ========== */
     .btnAddPage{
       width:100%;
       height:52px;
@@ -258,25 +300,6 @@
     }
     .pageName{ font-weight:900; font-size:16px; }
     .pageActions{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
-    .miniBtn{
-      height:34px;
-      padding:0 12px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      color: rgba(231,238,248,.92);
-      cursor:pointer;
-      font-weight:900;
-      font-size:13px;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .miniBtn.icon{
-      width:34px;
-      padding:0;
-    }
-    .miniBtn.url{ border-color: rgba(57,217,138,.55); }
-    .miniBtn.edit{ border-color: rgba(124,196,255,.55); }
-    .miniBtn.del{ border-color: rgba(255,93,93,.55); }
 
     /* ========== CENTER: Canvas ========== */
     .center{
@@ -338,7 +361,6 @@
       justify-content:center;
     }
 
-    /* ✅ 5번 이미지: 빠른 색상표 */
     .palette{
       display:flex; gap:12px; align-items:flex-start;
       flex-wrap:wrap;
@@ -390,7 +412,6 @@
     }
     textarea.field{ min-height:90px; resize:vertical; }
 
-    /* ✅ 6번: 우측 하단 "선택한 마커" 영역 */
     .selectedBox .label{
       font-size:14px; font-weight:900; margin-bottom:8px;
     }
@@ -399,7 +420,7 @@
       margin-top:10px;
     }
 
-    /* ========== MODAL (마커 편집 / 카테고리 편집 / 게임 편집) ========== */
+    /* ========== MODAL ========== */
     .modalBack{
       position:fixed; inset:0;
       background: rgba(0,0,0,.55);
@@ -442,7 +463,6 @@
       font-weight:900;
     }
 
-    /* ✅ 9번 이미지 느낌: 마커 편집 UI */
     .grid2{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -526,7 +546,7 @@
     .btnBig.danger{ border-color: rgba(255,93,93,.65); }
     .btnBig.ok{ border-color: rgba(57,217,138,.65); }
 
-    /* ✅ 마커 텍스트/표시 자체는 "마커 관련 제외" */
+    /* 마커 폰트 */
     .markerFont{
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       font-weight: 900;
@@ -566,7 +586,42 @@
       font-size:14px;
     }
 
-    /* ========== responsive: 작은 화면에서 3컬럼 유지하되 가로 스크롤 허용 ========== */
+    /* ========== POPUP (prompt/confirm 대체) ========== */
+    .popLayer{
+      position:fixed; inset:0;
+      z-index:260;
+      display:none;
+    }
+    .popLayer.show{ display:block; }
+    .pop{
+      position:absolute;
+      width:min(380px, calc(100vw - 28px));
+      background: linear-gradient(180deg, rgba(14,22,38,.96), rgba(10,15,24,.92));
+      border:1px solid rgba(39,52,74,.75);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(var(--blur));
+    }
+    .popHead{
+      padding:12px 12px 10px;
+      border-bottom:1px solid rgba(39,52,74,.55);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .popHead .title{ font-size:13px; font-weight:900; color:rgba(231,238,248,.92); }
+    .popBody{ padding:12px; }
+    .popBody .msg{ color: rgba(159,176,198,.92); font-size:12px; line-height:1.45; font-weight:800; margin:0 0 10px; }
+    .popFoot{
+      padding:12px;
+      border-top:1px solid rgba(39,52,74,.55);
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .popFoot .btnBig{ height:40px; }
+
+    /* ========== responsive ========== */
     @media (max-width: 1200px){
       body{ overflow:auto; }
       .layout{
@@ -581,6 +636,7 @@
       .slot.logo{ width:var(--topSlotW); }
       .logoBox{ width:var(--topSlotW); }
       .gameSlot{ font-size:13px; }
+      .gameDropWrap{ width:calc(var(--topSlotW) + 20px); }
     }
   </style>
 </head>
@@ -600,36 +656,45 @@
     </div>
   </div>
 
+  <!-- ✅ popup layer -->
+  <div class="popLayer" id="popLayer" aria-hidden="true">
+    <div class="pop" id="pop" role="dialog" aria-modal="true">
+      <div class="popHead">
+        <div class="title" id="popTitle">입력</div>
+        <button class="modalClose" id="popClose" type="button">닫기</button>
+      </div>
+      <div class="popBody" id="popBody">
+        <p class="msg" id="popMsg" style="display:none;"></p>
+        <input class="field" id="popInput" placeholder="" />
+      </div>
+      <div class="popFoot" id="popFoot">
+        <button class="btnBig" id="popCancel" type="button">취소</button>
+        <button class="btnBig ok" id="popOk" type="button">저장</button>
+      </div>
+    </div>
+  </div>
+
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="top-left">
-      <!-- Slot 1: Logo (클릭해서 URL 입력) -->
+      <!-- Logo -->
       <div class="slot fixed logo">
         <div class="logoBox" id="logoBox" title="로고 클릭 → URL 입력">
           <div class="brand"><div class="word">MAPM<span class="o"></span>DE</div></div>
         </div>
       </div>
 
-      <!-- ✅ 1번: 게임(카테고리) 4개 슬롯(아이온2 카테고리 크기 동일) -->
+      <!-- ✅ (2) 상단 슬롯: 아이온2(드롭다운)만 표시 -->
       <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
-        <div class="gameSlot" id="gSlot1" title="게임 선택 / 클릭하여 관리">아이온2</div>
-      </div>
-      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
-        <div class="gameSlot empty" id="gSlot2" title="게임 추가">+ 추가</div>
-      </div>
-      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
-        <div class="gameSlot empty" id="gSlot3" title="게임 추가">+ 추가</div>
-      </div>
-      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
-        <div class="gameSlot empty" id="gSlot4" title="게임 추가">+ 추가</div>
+        <div class="gameSlot active" id="gSlot1" title="게임 선택 / 클릭하여 관리">아이온2</div>
       </div>
 
-      <!-- Slot: Admin label -->
+      <!-- Admin label -->
       <div class="slot fixed">
         <div style="font-weight:900; color:rgba(57,217,138,.95);">ADMIN</div>
       </div>
 
-      <!-- ✅ 1번: 지도 업로드 / state 내보내기 / 전체 초기화 (옆으로 나열, 크기 동일) -->
+      <!-- 지도 업로드 / state 내보내기 / 전체 초기화 -->
       <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
         <label class="gameSlot" style="cursor:pointer;">
           지도 업로드
@@ -652,6 +717,17 @@
         <span style="opacity:.7;">/</span>
         <span id="pathGameTop">아이온2</span>
       </span>
+    </div>
+  </div>
+
+  <!-- ✅ 게임 드롭다운 -->
+  <div class="gameDropWrap" id="gameDropWrap">
+    <div class="gameDrop" id="gameDrop">
+      <div class="gameDropHead">
+        <div class="t">게임 목록</div>
+        <button class="pill small ghost" id="btnAddGameDrop" type="button">+ 추가</button>
+      </div>
+      <div class="gameDropList" id="gameDropList"></div>
     </div>
   </div>
 
@@ -700,15 +776,14 @@
 
           <div class="subtle" id="kpi" style="margin-top:10px;">표시 중 마커: 0 / 페이지 전체: 0</div>
 
-          <!-- ✅ 3번: 카테고리/색상 편집 안으로 옵션들을 이동 -->
           <button class="pill btnFull ghost" id="btnEditCats" style="margin-top:10px;">카테고리/색상 편집</button>
         </div>
 
-        <!-- 관리자 툴 (기존 유지) -->
+        <!-- 관리자 툴 -->
         <div class="card">
           <div class="sectionTitle">
             <span>관리자 툴</span>
-            <span class="subtle">• 색상 팔레트(체인 1번 기준 전파)<br/>• 선은 "같은 카테고리 필터" 시 같이 표시/숨김</span>
+            <span class="subtle">• 색상 팔레트(카테고리 1번 기준 전파)<br/>• 선은 같은 페이지 마커(번호 순)로 자동 표시</span>
           </div>
 
           <div class="subtle" style="margin-top:8px;">빠른 색상 (원 색상 오버라이드)</div>
@@ -722,8 +797,8 @@
           <div class="hr"></div>
 
           <div class="row2">
-            <button class="pill btnFull danger" id="btnClearLines">모든 선 제거</button>
-            <button class="pill btnFull ghost" id="btnRechain">선 다시 체인(전체)</button>
+            <button class="pill btnFull danger" id="btnClearLines">선 숨김</button>
+            <button class="pill btnFull ghost" id="btnRechain">선 다시 표시</button>
           </div>
 
           <div class="hr"></div>
@@ -842,14 +917,11 @@
         </div>
 
         <div class="subtle" id="mfPos" style="margin-top:12px;">좌표(비율): -</div>
-        <div class="subtle" style="margin-top:8px;">
-          • 새로운 번호로 시작: 이 마커부터 새 체인(새 1번) 시작<br/>
-          • 해당 마커를 이어서 시작: 이 마커 뒤로 "중간 삽입" 모드 활성화
-        </div>
       </div>
 
       <div class="modalFoot">
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <!-- (기존 버튼 유지 - 동작은 최소 유지) -->
           <button class="btnBig" id="btnNewChain">새로운 번호로 시작</button>
           <button class="btnBig" id="btnInsertAfter">해당 마커를 이어서 시작</button>
         </div>
@@ -857,34 +929,6 @@
           <button class="btnBig danger" id="btnDeleteMarker">삭제</button>
           <button class="btnBig ok" id="btnSaveMarker">저장</button>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ✅ 2번: GAME(아이온2 카테고리) 관리 MODAL (추가/삭제 포함, 페이지 추가/삭제 형태와 동일) -->
-  <div class="modalBack" id="mGames">
-    <div class="modal">
-      <div class="modalHead">
-        <div class="title">게임(카테고리) 관리</div>
-        <button class="modalClose" id="btnCloseGames">닫기</button>
-      </div>
-
-      <div class="modalBody">
-        <div class="subtle">상단에 표시되는 게임 슬롯(4개)을 관리합니다. (추가/삭제/이름 편집)</div>
-        <div class="hr"></div>
-
-        <div class="row2">
-          <button class="pill btnFull ghost" id="btnAddGameModal">+ 게임 추가</button>
-          <button class="pill btnFull ghost" id="btnGamesFocusCurrent">현재 게임으로 이동</button>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="pageList" id="gameList"></div>
-      </div>
-
-      <div class="modalFoot" style="justify-content:flex-end;">
-        <button class="btnBig ok" id="btnSaveGames">저장</button>
       </div>
     </div>
   </div>
@@ -900,7 +944,6 @@
       <div class="modalBody">
         <div class="subtle">저장하면 현재 게임의 카테고리 목록이 완전히 교체됩니다.</div>
 
-        <!-- ✅ 3번: 기존 "카테고리 카드"에 있던 옵션들을 여기로 이동 -->
         <div class="hr"></div>
 
         <div class="sectionTitle" style="margin-top:0;">
@@ -913,22 +956,6 @@
             <div class="dotc" style="background:#fff;"></div>
             <div>같은 카테고리 필터 시 선도 같이 표시/숨김</div>
           </div>
-        </div>
-
-        <div class="chipRow" style="gap:10px; margin-top:10px;">
-          <div class="chip" id="tgAutoAddCatFromText"><div class="dotc" style="background:#fff;"></div>발견하는 아이템 희귀도 증가 마을</div>
-          <div class="chip" id="tgAutoAddCatFromText2"><div class="dotc" style="background:#fff;"></div>발견하는 아이템 희귀도 증가</div>
-          <div class="chip" id="tgAutoAddCatFromText3"><div class="dotc" style="background:#fff;"></div>발견하는 아이템 희귀도 증가 마을 감소</div>
-        </div>
-
-        <div class="subtle" style="margin-top:8px;">빠른 카테고리 (선택 마커에 즉시 적용)</div>
-        <div class="chipRow" style="gap:10px; margin-top:8px;">
-          <div class="chip" data-quickcat="4"><div class="dotc" style="background:#fff;"></div>4</div>
-          <div class="chip" data-quickcat="11"><div class="dotc" style="background:#fff;"></div>11</div>
-          <div class="chip" data-quickcat="22"><div class="dotc" style="background:#fff;"></div>22</div>
-          <div class="chip" data-quickcat="33"><div class="dotc" style="background:#fff;"></div>33</div>
-          <div class="chip" data-quickcat="44"><div class="dotc" style="background:#fff;"></div>44</div>
-          <div class="chip" data-quickcat="455"><div class="dotc" style="background:#fff;"></div>455</div>
         </div>
 
         <div class="hr"></div>
@@ -992,7 +1019,7 @@
     showLinesWithCatFilter:true,
     map:{ imgDataUrl:"", naturalW:1, naturalH:1, scale:0, tx:0, ty:0 },
     markers:[],
-    chains:[], // [{id, pageId, cat, markerIds:[...]}]
+    chains:[]
   };
 
   const $ = (id)=>document.getElementById(id);
@@ -1009,13 +1036,26 @@
   const catChips = $("catChips");
   const palette = $("palette");
   const textColors = $("textColors");
-
   const mMarker = $("mMarker");
   const mCats = $("mCats");
 
-  // ✅ [ADD] 게임 모달
-  const mGames = $("mGames");
-  const gameList = $("gameList");
+  // game dropdown
+  const gSlot1 = $("gSlot1");
+  const gameDropWrap = $("gameDropWrap");
+  const gameDropList = $("gameDropList");
+  const btnAddGameDrop = $("btnAddGameDrop");
+
+  // popup
+  const popLayer = $("popLayer");
+  const pop = $("pop");
+  const popTitle = $("popTitle");
+  const popMsg = $("popMsg");
+  const popInput = $("popInput");
+  const popBody = $("popBody");
+  const popOk = $("popOk");
+  const popCancel = $("popCancel");
+  const popClose = $("popClose");
+  const popFoot = $("popFoot");
 
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const safeParse = (json, fallback) => { try{ return JSON.parse(json); }catch(e){ return fallback; } };
@@ -1061,6 +1101,125 @@
     if(e.key==="Enter") btnLogin.click();
   });
 
+  // ---------- popup helpers (prompt/confirm 대체) ----------
+  let _popResolve = null;
+  let _popMode = "input"; // input | confirm
+  function popCloseAll(){
+    popLayer.classList.remove("show");
+    popLayer.setAttribute("aria-hidden","true");
+    if(_popResolve){
+      const r = _popResolve;
+      _popResolve = null;
+      r(null);
+    }
+  }
+  function popPlaceNear(anchorEl){
+    const pad = 10;
+    const r = anchorEl ? anchorEl.getBoundingClientRect() : {left: (window.innerWidth/2), top:(window.innerHeight/2), width:0, height:0, right:(window.innerWidth/2), bottom:(window.innerHeight/2)};
+    const popW = Math.min(380, window.innerWidth - 28);
+    pop.style.width = popW + "px";
+
+    // estimate height
+    const estH = (_popMode==="confirm") ? 170 : 210;
+    let x = r.left;
+    let y = r.bottom + 10;
+
+    // prefer below, else above
+    if(y + estH > window.innerHeight - pad){
+      y = Math.max(pad, r.top - estH - 10);
+    }
+    // align left but clamp
+    x = clamp(x, pad, window.innerWidth - popW - pad);
+    pop.style.left = x + "px";
+    pop.style.top = y + "px";
+  }
+
+  function openPopInput({anchor, title="입력", message="", placeholder="", value="", okText="저장", cancelText="취소"}){
+    requireAuth(); if(!isAuthed()) return Promise.resolve(null);
+
+    _popMode = "input";
+    popTitle.textContent = title;
+    popMsg.style.display = message ? "block" : "none";
+    popMsg.textContent = message || "";
+    popInput.style.display = "block";
+    popInput.placeholder = placeholder || "";
+    popInput.value = value ?? "";
+    popOk.textContent = okText;
+    popCancel.textContent = cancelText;
+    popOk.classList.remove("danger");
+    popOk.classList.add("ok");
+    popFoot.style.display = "flex";
+
+    popLayer.classList.add("show");
+    popLayer.setAttribute("aria-hidden","false");
+    popPlaceNear(anchor);
+    setTimeout(()=>popInput.focus(), 0);
+
+    return new Promise((res)=>{
+      _popResolve = res;
+    });
+  }
+
+  function openPopConfirm({anchor, title="확인", message="정말 진행할까요?", okText="확인", cancelText="취소", danger=false}){
+    requireAuth(); if(!isAuthed()) return Promise.resolve(false);
+
+    _popMode = "confirm";
+    popTitle.textContent = title;
+    popMsg.style.display = "block";
+    popMsg.textContent = message || "";
+    popInput.style.display = "none";
+    popOk.textContent = okText;
+    popCancel.textContent = cancelText;
+    popFoot.style.display = "flex";
+
+    if(danger){
+      popOk.classList.remove("ok");
+      popOk.classList.add("danger");
+    }else{
+      popOk.classList.remove("danger");
+      popOk.classList.add("ok");
+    }
+
+    popLayer.classList.add("show");
+    popLayer.setAttribute("aria-hidden","false");
+    popPlaceNear(anchor);
+
+    return new Promise((res)=>{
+      _popResolve = (v)=>res(!!v);
+    });
+  }
+
+  function popCommit(val){
+    if(!_popResolve) return;
+    const r = _popResolve;
+    _popResolve = null;
+    popLayer.classList.remove("show");
+    popLayer.setAttribute("aria-hidden","true");
+    r(val);
+  }
+
+  popClose.addEventListener("click", ()=>popCommit(null));
+  popCancel.addEventListener("click", ()=>popCommit(null));
+  popOk.addEventListener("click", ()=>{
+    if(_popMode==="confirm"){ popCommit(true); return; }
+    popCommit(popInput.value);
+  });
+
+  popLayer.addEventListener("mousedown", (e)=>{
+    if(e.target === popLayer) popCommit(null);
+  });
+
+  window.addEventListener("keydown", (e)=>{
+    if(!popLayer.classList.contains("show")) return;
+    if(e.key==="Escape"){ e.preventDefault(); popCommit(null); }
+    if(e.key==="Enter"){
+      if(_popMode==="confirm"){ e.preventDefault(); popCommit(true); }
+      else{
+        if(document.activeElement === popInput){ e.preventDefault(); popCommit(popInput.value); }
+      }
+    }
+  });
+
   // ---------- state ----------
   let S = structuredClone(defaultState);
   let mapImg = new Image();
@@ -1077,6 +1236,13 @@
     merged.games = Array.isArray(st?.games) && st.games.length ? st.games : ["아이온2"];
     if(!merged.pages.find(p=>p.id===merged.currentPageId)) merged.currentPageId = merged.pages[0].id;
     if(!merged.games.includes(merged.game)) merged.game = merged.games[0];
+
+    // v99+: marker order/dim
+    for(const m of merged.markers){
+      if(typeof m.order !== "number") m.order = (typeof m.chainIndex==="number" ? m.chainIndex : null);
+      if(typeof m.dim !== "boolean") m.dim = false;
+      if(m.order == null) m.order = 0;
+    }
     return merged;
   }
 
@@ -1097,7 +1263,7 @@
     return raw ? safeParse(raw, structuredClone(defaultState)) : structuredClone(defaultState);
   }
 
-  // ---------- logo (4번: 로고 클릭 → URL 입력) ----------
+  // ---------- logo ----------
   const logoBox = $("logoBox");
   function renderLogo(){
     logoBox.innerHTML = "";
@@ -1113,12 +1279,20 @@
       logoBox.innerHTML = `<div class="brand"><div class="word">MAPM<span class="o"></span>DE</div></div>`;
     }
   }
-  logoBox.addEventListener("click", ()=>{
+  logoBox.addEventListener("click", async (e)=>{
     requireAuth();
     if(!isAuthed()) return;
 
     const cur = S.logoUrl || "";
-    const next = prompt("로고 이미지 URL을 입력하세요 (비우면 기본 로고)", cur);
+    const next = await openPopInput({
+      anchor: logoBox,
+      title: "로고 URL 설정",
+      message: "로고 이미지 URL을 입력하세요. 비우면 기본 로고로 돌아갑니다.",
+      placeholder: "https://... (비우면 기본)",
+      value: cur,
+      okText: "저장",
+      cancelText: "취소"
+    });
     if(next === null) return;
     S.logoUrl = (next || "").trim();
     saveLocal();
@@ -1126,9 +1300,7 @@
     toast("로고 설정 저장");
   });
 
-  // ✅ ---------- games (1,2번: 상단 4개 슬롯 + 클릭 시 관리창 + 삭제 추가) ----------
-  const gSlots = [ $("gSlot1"), $("gSlot2"), $("gSlot3"), $("gSlot4") ];
-
+  // ---------- games dropdown ----------
   function setGameActive(name){
     S.game = name;
     $("pathGameTop").textContent = S.game;
@@ -1139,180 +1311,150 @@
   }
 
   function renderGamesTop(){
-    // 슬롯 4개에 S.games를 채움, 비면 +추가
-    for(let i=0;i<4;i++){
-      const el = gSlots[i];
-      const name = S.games[i];
-      if(name){
-        el.classList.remove("empty");
-        el.textContent = name;
-        el.classList.toggle("active", name===S.game);
-      }else{
-        el.classList.add("empty");
-        el.classList.remove("active");
-        el.textContent = "+ 추가";
-      }
-    }
-
-    // 헤더 경로 반영
+    gSlot1.textContent = S.game || "아이온2";
+    gSlot1.classList.toggle("active", true);
     $("pathGameTop").textContent = S.game;
     $("pathGame").textContent = S.game;
   }
 
-  function openGamesModal(){
-    requireAuth(); if(!isAuthed()) return;
-    renderGamesModalList();
-    mGames.classList.add("show");
-  }
-  function closeGamesModal(){
-    mGames.classList.remove("show");
-  }
-
-  $("btnCloseGames").addEventListener("click", closeGamesModal);
-
-  function renderGamesModalList(){
-    gameList.innerHTML = "";
-
+  function renderGameDropList(){
+    gameDropList.innerHTML = "";
     for(const g of S.games){
-      const item = document.createElement("div");
-      item.className = "pageItem" + (g===S.game ? " active" : "");
-      item.innerHTML = `
-        <div class="pageName">${g}</div>
-        <div class="pageActions">
-          <button class="miniBtn icon edit" title="이름 편집">✎</button>
-          <button class="miniBtn icon del" title="삭제">🗑</button>
+      const row = document.createElement("div");
+      row.className = "gRow" + (g===S.game ? " active" : "");
+      row.innerHTML = `
+        <div class="nm">${g}</div>
+        <div class="acts">
+          <button class="miniBtn icon edit" type="button" title="이름 편집">✎</button>
+          <button class="miniBtn icon del" type="button" title="삭제">🗑</button>
         </div>
       `;
 
-      item.addEventListener("click", (e)=>{
+      row.addEventListener("click", (e)=>{
         const btn = e.target.closest("button");
         if(btn) return;
         setGameActive(g);
-        renderGamesModalList();
+        closeGameDrop();
+        renderPages();
+        renderCats();
+        renderKpi();
+        draw();
       });
 
-      const [bEdit, bDel] = item.querySelectorAll("button");
+      const bEdit = row.querySelector(".edit");
+      const bDel = row.querySelector(".del");
 
-      bEdit.addEventListener("click", (e)=>{
+      bEdit.addEventListener("click", async (e)=>{
         e.stopPropagation();
-        const next = prompt("게임 이름을 수정하세요", g);
-        if(!next) return;
-        const nn = next.trim();
-        if(!nn) return;
-        if(S.games.includes(nn) && nn!==g){
+        const nn = await openPopInput({
+          anchor: bEdit,
+          title: "게임 이름 편집",
+          message: "게임 이름을 수정하세요.",
+          placeholder: "예: 아이온2",
+          value: g,
+          okText: "저장",
+          cancelText: "취소"
+        });
+        if(nn === null) return;
+        const name = (nn||"").trim();
+        if(!name) return;
+        if(S.games.includes(name) && name !== g){
           toast("이미 존재하는 게임");
           return;
         }
-        // rename
         const idx = S.games.indexOf(g);
-        S.games[idx] = nn;
-        if(S.game === g) S.game = nn;
-
+        if(idx>=0) S.games[idx] = name;
+        if(S.game === g) S.game = name;
         saveLocal();
         renderGamesTop();
-        renderGamesModalList();
+        renderGameDropList();
         toast("게임 이름 수정");
       });
 
-      bDel.addEventListener("click", (e)=>{
+      bDel.addEventListener("click", async (e)=>{
         e.stopPropagation();
         if(S.games.length <= 1){
           toast("최소 1개 게임은 필요합니다");
           return;
         }
-        if(!confirm(`"${g}" 게임을 삭제할까요?`)) return;
+        const ok = await openPopConfirm({
+          anchor: bDel,
+          title: "게임 삭제",
+          message: `"${g}" 게임을 삭제할까요?\n(게임 목록에서만 제거됩니다)`,
+          okText: "삭제",
+          cancelText: "취소",
+          danger: true
+        });
+        if(!ok) return;
 
         S.games = S.games.filter(x=>x!==g);
-        if(S.game === g) S.game = S.games[0];
-
+        if(S.game === g) S.game = S.games[0] || "아이온2";
         saveLocal();
         renderGamesTop();
-        renderGamesModalList();
+        renderGameDropList();
         toast("게임 삭제");
       });
 
-      gameList.appendChild(item);
+      gameDropList.appendChild(row);
     }
   }
 
-  $("btnAddGameModal").addEventListener("click", ()=>{
+  function openGameDrop(){
     requireAuth(); if(!isAuthed()) return;
-    const name = prompt("추가할 게임 이름을 입력하세요");
+    renderGameDropList();
+    gameDropWrap.classList.add("show");
+  }
+  function closeGameDrop(){
+    gameDropWrap.classList.remove("show");
+  }
+  function toggleGameDrop(){
+    if(gameDropWrap.classList.contains("show")) closeGameDrop();
+    else openGameDrop();
+  }
+
+  gSlot1.addEventListener("click", (e)=>{
+    requireAuth(); if(!isAuthed()) return;
+    toggleGameDrop();
+  });
+
+  // 바깥 클릭 / ESC 닫기
+  document.addEventListener("mousedown", (e)=>{
+    if(!gameDropWrap.classList.contains("show")) return;
+    if(e.target.closest("#gameDropWrap")) return;
+    if(e.target.closest("#gSlot1")) return;
+    closeGameDrop();
+  });
+  window.addEventListener("keydown", (e)=>{
+    if(e.key==="Escape" && gameDropWrap.classList.contains("show")) closeGameDrop();
+  });
+
+  btnAddGameDrop.addEventListener("click", async (e)=>{
+    requireAuth(); if(!isAuthed()) return;
+    const nn = await openPopInput({
+      anchor: btnAddGameDrop,
+      title: "게임 추가",
+      message: "추가할 게임 이름을 입력하세요.",
+      placeholder: "예: 패스오브엑자일",
+      value: "",
+      okText: "추가",
+      cancelText: "취소"
+    });
+    if(nn === null) return;
+    const name = (nn||"").trim();
     if(!name) return;
-    const g = name.trim();
-    if(!g) return;
-    if(S.games.includes(g)){
+    if(S.games.includes(name)){
       toast("이미 존재하는 게임");
       return;
     }
-    S.games.push(g);
-    if(!S.game) S.game = g;
-
+    S.games.push(name);
+    S.game = name;
     saveLocal();
     renderGamesTop();
-    renderGamesModalList();
+    renderGameDropList();
     toast("게임 추가");
   });
 
-  $("btnGamesFocusCurrent").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    // 리스트 재렌더(현재 active 표시)
-    renderGamesModalList();
-    toast("현재 게임 표시");
-  });
-
-  $("btnSaveGames").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    // 정합성만 체크(빈 문자열 제거)
-    S.games = (S.games||[]).map(x=>(x||"").trim()).filter(Boolean);
-    if(!S.games.length) S.games = ["아이온2"];
-    if(!S.games.includes(S.game)) S.game = S.games[0];
-
-    saveLocal();
-    renderGamesTop();
-    closeGamesModal();
-    toast("게임 저장");
-  });
-
-  // 상단 슬롯 클릭 동작:
-  // - 이름 있는 슬롯: 클릭하면 게임 선택
-  // - 빈 슬롯: 클릭하면 즉시 추가(=prompt) 또는 관리창 오픈
-  // - 어떤 슬롯이든 더블클릭하면 관리창 오픈(요청한 "클릭하면 나오는 창" UX)
-  gSlots.forEach((el, idx)=>{
-    el.addEventListener("click", ()=>{
-      requireAuth(); if(!isAuthed()) return;
-
-      const name = S.games[idx];
-      if(name){
-        setGameActive(name);
-      }else{
-        const n = prompt("추가할 게임 이름을 입력하세요");
-        if(!n) return;
-        const g = n.trim();
-        if(!g) return;
-        if(S.games.includes(g)){
-          toast("이미 존재하는 게임");
-          return;
-        }
-        S.games.push(g);
-        setGameActive(g);
-        renderGamesTop();
-        toast("게임 추가");
-      }
-    });
-
-    el.addEventListener("dblclick", ()=>{
-      openGamesModal();
-    });
-
-    // 우클릭으로도 관리창(편하게)
-    el.addEventListener("contextmenu", (e)=>{
-      e.preventDefault();
-      openGamesModal();
-    });
-  });
-
-  // ---------- pages (기존 유지) ----------
+  // ---------- pages ----------
   function renderPages(){
     pageList.innerHTML = "";
     const cur = S.pages.find(p=>p.id===S.currentPageId) || S.pages[0];
@@ -1324,9 +1466,9 @@
       item.innerHTML = `
         <div class="pageName">${p.name}</div>
         <div class="pageActions">
-          <button class="miniBtn url" title="지도 이미지 URL 설정">URL</button>
-          <button class="miniBtn icon edit" title="이름 편집">✎</button>
-          <button class="miniBtn icon del" title="삭제">🗑</button>
+          <button class="miniBtn url" type="button" title="지도 이미지 URL 설정">URL</button>
+          <button class="miniBtn icon edit" type="button" title="이름 편집">✎</button>
+          <button class="miniBtn icon del" type="button" title="삭제">🗑</button>
         </div>
       `;
       item.addEventListener("click", (e)=>{
@@ -1336,53 +1478,81 @@
         saveLocal();
         renderPages();
         renderKpi();
-        loadMap(); // ✅ 페이지 전환 시 페이지 URL 지도 로드
+        loadMap();
+        draw();
       });
 
-      const [bUrl, bEdit, bDel] = item.querySelectorAll("button");
+      const bUrl = item.querySelector(".url");
+      const bEdit = item.querySelector(".edit");
+      const bDel = item.querySelector(".del");
 
-      bUrl.addEventListener("click", (e)=>{
+      bUrl.addEventListener("click", async (e)=>{
         e.stopPropagation();
         requireAuth();
         if(!isAuthed()) return;
-        const next = prompt("이 페이지 지도 이미지 URL(또는 Raw/GitHub Pages URL)을 입력하세요", p.url || "");
+        const next = await openPopInput({
+          anchor: bUrl,
+          title: "페이지 지도 URL",
+          message: "이 페이지 지도 이미지 URL을 입력하세요. (Raw/GitHub Pages URL 가능)",
+          placeholder: "https://.../map.png",
+          value: p.url || "",
+          okText: "저장",
+          cancelText: "취소"
+        });
         if(next === null) return;
         p.url = (next || "").trim();
         saveLocal();
         toast("페이지 URL 저장");
-        if(p.id === S.currentPageId) loadMap(); // ✅ 현재 페이지면 즉시 반영
+        if(p.id === S.currentPageId) loadMap();
       });
 
-      bEdit.addEventListener("click", (e)=>{
+      bEdit.addEventListener("click", async (e)=>{
         e.stopPropagation();
         requireAuth();
         if(!isAuthed()) return;
-        const next = prompt("페이지 이름을 수정하세요", p.name);
-        if(!next) return;
-        p.name = next.trim();
+        const next = await openPopInput({
+          anchor: bEdit,
+          title: "페이지 이름 편집",
+          message: "페이지 이름을 수정하세요.",
+          placeholder: "예: 8번마을",
+          value: p.name,
+          okText: "저장",
+          cancelText: "취소"
+        });
+        if(next === null) return;
+        const name = (next||"").trim();
+        if(!name) return;
+        p.name = name;
         saveLocal();
         renderPages();
         toast("페이지 이름 수정");
       });
 
-      bDel.addEventListener("click", (e)=>{
+      bDel.addEventListener("click", async (e)=>{
         e.stopPropagation();
         requireAuth();
         if(!isAuthed()) return;
         if(S.pages.length <= 1){ toast("최소 1개 페이지는 필요합니다"); return; }
-        if(!confirm(`"${p.name}" 페이지를 삭제할까요? (해당 페이지 마커도 같이 삭제됩니다)`)) return;
+        const ok = await openPopConfirm({
+          anchor: bDel,
+          title: "페이지 삭제",
+          message: `"${p.name}" 페이지를 삭제할까요?\n(해당 페이지 마커도 같이 삭제됩니다)`,
+          okText: "삭제",
+          cancelText: "취소",
+          danger: true
+        });
+        if(!ok) return;
 
-        // remove markers
         const pid = p.id;
         S.markers = S.markers.filter(m=>m.pageId !== pid);
-        S.chains = S.chains.filter(c=>c.pageId !== pid);
         S.pages = S.pages.filter(x=>x.id !== pid);
         if(S.currentPageId === pid) S.currentPageId = S.pages[0].id;
 
         saveLocal();
         renderPages();
         renderKpi();
-        loadMap(); // ✅ 삭제 후 현재 페이지 지도 갱신
+        loadMap();
+        draw();
         toast("페이지 삭제");
       });
 
@@ -1390,18 +1560,30 @@
     }
   }
 
-  $("btnAddPage").addEventListener("click", ()=>{
+  $("btnAddPage").addEventListener("click", async (e)=>{
     requireAuth();
     if(!isAuthed()) return;
-    const name = prompt("추가할 페이지 이름을 입력하세요 (예: 8번마을)");
-    if(!name) return;
-    const p = { id:"p_"+uid(), name:name.trim(), url:"" };
+    const name = await openPopInput({
+      anchor: $("btnAddPage"),
+      title: "페이지 추가",
+      message: "추가할 페이지 이름을 입력하세요. (예: 8번마을)",
+      placeholder: "예: 8번마을",
+      value: "",
+      okText: "추가",
+      cancelText: "취소"
+    });
+    if(name === null) return;
+    const n = (name||"").trim();
+    if(!n) return;
+
+    const p = { id:"p_"+uid(), name:n, url:"" };
     S.pages.push(p);
     S.currentPageId = p.id;
     saveLocal();
     renderPages();
     renderKpi();
-    loadMap(); // ✅ 추가 후 현재 페이지 지도 갱신
+    loadMap();
+    draw();
     toast("페이지 추가");
   });
 
@@ -1441,7 +1623,6 @@
     }
   }
 
-  // ✅ 3번: 토글 UI가 모달로 이동했지만 기능은 그대로 유지
   function setChipToggle(el, on){
     el.classList.toggle("on", !!on);
     el.dataset.on = on ? "1" : "0";
@@ -1454,32 +1635,6 @@
     setChipToggle(tgShowLinesWithCatFilter, S.showLinesWithCatFilter);
     saveLocal();
     draw();
-  });
-
-  // The three extra toggles in screenshot: we keep UI only
-  const tg1=$("tgAutoAddCatFromText"), tg2=$("tgAutoAddCatFromText2"), tg3=$("tgAutoAddCatFromText3");
-  setChipToggle(tg1,false); setChipToggle(tg2,false); setChipToggle(tg3,false);
-  [tg1,tg2,tg3].forEach(tg=>{
-    tg.addEventListener("click", ()=>{
-      requireAuth(); if(!isAuthed()) return;
-      setChipToggle(tg, !(tg.dataset.on==="1"));
-    });
-  });
-
-  // quick-cat chips (just quick set category for selected marker)
-  document.querySelectorAll('[data-quickcat]').forEach(ch=>{
-    ch.addEventListener("click", ()=>{
-      requireAuth(); if(!isAuthed()) return;
-      if(!selectedMarker){ toast("마커를 선택하세요"); return; }
-      const name = ch.getAttribute("data-quickcat");
-      ensureCat(name, "#ffffff");
-      selectedMarker.cat = name;
-      selectedMarker.useCatColor = true;
-      saveLocal();
-      syncSelectedPanel();
-      draw();
-      toast("카테고리 변경");
-    });
   });
 
   function ensureCat(name, color){
@@ -1512,7 +1667,6 @@
   }
 
   function loadMap(){
-    // ✅ 현재 페이지 URL이 있으면 그걸 최우선으로 사용
     const curPage = S.pages.find(p => p.id === S.currentPageId);
     const pageUrl = (curPage?.url || "").trim();
 
@@ -1522,7 +1676,6 @@
       mapImg.onload = ()=>{
         S.map.naturalW = mapImg.naturalWidth || 1;
         S.map.naturalH = mapImg.naturalHeight || 1;
-
         fitToScreen();
         saveLocal();
         draw();
@@ -1536,7 +1689,6 @@
       return;
     }
 
-    // ✅ 페이지 URL이 없으면 업로드(DataURL) 지도 사용
     if(S.map.imgDataUrl){
       mapImg = new Image();
       mapImg.crossOrigin = "anonymous";
@@ -1550,7 +1702,6 @@
       return;
     }
 
-    // placeholder
     mapImg = new Image();
     mapImg.onload = ()=>draw();
     mapImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
@@ -1581,10 +1732,19 @@
     toast("state.json 다운로드");
   });
 
-  $("btnResetAll").addEventListener("click", ()=>{
+  $("btnResetAll").addEventListener("click", async (e)=>{
     requireAuth();
     if(!isAuthed()) return;
-    if(!confirm("전체 초기화할까요? (페이지/마커/지도 포함)")) return;
+    const ok = await openPopConfirm({
+      anchor: $("btnResetAll"),
+      title: "전체 초기화",
+      message: "전체 초기화할까요?\n(페이지/마커/지도 포함)",
+      okText: "초기화",
+      cancelText: "취소",
+      danger: true
+    });
+    if(!ok) return;
+
     S = structuredClone(defaultState);
     saveLocal();
     renderAll();
@@ -1614,6 +1774,14 @@
   }
 
   // ---------- marker data ----------
+  function renumberPage(pageId){
+    const ms = (S.markers||[]).filter(m=>m.pageId===pageId);
+    ms.sort((a,b)=>(a.order||0)-(b.order||0) || (a.id>b.id?1:-1));
+    for(let i=0;i<ms.length;i++){
+      ms[i].order = i+1;
+    }
+  }
+
   function getVisibleMarkers(){
     const curPage = S.currentPageId;
     const onCats = new Set(S.categories.filter(c=>c.on).map(c=>c.id));
@@ -1622,7 +1790,7 @@
       if(m.pageId !== curPage) return false;
       if(allOn) return true;
       return onCats.has(m.cat);
-    });
+    }).sort((a,b)=>(a.order||0)-(b.order||0));
   }
 
   function renderKpi(){
@@ -1630,6 +1798,35 @@
     const total = (S.markers||[]).filter(m=>m.pageId===curPage).length;
     const shown = getVisibleMarkers().length;
     $("kpi").textContent = `표시 중 마커: ${shown} / 페이지 전체: ${total}`;
+  }
+
+  // ---------- style propagation (카테고리 1번 기준 전파) ----------
+  function leaderOfCat(pageId, catId){
+    const ms = (S.markers||[]).filter(m=>m.pageId===pageId && m.cat===catId);
+    if(!ms.length) return null;
+    ms.sort((a,b)=>(a.order||0)-(b.order||0));
+    return ms[0];
+  }
+
+  function applyCatLeaderStyle(pageId, catId){
+    const leader = leaderOfCat(pageId, catId);
+    if(!leader) return;
+    const ms = (S.markers||[]).filter(m=>m.pageId===pageId && m.cat===catId);
+    for(const m of ms){
+      if(m.id===leader.id) continue;
+      m.r = leader.r;
+      m.fs = leader.fs;
+      m.fw = leader.fw;
+      m.labelColor = leader.labelColor;
+      // "색/모양"도 1번 기준: useCatColor/override도 동기화
+      m.useCatColor = leader.useCatColor;
+      m.colorOverride = leader.colorOverride || "";
+    }
+  }
+
+  function applyAllCatStylesOnPage(pageId){
+    const cats = new Set((S.markers||[]).filter(m=>m.pageId===pageId).map(m=>m.cat));
+    for(const catId of cats) applyCatLeaderStyle(pageId, catId);
   }
 
   // ---------- drawing ----------
@@ -1643,6 +1840,26 @@
   }
 
   let circleHitboxes = []; // {id,sx,sy,rPx}
+  function drawArrowheadWorld(x1,y1,x2,y2, sizeWorld){
+    const dx = x2-x1, dy = y2-y1;
+    const len = Math.hypot(dx,dy);
+    if(len < 1e-6) return;
+    const ux = dx/len, uy = dy/len;
+    const px = -uy, py = ux;
+
+    const tipX = x2, tipY = y2;
+    const backX = x2 - ux*sizeWorld;
+    const backY = y2 - uy*sizeWorld;
+    const wing = sizeWorld*0.55;
+
+    ctx.beginPath();
+    ctx.moveTo(tipX, tipY);
+    ctx.lineTo(backX + px*wing, backY + py*wing);
+    ctx.lineTo(backX - px*wing, backY - py*wing);
+    ctx.closePath();
+    ctx.fill();
+  }
+
   function draw(){
     ctx.clearRect(0,0,cv.width,cv.height);
     circleHitboxes = [];
@@ -1665,28 +1882,42 @@
 
     const ms = getVisibleMarkers();
 
-    // chain lines
-    const showLines = !!S.showLinesWithCatFilter;
-    if(showLines){
-      const byChain = new Map();
-      for(const m of ms){
-        if(!m.chainId || !m.chainIndex) continue;
-        if(!byChain.has(m.chainId)) byChain.set(m.chainId, []);
-        byChain.get(m.chainId).push(m);
-      }
-      ctx.lineWidth = 2 / S.map.scale;
-      ctx.strokeStyle = "rgba(255,255,255,.78)";
-      ctx.globalAlpha = 0.9;
-      for(const arr of byChain.values()){
-        arr.sort((a,b)=>(a.chainIndex||0)-(b.chainIndex||0));
-        if(arr.length<2) continue;
+    // lines + arrows (번호 순)
+    if(S.showLinesWithCatFilter){
+      if(ms.length >= 2){
+        ctx.save();
+        ctx.globalAlpha = 0.92;
+        ctx.lineWidth = 2 / S.map.scale;
+        ctx.strokeStyle = "rgba(255,255,255,.78)";
+        ctx.fillStyle = "rgba(255,255,255,.78)";
         ctx.beginPath();
-        for(let i=0;i<arr.length;i++){
-          const p = worldFromNorm(arr[i].x, arr[i].y);
+        for(let i=0;i<ms.length;i++){
+          const p = worldFromNorm(ms[i].x, ms[i].y);
           if(i===0) ctx.moveTo(p.x, p.y);
           else ctx.lineTo(p.x, p.y);
         }
         ctx.stroke();
+
+        // arrows on each segment end
+        const arrowSize = 14 / S.map.scale; // in world units after scaling
+        for(let i=0;i<ms.length-1;i++){
+          const a = worldFromNorm(ms[i].x, ms[i].y);
+          const b = worldFromNorm(ms[i+1].x, ms[i+1].y);
+          // place arrow near b but not inside marker circle
+          const br = (ms[i+1].r ?? 10);
+          const dx = b.x-a.x, dy = b.y-a.y;
+          const len = Math.hypot(dx,dy);
+          if(len < 1e-6) continue;
+          const ux = dx/len, uy = dy/len;
+          const endX = b.x - ux*(br + 3);
+          const endY = b.y - uy*(br + 3);
+          const startX = a.x + ux*( (ms[i].r ?? 10) + 3 );
+          const startY = a.y + uy*( (ms[i].r ?? 10) + 3 );
+          // if still too short, skip
+          if(Math.hypot(endX-startX, endY-startY) < 10) continue;
+          drawArrowheadWorld(startX, startY, endX, endY, arrowSize);
+        }
+        ctx.restore();
       }
     }
 
@@ -1696,9 +1927,9 @@
       const r = (m.r ?? 10);
       const col = markerColor(m);
 
-      // circle
+      // circle only dim toggle
       ctx.save();
-      ctx.globalAlpha = 1;
+      ctx.globalAlpha = m.dim ? 0.30 : 1;
       ctx.beginPath();
       ctx.arc(p.x, p.y, r, 0, Math.PI*2);
       ctx.fillStyle = col;
@@ -1708,8 +1939,8 @@
       ctx.stroke();
       ctx.restore();
 
-      // number
-      const num = (m.chainIndex != null) ? String(m.chainIndex) : "";
+      // number (always 1..n)
+      const num = (m.order != null) ? String(m.order) : "";
       if(num){
         ctx.save();
         ctx.globalAlpha = 0.98;
@@ -1721,10 +1952,10 @@
         ctx.restore();
       }
 
-      // label
+      // label (must stay 100% even if dim)
       if(m.name){
         ctx.save();
-        ctx.globalAlpha = 0.98;
+        ctx.globalAlpha = 1;
         ctx.fillStyle = m.labelColor || "#e7eef8";
         ctx.font = `${m.fw ?? 900} ${m.fs ?? 15}px ui-sans-serif`;
         ctx.textAlign = "left";
@@ -1754,15 +1985,72 @@
     return best;
   }
 
-  // ---------- pan/zoom ----------
+  // ---------- pan/zoom + marker drag ----------
   let isPanning=false, lastX=0,lastY=0;
+  let draggingMarkerId = null;
+  let dragStartSX=0, dragStartSY=0;
+  let dragMoved = false;
+  let dragPointerId = null;
+
+  function screenToWorld(sx, sy){
+    const wx = (sx - S.map.tx) / S.map.scale;
+    const wy = (sy - S.map.ty) / S.map.scale;
+    return { wx, wy };
+  }
+  function worldToNorm(wx, wy){
+    const iw = S.map.naturalW || (mapImg.naturalWidth||1);
+    const ih = S.map.naturalH || (mapImg.naturalHeight||1);
+    return { nx: clamp(wx / iw, 0, 1), ny: clamp(wy / ih, 0, 1) };
+  }
 
   cv.addEventListener("pointerdown", (e)=>{
+    requireAuth(); if(!isAuthed()) return;
+
     cv.setPointerCapture(e.pointerId);
+    dragPointerId = e.pointerId;
+
+    const rect = cv.getBoundingClientRect();
+    const sx = e.clientX - rect.left;
+    const sy = e.clientY - rect.top;
+
     lastX=e.clientX; lastY=e.clientY;
-    isPanning=true;
+
+    const hit = pickCircleAt(sx, sy);
+    if(hit){
+      draggingMarkerId = hit.id;
+      dragStartSX = sx;
+      dragStartSY = sy;
+      dragMoved = false;
+      isPanning = false; // ✅ 드래그 중 패닝 금지
+      return;
+    }
+
+    draggingMarkerId = null;
+    isPanning = true;
   });
+
   cv.addEventListener("pointermove", (e)=>{
+    if(dragPointerId !== e.pointerId) return;
+
+    const rect = cv.getBoundingClientRect();
+    const sx = e.clientX - rect.left;
+    const sy = e.clientY - rect.top;
+
+    if(draggingMarkerId){
+      const dist = Math.hypot(sx - dragStartSX, sy - dragStartSY);
+      if(dist > 3) dragMoved = true;
+
+      const m = S.markers.find(x=>x.id===draggingMarkerId);
+      if(!m) return;
+
+      const { wx, wy } = screenToWorld(sx, sy);
+      const { nx, ny } = worldToNorm(wx, wy);
+      m.x = nx; m.y = ny;
+
+      draw();
+      return;
+    }
+
     if(!isPanning) return;
     const dx=e.clientX-lastX, dy=e.clientY-lastY;
     lastX=e.clientX; lastY=e.clientY;
@@ -1770,8 +2058,39 @@
     S.map.ty += dy;
     draw();
   });
-  cv.addEventListener("pointerup", ()=>{ isPanning=false; });
-  cv.addEventListener("pointercancel", ()=>{ isPanning=false; });
+
+  cv.addEventListener("pointerup", ()=>{
+    // finalize
+    if(draggingMarkerId){
+      const m = S.markers.find(x=>x.id===draggingMarkerId);
+      if(m){
+        // click (no drag) => dim toggle + select
+        if(!dragMoved){
+          m.dim = !m.dim;
+          selectedMarker = m;
+          syncSelectedPanel();
+          toast(m.dim ? "불투명화" : "불투명 해제");
+        }else{
+          toast("마커 이동 완료");
+        }
+        saveLocal(); // ✅ 드래그 종료 저장
+      }
+      draggingMarkerId = null;
+      dragPointerId = null;
+      dragMoved = false;
+      draw();
+      return;
+    }
+
+    isPanning=false;
+    dragPointerId = null;
+  });
+
+  cv.addEventListener("pointercancel", ()=>{
+    draggingMarkerId = null;
+    isPanning=false;
+    dragPointerId = null;
+  });
 
   cv.addEventListener("wheel", (e)=>{
     e.preventDefault();
@@ -1795,7 +2114,13 @@
 
   // ---------- marker create / select ----------
   let selectedMarker = null;
-  let insertAfterMarkerId = null; // for "중간 삽입" 느낌
+  let insertAfterMarkerId = null; // 유지(기존 버튼)
+
+  function nextOrderForPage(pageId){
+    const ms = (S.markers||[]).filter(m=>m.pageId===pageId);
+    const max = ms.reduce((acc,m)=>Math.max(acc, (m.order||0)), 0);
+    return max + 1;
+  }
 
   function newMarkerAt(normX, normY){
     const m = {
@@ -1813,30 +2138,43 @@
       fs:15,
       fw:900,
       labelColor:"#e7eef8",
+      // new numbering
+      order: nextOrderForPage(S.currentPageId),
+      // dim toggle
+      dim:false,
+      // keep old fields to avoid breaking existing state consumers
       chainId:null,
       chainIndex:null,
     };
 
-    // chain logic (간단): 새 체인 or 기존 체인 이어붙이기
+    // 기존 "중간 삽입" 느낌 유지: insertAfterMarker 뒤로 번호 삽입
     if(insertAfterMarkerId){
       const base = S.markers.find(x=>x.id===insertAfterMarkerId);
-      if(base && base.chainId){
-        m.chainId = base.chainId;
-        m.chainIndex = (base.chainIndex||0) + 1;
-        // shift 이후 인덱스 +1
+      if(base && base.pageId===m.pageId){
+        const insertAt = (base.order||0) + 1;
         for(const mm of S.markers){
-          if(mm.chainId===m.chainId && (mm.chainIndex||0) >= m.chainIndex){
-            mm.chainIndex = (mm.chainIndex||0) + 1;
+          if(mm.pageId===m.pageId && (mm.order||0) >= insertAt){
+            mm.order = (mm.order||0) + 1;
           }
         }
+        m.order = insertAt;
+        renumberPage(m.pageId);
       }
-    }else{
-      // 기본: 페이지 내 새 체인 시작
-      m.chainId = "c_"+uid();
-      m.chainIndex = 1;
     }
 
     S.markers.push(m);
+
+    // 카테고리 1번 스타일 전파: 새 마커는 leader 스타일을 따라감
+    const leader = leaderOfCat(m.pageId, m.cat);
+    if(leader && leader.id !== m.id){
+      m.r = leader.r; m.fs = leader.fs; m.fw = leader.fw; m.labelColor = leader.labelColor;
+      m.useCatColor = leader.useCatColor; m.colorOverride = leader.colorOverride || "";
+    }
+
+    renumberPage(S.currentPageId);
+    // keep backward compat chainIndex
+    for(const mm of S.markers.filter(x=>x.pageId===S.currentPageId)) mm.chainIndex = mm.order;
+
     saveLocal();
     selectMarker(m.id);
     renderKpi();
@@ -1857,16 +2195,19 @@
     $("btnUseCatColor").disabled = !selectedMarker;
   }
 
-  // click to select
+  // click empty to clear selection (circle click is handled by pointerup toggle)
   cv.addEventListener("click", (e)=>{
     requireAuth(); if(!isAuthed()) return;
+    // prevent click after drag marker
+    if(dragMoved) return;
+
     const rect = cv.getBoundingClientRect();
     const sx = e.clientX - rect.left;
     const sy = e.clientY - rect.top;
     const hit = pickCircleAt(sx, sy);
     if(hit){
+      // selection already handled by pointerup for toggle; ensure selected sync
       selectMarker(hit.id);
-      toast("마커 선택");
       return;
     }
     selectedMarker = null;
@@ -1874,7 +2215,7 @@
     syncSelectedPanel();
   });
 
-  // right-click add marker
+  // right-click add marker (번호 자동 1..n)
   cv.addEventListener("contextmenu", (e)=>{
     e.preventDefault();
     requireAuth(); if(!isAuthed()) return;
@@ -1883,8 +2224,7 @@
     const sx = e.clientX - rect.left;
     const sy = e.clientY - rect.top;
 
-    const wx = (sx - S.map.tx) / S.map.scale;
-    const wy = (sy - S.map.ty) / S.map.scale;
+    const { wx, wy } = screenToWorld(sx, sy);
 
     const iw = S.map.naturalW || (mapImg.naturalWidth||1);
     const ih = S.map.naturalH || (mapImg.naturalHeight||1);
@@ -1948,6 +2288,10 @@
     if(!pickedQuick){ toast("빠른 색상을 먼저 선택하세요"); return; }
     selectedMarker.colorOverride = pickedQuick;
     selectedMarker.useCatColor = false;
+
+    // leader style changed? if selectedMarker is leader then propagate
+    applyAllCatStylesOnPage(S.currentPageId);
+
     saveLocal();
     draw();
     toast("색상 적용");
@@ -1958,48 +2302,50 @@
     if(!selectedMarker){ toast("마커를 선택하세요"); return; }
     selectedMarker.colorOverride = "";
     selectedMarker.useCatColor = true;
+
+    applyAllCatStylesOnPage(S.currentPageId);
+
     saveLocal();
     draw();
     toast("카테고리 색상 적용");
   });
 
-  // chain tools
+  // line tools (기존 유지 톤: 숨김/다시표시)
   $("btnClearLines").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
-    if(!confirm("모든 선(체인)을 제거할까요?")) return;
-    for(const m of S.markers){
-      if(m.pageId===S.currentPageId){
-        m.chainId = null;
-        m.chainIndex = null;
-      }
-    }
-    S.chains = S.chains.filter(c=>c.pageId!==S.currentPageId);
-    insertAfterMarkerId = null;
+    S.showLinesWithCatFilter = false;
+    setChipToggle($("tgShowChainSameCat"), false);
     saveLocal();
     draw();
-    toast("모든 선 제거");
+    toast("선 숨김");
   });
 
   $("btnRechain").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
-    const pageMs = S.markers.filter(m=>m.pageId===S.currentPageId);
-    const chainId = "c_"+uid();
-    let idx=1;
-    for(const m of pageMs){
-      m.chainId = chainId;
-      m.chainIndex = idx++;
-    }
+    renumberPage(S.currentPageId);
+    for(const mm of S.markers.filter(x=>x.pageId===S.currentPageId)) mm.chainIndex = mm.order;
+    S.showLinesWithCatFilter = true;
+    setChipToggle($("tgShowChainSameCat"), true);
+    applyAllCatStylesOnPage(S.currentPageId);
     saveLocal();
     draw();
-    toast("선 다시 체인(전체)");
+    toast("선 표시");
   });
 
-  $("btnResetMarkers").addEventListener("click", ()=>{
+  $("btnResetMarkers").addEventListener("click", async (e)=>{
     requireAuth(); if(!isAuthed()) return;
-    if(!confirm("현재 페이지의 마커를 모두 삭제할까요?")) return;
+    const ok = await openPopConfirm({
+      anchor: $("btnResetMarkers"),
+      title: "마커 초기화",
+      message: "현재 페이지의 마커를 모두 삭제할까요?",
+      okText: "삭제",
+      cancelText: "취소",
+      danger: true
+    });
+    if(!ok) return;
+
     const pid = S.currentPageId;
     S.markers = S.markers.filter(m=>m.pageId!==pid);
-    S.chains = S.chains.filter(c=>c.pageId!==pid);
     selectedMarker = null;
     insertAfterMarkerId = null;
     saveLocal();
@@ -2049,6 +2395,7 @@
 
     updateColorChip();
     mMarker.classList.add("show");
+    setTimeout(()=>$("mfName").focus(), 0);
   }
 
   function closeMarkerModal(){
@@ -2059,6 +2406,7 @@
   $("btnSaveMarker").addEventListener("click", saveMarkerModal);
   $("btnDeleteMarker").addEventListener("click", deleteMarkerModal);
 
+  // ✅ Enter 저장 + 자동 닫기
   mMarker.addEventListener("keydown", (e)=>{
     if(e.key==="Enter"){
       if(e.target && e.target.tagName==="TEXTAREA") return;
@@ -2117,10 +2465,17 @@
     return S.markers.find(x=>x.id===editingId) || null;
   }
 
+  function isLeaderMarker(m){
+    const leader = leaderOfCat(m.pageId, m.cat);
+    return leader && leader.id === m.id;
+  }
+
   function saveMarkerModal(){
     requireAuth(); if(!isAuthed()) return;
     const m = getEditing();
     if(!m) return;
+
+    const prevCat = m.cat;
 
     m.name = ($("mfName").value || "").trim();
     m.cat = $("mfCat").value || "기텔";
@@ -2138,30 +2493,50 @@
     m.fw = Number($("mfFw").value);
     m.labelColor = ($("mfLabelColor").value || "#e7eef8").trim();
 
+    // renumber always 1..n and keep chainIndex for compat
+    renumberPage(m.pageId);
+    for(const mm of S.markers.filter(x=>x.pageId===m.pageId)) mm.chainIndex = mm.order;
+
+    // ✅ (4-4) leader style propagate
+    // if marker moved cat or leader edited, apply to relevant categories
+    applyCatLeaderStyle(m.pageId, prevCat);
+    applyCatLeaderStyle(m.pageId, m.cat);
+
     saveLocal();
     selectMarker(m.id);
     renderCats();
     renderKpi();
     draw();
     toast("저장 완료");
+    // ✅ (4-5) 저장 후 자동 닫기
+    closeMarkerModal();
   }
 
-  function deleteMarkerModal(){
+  async function deleteMarkerModal(){
     requireAuth(); if(!isAuthed()) return;
     const m = getEditing();
     if(!m) return;
-    if(!confirm("이 마커를 삭제할까요?")) return;
 
-    const cid = m.chainId;
-    const cidx = m.chainIndex;
+    const ok = await openPopConfirm({
+      anchor: $("btnDeleteMarker"),
+      title: "마커 삭제",
+      message: "이 마커를 삭제할까요?",
+      okText: "삭제",
+      cancelText: "취소",
+      danger: true
+    });
+    if(!ok) return;
+
+    const pid = m.pageId;
+    const catId = m.cat;
+
     S.markers = S.markers.filter(x=>x.id!==m.id);
-    if(cid && cidx){
-      for(const mm of S.markers){
-        if(mm.chainId===cid && (mm.chainIndex||0) > cidx){
-          mm.chainIndex = (mm.chainIndex||0) - 1;
-        }
-      }
-    }
+    renumberPage(pid);
+    for(const mm of S.markers.filter(x=>x.pageId===pid)) mm.chainIndex = mm.order;
+
+    // leader may have changed
+    applyCatLeaderStyle(pid, catId);
+
     saveLocal();
     closeMarkerModal();
     selectedMarker = null;
@@ -2171,16 +2546,28 @@
     toast("삭제 완료");
   }
 
+  // (기존 버튼 유지)
   $("btnNewChain").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
     const m = getEditing();
     if(!m) return;
-    m.chainId = "c_"+uid();
-    m.chainIndex = 1;
+    // 현재 마커를 "앞으로"로 만들기: order=1로 당기고 나머지 밀기
+    const pid = m.pageId;
+    for(const mm of S.markers){
+      if(mm.pageId===pid && mm.id!==m.id){
+        mm.order = (mm.order||0) + 1;
+      }
+    }
+    m.order = 1;
+    renumberPage(pid);
+    for(const mm of S.markers.filter(x=>x.pageId===pid)) mm.chainIndex = mm.order;
+
+    applyCatLeaderStyle(pid, m.cat);
+
     insertAfterMarkerId = null;
     saveLocal();
     draw();
-    toast("새 체인 시작");
+    toast("새로운 번호로 시작");
   });
 
   $("btnInsertAfter").addEventListener("click", ()=>{
@@ -2215,9 +2602,7 @@
 
   function openCatsModal(){
     catSelectedRowId = null;
-    // ✅ 3번: 모달 열 때 현재 옵션 상태를 칩에 반영
     setChipToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
-    // 아래 3개는 상태 저장 요구가 없어서 UI만 유지(기존과 동일)
     renderCatRows();
     renderCatQuickPalette();
     mCats.classList.add("show");
@@ -2256,7 +2641,7 @@
 
       row.innerHTML = `
         <input class="field" value="${c.name}" />
-        <div class="colorChip" style="--c:${c.color};"></div>
+        <div class="colorChip" style="--c:${c.color}; cursor:pointer;"></div>
         <button class="pill danger" type="button">삭제</button>
       `;
 
@@ -2273,22 +2658,47 @@
         c.name = inp.value;
       });
 
-      chip.addEventListener("click", ()=>{
+      chip.addEventListener("click", async (e)=>{
+        e.stopPropagation();
         catSelectedRowId = c.id;
-        const next = prompt("색상 코드 입력 (#rrggbb)", c.color);
-        if(next===null) return;
-        c.color = (next||"").trim() || c.color;
+        const next = await openPopInput({
+          anchor: chip,
+          title: "카테고리 색상",
+          message: "색상 코드를 입력하세요. (예: #ff0000)",
+          placeholder: "#rrggbb",
+          value: c.color || "",
+          okText: "저장",
+          cancelText: "취소"
+        });
+        if(next === null) return;
+        const v = (next||"").trim();
+        if(v) c.color = v;
         renderCatRows();
+        renderCats();
+        saveLocal();
+        draw();
       });
 
-      del.addEventListener("click", (e)=>{
+      del.addEventListener("click", async (e)=>{
         e.stopPropagation();
-        if(!confirm(`"${c.name}" 카테고리를 삭제할까요?`)) return;
+        const ok = await openPopConfirm({
+          anchor: del,
+          title: "카테고리 삭제",
+          message: `"${c.name}" 카테고리를 삭제할까요?\n(해당 마커는 다른 카테고리로 이동됩니다)`,
+          okText: "삭제",
+          cancelText: "취소",
+          danger: true
+        });
+        if(!ok) return;
+
         const fallback = S.categories.find(x=>x.id==="기텔") || S.categories[0];
         for(const m of S.markers){
           if(m.cat === c.id) m.cat = fallback.id;
         }
         S.categories = S.categories.filter(x=>x.id!==c.id);
+
+        applyAllCatStylesOnPage(S.currentPageId);
+
         renderCatRows();
         renderCats();
         saveLocal();
@@ -2299,18 +2709,34 @@
     }
   }
 
-  $("btnAddCat").addEventListener("click", ()=>{
-    const name = prompt("카테고리 이름");
-    if(!name) return;
-    const id = name.trim();
+  $("btnAddCat").addEventListener("click", async (e)=>{
+    const name = await openPopInput({
+      anchor: $("btnAddCat"),
+      title: "카테고리 추가",
+      message: "추가할 카테고리 이름을 입력하세요.",
+      placeholder: "예: 11",
+      value: "",
+      okText: "추가",
+      cancelText: "취소"
+    });
+    if(name === null) return;
+    const id = (name||"").trim();
     if(!id) return;
     if(S.categories.some(c=>c.id===id)){ toast("이미 존재"); return; }
     S.categories.push({ id, name:id, color:"#ffffff", on:true });
     renderCatRows();
   });
 
-  $("btnCatsDefault").addEventListener("click", ()=>{
-    if(!confirm("기본 카테고리로 되돌릴까요?")) return;
+  $("btnCatsDefault").addEventListener("click", async (e)=>{
+    const ok = await openPopConfirm({
+      anchor: $("btnCatsDefault"),
+      title: "기본값으로",
+      message: "기본 카테고리로 되돌릴까요?",
+      okText: "되돌리기",
+      cancelText: "취소",
+      danger: true
+    });
+    if(!ok) return;
     S.categories = structuredClone(defaultCats);
     renderCatRows();
   });
@@ -2323,7 +2749,7 @@
     for(const c of S.categories){
       const name = (c.name||c.id||"").trim();
       if(!name) continue;
-      const finalId = name; // ✅ 단순: 이름=ID
+      const finalId = name;
       if(seen.has(finalId)) continue;
       seen.add(finalId);
       cleaned.push({ id:finalId, name, color:(c.color||"#ffffff"), on:!!c.on });
@@ -2336,6 +2762,8 @@
     for(const m of S.markers){
       if(!valid.has(m.cat)) m.cat = fb;
     }
+
+    applyAllCatStylesOnPage(S.currentPageId);
 
     saveLocal();
     renderCats();
@@ -2365,7 +2793,7 @@
   // ---------- helpers ----------
   function renderAll(){
     renderLogo();
-    renderGamesTop();     // ✅ 변경
+    renderGamesTop();
     renderPages();
     renderCats();
     renderPalette();
@@ -2374,6 +2802,12 @@
     renderKpi();
     resizeCanvas();
     if(!S.map.scale || S.map.scale<=0) fitToScreen();
+
+    // ensure numbering/styling
+    renumberPage(S.currentPageId);
+    for(const mm of S.markers.filter(x=>x.pageId===S.currentPageId)) mm.chainIndex = mm.order;
+    applyAllCatStylesOnPage(S.currentPageId);
+
     draw();
   }
 
@@ -2385,7 +2819,6 @@
 
     if(typeof S.showLinesWithCatFilter !== "boolean") S.showLinesWithCatFilter = true;
 
-    // ✅ games 최소 1개 보장
     if(!Array.isArray(S.games) || !S.games.length) S.games = ["아이온2"];
     if(!S.games.includes(S.game)) S.game = S.games[0];
 
