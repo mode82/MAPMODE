@@ -35,6 +35,9 @@
       --topH:58px;
       --sideW:320px;
       --sideW2:360px;
+
+      /* ✅ [ADD] 상단 슬롯 폭(게임 4개 + 컨트롤 3개 정렬용) */
+      --topSlotW:170px;
     }
 
     *{ box-sizing:border-box; }
@@ -79,17 +82,18 @@
       gap:8px;
       white-space:nowrap;
     }
-    .slot.fixed{ width:170px; justify-content:center; }
+    .slot.fixed{ width:var(--topSlotW); justify-content:center; }
+
     .slot.logo{
       justify-content:flex-start;
       border:none;
       background: transparent;
       box-shadow:none;
       padding:0;
-      width:170px;
+      width:var(--topSlotW);
     }
     .logoBox{
-      width:170px; height:38px;
+      width:var(--topSlotW); height:38px;
       border-radius:999px;
       display:flex; align-items:center; justify-content:center;
       overflow:hidden;
@@ -108,28 +112,6 @@
       background:#fff;
       box-shadow: 0 0 0 2px rgba(255,255,255,.12);
       transform: translateY(1px);
-    }
-
-    .select{
-      appearance:none;
-      border:none;
-      background:transparent;
-      color:var(--text);
-      font-weight:900;
-      padding-right:18px;
-      outline:none;
-      cursor:pointer;
-      max-width: 140px;
-      overflow:hidden;
-      text-overflow: ellipsis;
-    }
-    .chev{
-      width:0; height:0;
-      border-left:5px solid transparent;
-      border-right:5px solid transparent;
-      border-top:6px solid rgba(231,238,248,.7);
-      margin-left:-8px;
-      pointer-events:none;
     }
 
     .pill{
@@ -153,6 +135,42 @@
     .pill.ghost{ background: rgba(14,22,38,.25); }
     .pill.danger{ border-color: rgba(255,93,93,.55); }
     .pill.ok{ border-color: rgba(57,217,138,.55); }
+
+    /* ✅ 1번: 게임(카테고리) 4개 슬롯 */
+    .gameSlot{
+      width:100%;
+      height:38px;
+      display:flex; align-items:center; justify-content:center;
+      gap:8px;
+      border-radius:999px;
+      background: rgba(14,22,38,.35);
+      border:1px solid rgba(39,52,74,.65);
+      box-shadow: var(--shadow2);
+      cursor:pointer;
+      user-select:none;
+      font-weight:900;
+      font-size:14px;
+      padding:0 12px;
+    }
+    .gameSlot:hover{ border-color: rgba(124,196,255,.55); }
+    .gameSlot.active{
+      border-color: rgba(57,217,138,.65);
+      background: rgba(57,217,138,.10);
+      box-shadow: var(--shadow2);
+    }
+    .gameSlot.empty{
+      opacity:.65;
+      border-style:dashed;
+    }
+    .gameSlot .miniIcon{
+      width:24px; height:24px;
+      display:flex; align-items:center; justify-content:center;
+      border-radius:999px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(10,15,24,.35);
+      font-size:14px;
+      flex:0 0 auto;
+    }
 
     /* ✅ 5번: 아이콘/버튼 겹침 방지 */
     .top-right{ flex-wrap:wrap; justify-content:flex-end; }
@@ -293,7 +311,7 @@
     }
     .hintToast.show{ display:block; }
 
-    /* ========== RIGHT: Tools (3,5번 느낌) ========== */
+    /* ========== RIGHT: Tools ========== */
     .chipRow{ display:flex; gap:10px; flex-wrap:wrap; }
     .chip{
       display:flex; align-items:center; gap:10px;
@@ -308,26 +326,6 @@
     }
     .chip.on{ border-color: rgba(124,196,255,.6); background: rgba(124,196,255,.10); }
     .dotc{ width:10px; height:10px; border-radius:999px; box-shadow:0 0 0 2px rgba(255,255,255,.06); }
-
-    .toggleRow{ display:flex; gap:10px; flex-direction:column; margin-top:10px; }
-    .toggle{
-      display:flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.6);
-      background: rgba(10,15,24,.35);
-      cursor:pointer;
-      font-size:13px;
-      user-select:none;
-      font-weight:900;
-    }
-    .toggle .dot{
-      width:10px; height:10px; border-radius:999px;
-      background: rgba(231,238,248,.25);
-      border:1px solid rgba(231,238,248,.25);
-    }
-    .toggle.on{ border-color: rgba(57,217,138,.55); }
-    .toggle.on .dot{ background: rgba(57,217,138,.9); border-color: rgba(57,217,138,.9); }
 
     .hr{ height:1px; background: rgba(39,52,74,.55); margin:12px 0; }
 
@@ -401,7 +399,7 @@
       margin-top:10px;
     }
 
-    /* ========== MODAL (마커 편집 / 카테고리 편집) ========== */
+    /* ========== MODAL (마커 편집 / 카테고리 편집 / 게임 편집) ========== */
     .modalBack{
       position:fixed; inset:0;
       background: rgba(0,0,0,.55);
@@ -578,10 +576,11 @@
       .center{ min-width: 1000px; }
     }
     @media (max-width: 560px){
-      .slot.fixed{ width:160px; }
-      .slot.logo{ width:160px; }
-      .logoBox{ width:160px; }
-      .select{ max-width:130px; }
+      :root{ --topSlotW:160px; }
+      .slot.fixed{ width:var(--topSlotW); }
+      .slot.logo{ width:var(--topSlotW); }
+      .logoBox{ width:var(--topSlotW); }
+      .gameSlot{ font-size:13px; }
     }
   </style>
 </head>
@@ -611,28 +610,39 @@
         </div>
       </div>
 
-      <!-- Slot 2: Game (추가 가능) -->
-      <div class="slot fixed" title="게임 선택/추가">
-        <select id="gameSelect" class="select">
-          <option value="아이온2">아이온2</option>
-        </select>
-        <div class="chev"></div>
-        <button class="miniBtn icon edit" id="btnAddGame" title="게임 추가">+</button>
+      <!-- ✅ 1번: 게임(카테고리) 4개 슬롯(아이온2 카테고리 크기 동일) -->
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="gameSlot" id="gSlot1" title="게임 선택 / 클릭하여 관리">아이온2</div>
+      </div>
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="gameSlot empty" id="gSlot2" title="게임 추가">+ 추가</div>
+      </div>
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="gameSlot empty" id="gSlot3" title="게임 추가">+ 추가</div>
+      </div>
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="gameSlot empty" id="gSlot4" title="게임 추가">+ 추가</div>
       </div>
 
-      <!-- Slot 3: Admin label -->
+      <!-- Slot: Admin label -->
       <div class="slot fixed">
         <div style="font-weight:900; color:rgba(57,217,138,.95);">ADMIN</div>
       </div>
 
-      <!-- Slot 4: Controls -->
-      <div class="slot fixed" style="justify-content:center; gap:8px;">
-        <label class="pill small ghost" style="cursor:pointer;">
+      <!-- ✅ 1번: 지도 업로드 / state 내보내기 / 전체 초기화 (옆으로 나열, 크기 동일) -->
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <label class="gameSlot" style="cursor:pointer;">
           지도 업로드
           <input id="fileMap" type="file" accept="image/*" style="display:none;" />
         </label>
-        <button class="pill small ghost" id="btnExport">state 내보내기</button>
-        <button class="pill small danger" id="btnResetAll">전체 초기화</button>
+      </div>
+
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="gameSlot" id="btnExport">state 내보내기</div>
+      </div>
+
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="gameSlot" id="btnResetAll" style="border-color:rgba(255,93,93,.55);">전체 초기화</div>
       </div>
     </div>
 
@@ -688,40 +698,13 @@
 
           <div class="chipRow" id="catChips"></div>
 
-          <div class="toggleRow">
-            <div class="toggle" id="tgShowChainSameCat">
-              <div class="dot"></div>
-              <div>같은 카테고리 필터 시 선도 같이 표시/숨김</div>
-            </div>
-            <div class="toggle" id="tgAutoAddCatFromText">
-              <div class="dot"></div>
-              <div>발견하는 아이템 희귀도 증가 마을</div>
-            </div>
-            <div class="toggle" id="tgAutoAddCatFromText2">
-              <div class="dot"></div>
-              <div>발견하는 아이템 희귀도 증가</div>
-            </div>
-            <div class="toggle" id="tgAutoAddCatFromText3">
-              <div class="dot"></div>
-              <div>발견하는 아이템 희귀도 증가 마을 감소</div>
-            </div>
+          <div class="subtle" id="kpi" style="margin-top:10px;">표시 중 마커: 0 / 페이지 전체: 0</div>
 
-            <div class="chipRow" style="gap:10px;">
-              <div class="chip" data-quickcat="4"><div class="dotc" style="background:#fff;"></div>4</div>
-              <div class="chip" data-quickcat="11"><div class="dotc" style="background:#fff;"></div>11</div>
-              <div class="chip" data-quickcat="22"><div class="dotc" style="background:#fff;"></div>22</div>
-              <div class="chip" data-quickcat="33"><div class="dotc" style="background:#fff;"></div>33</div>
-              <div class="chip" data-quickcat="44"><div class="dotc" style="background:#fff;"></div>44</div>
-              <div class="chip" data-quickcat="455"><div class="dotc" style="background:#fff;"></div>455</div>
-            </div>
-
-            <div class="subtle" id="kpi" style="margin-top:2px;">표시 중 마커: 0 / 페이지 전체: 0</div>
-
-            <button class="pill btnFull ghost" id="btnEditCats">카테고리/색상 편집</button>
-          </div>
+          <!-- ✅ 3번: 카테고리/색상 편집 안으로 옵션들을 이동 -->
+          <button class="pill btnFull ghost" id="btnEditCats" style="margin-top:10px;">카테고리/색상 편집</button>
         </div>
 
-        <!-- 관리자 툴 (5번 느낌) -->
+        <!-- 관리자 툴 (기존 유지) -->
         <div class="card">
           <div class="sectionTitle">
             <span>관리자 툴</span>
@@ -878,6 +861,34 @@
     </div>
   </div>
 
+  <!-- ✅ 2번: GAME(아이온2 카테고리) 관리 MODAL (추가/삭제 포함, 페이지 추가/삭제 형태와 동일) -->
+  <div class="modalBack" id="mGames">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="title">게임(카테고리) 관리</div>
+        <button class="modalClose" id="btnCloseGames">닫기</button>
+      </div>
+
+      <div class="modalBody">
+        <div class="subtle">상단에 표시되는 게임 슬롯(4개)을 관리합니다. (추가/삭제/이름 편집)</div>
+        <div class="hr"></div>
+
+        <div class="row2">
+          <button class="pill btnFull ghost" id="btnAddGameModal">+ 게임 추가</button>
+          <button class="pill btnFull ghost" id="btnGamesFocusCurrent">현재 게임으로 이동</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="pageList" id="gameList"></div>
+      </div>
+
+      <div class="modalFoot" style="justify-content:flex-end;">
+        <button class="btnBig ok" id="btnSaveGames">저장</button>
+      </div>
+    </div>
+  </div>
+
   <!-- CATEGORY EDIT MODAL -->
   <div class="modalBack" id="mCats">
     <div class="modal">
@@ -888,6 +899,39 @@
 
       <div class="modalBody">
         <div class="subtle">저장하면 현재 게임의 카테고리 목록이 완전히 교체됩니다.</div>
+
+        <!-- ✅ 3번: 기존 "카테고리 카드"에 있던 옵션들을 여기로 이동 -->
+        <div class="hr"></div>
+
+        <div class="sectionTitle" style="margin-top:0;">
+          <span>카테고리 옵션</span>
+          <span class="subtle">표시/필터</span>
+        </div>
+
+        <div class="chipRow" style="gap:10px;">
+          <div class="chip" id="tgShowChainSameCat">
+            <div class="dotc" style="background:#fff;"></div>
+            <div>같은 카테고리 필터 시 선도 같이 표시/숨김</div>
+          </div>
+        </div>
+
+        <div class="chipRow" style="gap:10px; margin-top:10px;">
+          <div class="chip" id="tgAutoAddCatFromText"><div class="dotc" style="background:#fff;"></div>발견하는 아이템 희귀도 증가 마을</div>
+          <div class="chip" id="tgAutoAddCatFromText2"><div class="dotc" style="background:#fff;"></div>발견하는 아이템 희귀도 증가</div>
+          <div class="chip" id="tgAutoAddCatFromText3"><div class="dotc" style="background:#fff;"></div>발견하는 아이템 희귀도 증가 마을 감소</div>
+        </div>
+
+        <div class="subtle" style="margin-top:8px;">빠른 카테고리 (선택 마커에 즉시 적용)</div>
+        <div class="chipRow" style="gap:10px; margin-top:8px;">
+          <div class="chip" data-quickcat="4"><div class="dotc" style="background:#fff;"></div>4</div>
+          <div class="chip" data-quickcat="11"><div class="dotc" style="background:#fff;"></div>11</div>
+          <div class="chip" data-quickcat="22"><div class="dotc" style="background:#fff;"></div>22</div>
+          <div class="chip" data-quickcat="33"><div class="dotc" style="background:#fff;"></div>33</div>
+          <div class="chip" data-quickcat="44"><div class="dotc" style="background:#fff;"></div>44</div>
+          <div class="chip" data-quickcat="455"><div class="dotc" style="background:#fff;"></div>455</div>
+        </div>
+
+        <div class="hr"></div>
 
         <div class="labelRow" style="margin-top:14px;">빠른 색상 (선택한 카테고리 행에 적용)</div>
         <div class="palette" id="catQuickPalette" style="margin-top:10px;"></div>
@@ -968,6 +1012,10 @@
 
   const mMarker = $("mMarker");
   const mCats = $("mCats");
+
+  // ✅ [ADD] 게임 모달
+  const mGames = $("mGames");
+  const gameList = $("gameList");
 
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const safeParse = (json, fallback) => { try{ return JSON.parse(json); }catch(e){ return fallback; } };
@@ -1078,32 +1126,117 @@
     toast("로고 설정 저장");
   });
 
-  // ---------- game select (2번: 아이온2 슬롯도 추가 가능) ----------
-  const gameSelect = $("gameSelect");
-  const btnAddGame = $("btnAddGame");
-  function renderGames(){
-    gameSelect.innerHTML = "";
-    for(const g of S.games){
-      const opt = document.createElement("option");
-      opt.value = g; opt.textContent = g;
-      gameSelect.appendChild(opt);
-    }
-    gameSelect.value = S.game;
-    $("pathGameTop").textContent = S.game;
-    $("pathGame").textContent = S.game;
-  }
-  gameSelect.addEventListener("change", ()=>{
-    requireAuth();
-    if(!isAuthed()) { gameSelect.value = S.game; return; }
-    S.game = gameSelect.value;
+  // ✅ ---------- games (1,2번: 상단 4개 슬롯 + 클릭 시 관리창 + 삭제 추가) ----------
+  const gSlots = [ $("gSlot1"), $("gSlot2"), $("gSlot3"), $("gSlot4") ];
+
+  function setGameActive(name){
+    S.game = name;
     $("pathGameTop").textContent = S.game;
     $("pathGame").textContent = S.game;
     saveLocal();
+    renderGamesTop();
     toast("게임 변경");
-  });
-  btnAddGame.addEventListener("click", ()=>{
-    requireAuth();
-    if(!isAuthed()) return;
+  }
+
+  function renderGamesTop(){
+    // 슬롯 4개에 S.games를 채움, 비면 +추가
+    for(let i=0;i<4;i++){
+      const el = gSlots[i];
+      const name = S.games[i];
+      if(name){
+        el.classList.remove("empty");
+        el.textContent = name;
+        el.classList.toggle("active", name===S.game);
+      }else{
+        el.classList.add("empty");
+        el.classList.remove("active");
+        el.textContent = "+ 추가";
+      }
+    }
+
+    // 헤더 경로 반영
+    $("pathGameTop").textContent = S.game;
+    $("pathGame").textContent = S.game;
+  }
+
+  function openGamesModal(){
+    requireAuth(); if(!isAuthed()) return;
+    renderGamesModalList();
+    mGames.classList.add("show");
+  }
+  function closeGamesModal(){
+    mGames.classList.remove("show");
+  }
+
+  $("btnCloseGames").addEventListener("click", closeGamesModal);
+
+  function renderGamesModalList(){
+    gameList.innerHTML = "";
+
+    for(const g of S.games){
+      const item = document.createElement("div");
+      item.className = "pageItem" + (g===S.game ? " active" : "");
+      item.innerHTML = `
+        <div class="pageName">${g}</div>
+        <div class="pageActions">
+          <button class="miniBtn icon edit" title="이름 편집">✎</button>
+          <button class="miniBtn icon del" title="삭제">🗑</button>
+        </div>
+      `;
+
+      item.addEventListener("click", (e)=>{
+        const btn = e.target.closest("button");
+        if(btn) return;
+        setGameActive(g);
+        renderGamesModalList();
+      });
+
+      const [bEdit, bDel] = item.querySelectorAll("button");
+
+      bEdit.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        const next = prompt("게임 이름을 수정하세요", g);
+        if(!next) return;
+        const nn = next.trim();
+        if(!nn) return;
+        if(S.games.includes(nn) && nn!==g){
+          toast("이미 존재하는 게임");
+          return;
+        }
+        // rename
+        const idx = S.games.indexOf(g);
+        S.games[idx] = nn;
+        if(S.game === g) S.game = nn;
+
+        saveLocal();
+        renderGamesTop();
+        renderGamesModalList();
+        toast("게임 이름 수정");
+      });
+
+      bDel.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        if(S.games.length <= 1){
+          toast("최소 1개 게임은 필요합니다");
+          return;
+        }
+        if(!confirm(`"${g}" 게임을 삭제할까요?`)) return;
+
+        S.games = S.games.filter(x=>x!==g);
+        if(S.game === g) S.game = S.games[0];
+
+        saveLocal();
+        renderGamesTop();
+        renderGamesModalList();
+        toast("게임 삭제");
+      });
+
+      gameList.appendChild(item);
+    }
+  }
+
+  $("btnAddGameModal").addEventListener("click", ()=>{
+    requireAuth(); if(!isAuthed()) return;
     const name = prompt("추가할 게임 이름을 입력하세요");
     if(!name) return;
     const g = name.trim();
@@ -1113,13 +1246,73 @@
       return;
     }
     S.games.push(g);
-    S.game = g;
-    renderGames();
+    if(!S.game) S.game = g;
+
     saveLocal();
+    renderGamesTop();
+    renderGamesModalList();
     toast("게임 추가");
   });
 
-  // ---------- pages (3번: 페이지 추가 + URL 설정 버튼) ----------
+  $("btnGamesFocusCurrent").addEventListener("click", ()=>{
+    requireAuth(); if(!isAuthed()) return;
+    // 리스트 재렌더(현재 active 표시)
+    renderGamesModalList();
+    toast("현재 게임 표시");
+  });
+
+  $("btnSaveGames").addEventListener("click", ()=>{
+    requireAuth(); if(!isAuthed()) return;
+    // 정합성만 체크(빈 문자열 제거)
+    S.games = (S.games||[]).map(x=>(x||"").trim()).filter(Boolean);
+    if(!S.games.length) S.games = ["아이온2"];
+    if(!S.games.includes(S.game)) S.game = S.games[0];
+
+    saveLocal();
+    renderGamesTop();
+    closeGamesModal();
+    toast("게임 저장");
+  });
+
+  // 상단 슬롯 클릭 동작:
+  // - 이름 있는 슬롯: 클릭하면 게임 선택
+  // - 빈 슬롯: 클릭하면 즉시 추가(=prompt) 또는 관리창 오픈
+  // - 어떤 슬롯이든 더블클릭하면 관리창 오픈(요청한 "클릭하면 나오는 창" UX)
+  gSlots.forEach((el, idx)=>{
+    el.addEventListener("click", ()=>{
+      requireAuth(); if(!isAuthed()) return;
+
+      const name = S.games[idx];
+      if(name){
+        setGameActive(name);
+      }else{
+        const n = prompt("추가할 게임 이름을 입력하세요");
+        if(!n) return;
+        const g = n.trim();
+        if(!g) return;
+        if(S.games.includes(g)){
+          toast("이미 존재하는 게임");
+          return;
+        }
+        S.games.push(g);
+        setGameActive(g);
+        renderGamesTop();
+        toast("게임 추가");
+      }
+    });
+
+    el.addEventListener("dblclick", ()=>{
+      openGamesModal();
+    });
+
+    // 우클릭으로도 관리창(편하게)
+    el.addEventListener("contextmenu", (e)=>{
+      e.preventDefault();
+      openGamesModal();
+    });
+  });
+
+  // ---------- pages (기존 유지) ----------
   function renderPages(){
     pageList.innerHTML = "";
     const cur = S.pages.find(p=>p.id===S.currentPageId) || S.pages[0];
@@ -1248,18 +1441,29 @@
     }
   }
 
-  // right toggles
-  function setToggle(el, on){
+  // ✅ 3번: 토글 UI가 모달로 이동했지만 기능은 그대로 유지
+  function setChipToggle(el, on){
     el.classList.toggle("on", !!on);
     el.dataset.on = on ? "1" : "0";
   }
+
   const tgShowLinesWithCatFilter = $("tgShowChainSameCat");
   tgShowLinesWithCatFilter.addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
     S.showLinesWithCatFilter = !S.showLinesWithCatFilter;
-    setToggle(tgShowLinesWithCatFilter, S.showLinesWithCatFilter);
+    setChipToggle(tgShowLinesWithCatFilter, S.showLinesWithCatFilter);
     saveLocal();
     draw();
+  });
+
+  // The three extra toggles in screenshot: we keep UI only
+  const tg1=$("tgAutoAddCatFromText"), tg2=$("tgAutoAddCatFromText2"), tg3=$("tgAutoAddCatFromText3");
+  setChipToggle(tg1,false); setChipToggle(tg2,false); setChipToggle(tg3,false);
+  [tg1,tg2,tg3].forEach(tg=>{
+    tg.addEventListener("click", ()=>{
+      requireAuth(); if(!isAuthed()) return;
+      setChipToggle(tg, !(tg.dataset.on==="1"));
+    });
   });
 
   // quick-cat chips (just quick set category for selected marker)
@@ -1275,16 +1479,6 @@
       syncSelectedPanel();
       draw();
       toast("카테고리 변경");
-    });
-  });
-
-  // The three extra toggles in screenshot: we keep UI only (can be used for quick add category text)
-  const tg1=$("tgAutoAddCatFromText"), tg2=$("tgAutoAddCatFromText2"), tg3=$("tgAutoAddCatFromText3");
-  setToggle(tg1,false); setToggle(tg2,false); setToggle(tg3,false);
-  [tg1,tg2,tg3].forEach(tg=>{
-    tg.addEventListener("click", ()=>{
-      requireAuth(); if(!isAuthed()) return;
-      setToggle(tg, !(tg.dataset.on==="1"));
     });
   });
 
@@ -1527,7 +1721,7 @@
         ctx.restore();
       }
 
-      // label (marker related font uses .markerFont concept: keep crisp)
+      // label
       if(m.name){
         ctx.save();
         ctx.globalAlpha = 0.98;
@@ -1702,7 +1896,7 @@
     toast("마커 추가");
   });
 
-  // selected quick edit fields (5번: 링크 → 유튜브 링크, 밑에 유튜브 표시명 표시)
+  // selected quick edit fields
   $("selLink").addEventListener("input", ()=>{
     if(!selectedMarker) return;
     selectedMarker.yt = $("selLink").value.trim();
@@ -1719,7 +1913,7 @@
     openMarkerModal(selectedMarker.id);
   });
 
-  // ---------- quick palette (5번 이미지 그대로 느낌) ----------
+  // ---------- quick palette ----------
   const QUICK = [
     {name:"빨", c:"#ff3b30"},
     {name:"주", c:"#ff9500"},
@@ -1788,7 +1982,6 @@
 
   $("btnRechain").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
-    // 간단: 현재 페이지에서 chainId 없는 마커를 1개의 체인으로 재부여 (배치 순서=생성순)
     const pageMs = S.markers.filter(m=>m.pageId===S.currentPageId);
     const chainId = "c_"+uid();
     let idx=1;
@@ -1816,7 +2009,7 @@
     toast("마커 초기화");
   });
 
-  // ---------- marker modal (9번) ----------
+  // ---------- marker modal ----------
   let editingId = null;
   function openMarkerModal(markerId){
     requireAuth(); if(!isAuthed()) return;
@@ -1824,7 +2017,6 @@
     if(!m) return;
 
     editingId = markerId;
-    // categories select
     const sel = $("mfCat");
     sel.innerHTML = "";
     for(const c of S.categories){
@@ -1867,10 +2059,8 @@
   $("btnSaveMarker").addEventListener("click", saveMarkerModal);
   $("btnDeleteMarker").addEventListener("click", deleteMarkerModal);
 
-  // Enter = 저장
   mMarker.addEventListener("keydown", (e)=>{
     if(e.key==="Enter"){
-      // textarea에서는 Enter 유지
       if(e.target && e.target.tagName==="TEXTAREA") return;
       e.preventDefault();
       saveMarkerModal();
@@ -1891,7 +2081,6 @@
   $("mfUseCatColor").addEventListener("change", updateColorChip);
   $("mfCat").addEventListener("change", updateColorChip);
 
-  // 8번: 이름 입력 시 유튜브 표시명 + 메모에도 동시에 같은 글(단, 표시명/메모를 사용자가 수정하면 유지)
   let ytTouched = false, memoTouched = false;
   $("mfYtTitle").addEventListener("input", ()=>{ ytTouched = true; syncSelectedPanelLive(); });
   $("mfMemo").addEventListener("input", ()=>{ memoTouched = true; syncSelectedPanelLive(); });
@@ -1904,7 +2093,6 @@
   });
 
   function syncSelectedPanelLive(){
-    // 편집 중에도 우측 하단 표시 반영
     if(!editingId) return;
     if(selectedMarker && selectedMarker.id === editingId){
       $("selName").textContent = $("mfName").value || "(이름 없음)";
@@ -1915,7 +2103,6 @@
 
   $("mfR").addEventListener("input", ()=>{
     $("mfRVal").textContent = $("mfR").value;
-    // 원 크기에 맞춰 글씨 자동 스케일
     const r = Number($("mfR").value);
     const fs = clamp(Math.round(r * 1.5), 8, 40);
     $("mfFs").value = fs;
@@ -1965,7 +2152,6 @@
     if(!m) return;
     if(!confirm("이 마커를 삭제할까요?")) return;
 
-    // remove and reindex chain
     const cid = m.chainId;
     const cidx = m.chainIndex;
     S.markers = S.markers.filter(x=>x.id!==m.id);
@@ -2005,7 +2191,6 @@
     toast("중간 삽입 모드 활성화");
   });
 
-  // open modal via double click on marker
   cv.addEventListener("dblclick", (e)=>{
     requireAuth(); if(!isAuthed()) return;
     const rect = cv.getBoundingClientRect();
@@ -2019,7 +2204,7 @@
     }
   });
 
-  // ---------- category modal (7번 이미지) ----------
+  // ---------- category modal ----------
   let catSelectedRowId = null;
 
   $("btnEditCats").addEventListener("click", ()=>{
@@ -2030,6 +2215,9 @@
 
   function openCatsModal(){
     catSelectedRowId = null;
+    // ✅ 3번: 모달 열 때 현재 옵션 상태를 칩에 반영
+    setChipToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
+    // 아래 3개는 상태 저장 요구가 없어서 UI만 유지(기존과 동일)
     renderCatRows();
     renderCatQuickPalette();
     mCats.classList.add("show");
@@ -2057,7 +2245,7 @@
     const rows = $("catRows");
     rows.innerHTML = "";
 
-    const list = S.categories.filter(c=>c.id!=="전체"); // 편집은 전체 제외(필터칩은 유지)
+    const list = S.categories.filter(c=>c.id!=="전체");
     for(const c of list){
       const row = document.createElement("div");
       row.style.display = "grid";
@@ -2096,7 +2284,6 @@
       del.addEventListener("click", (e)=>{
         e.stopPropagation();
         if(!confirm(`"${c.name}" 카테고리를 삭제할까요?`)) return;
-        // markers with this cat -> move to "기텔"
         const fallback = S.categories.find(x=>x.id==="기텔") || S.categories[0];
         for(const m of S.markers){
           if(m.cat === c.id) m.cat = fallback.id;
@@ -2130,23 +2317,20 @@
 
   $("btnSaveCats").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
-    // ensure ids unique: use name as id
+
     const cleaned = [];
     const seen = new Set(["전체"]);
     for(const c of S.categories){
       const name = (c.name||c.id||"").trim();
       if(!name) continue;
-      const id = (c.id||name).trim();
       const finalId = name; // ✅ 단순: 이름=ID
       if(seen.has(finalId)) continue;
       seen.add(finalId);
       cleaned.push({ id:finalId, name, color:(c.color||"#ffffff"), on:!!c.on });
     }
-    // prepend "전체"
     const all = { id:"전체", name:"전체", color:"#7cc4ff", on:true };
     S.categories = [all, ...cleaned];
 
-    // remap markers cat if old id removed
     const valid = new Set(S.categories.map(x=>x.id));
     const fb = valid.has("기텔") ? "기텔" : (S.categories[1]?.id || "전체");
     for(const m of S.markers){
@@ -2178,22 +2362,14 @@
     }
   }
 
-  // ---------- selected marker row buttons ----------
-  $("btnOpenMarkerEdit").addEventListener("click", ()=>{
-    if(!selectedMarker) return;
-    ytTouched = false; memoTouched = false;
-    openMarkerModal(selectedMarker.id);
-  });
-
   // ---------- helpers ----------
   function renderAll(){
     renderLogo();
-    renderGames();
+    renderGamesTop();     // ✅ 변경
     renderPages();
     renderCats();
     renderPalette();
     renderTextColors();
-    setToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
     syncSelectedPanel();
     renderKpi();
     resizeCanvas();
@@ -2207,8 +2383,11 @@
     const st = await loadStateRemoteFirst();
     S = mergeState(st);
 
-    // ✅ 기본 toggle 값 반영
     if(typeof S.showLinesWithCatFilter !== "boolean") S.showLinesWithCatFilter = true;
+
+    // ✅ games 최소 1개 보장
+    if(!Array.isArray(S.games) || !S.games.length) S.games = ["아이온2"];
+    if(!S.games.includes(S.game)) S.game = S.games[0];
 
     renderAll();
     loadMap();
