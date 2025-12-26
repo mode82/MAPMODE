@@ -153,9 +153,15 @@
     }
     .gameSlot:hover{ border-color: rgba(124,196,255,.55); }
     .gameSlot.active{
-      border-color: rgba(57,217,138,.65);
-      background: rgba(57,217,138,.10);
+      /* ✅ (1) 녹색 강조 제거: 기존 UI 톤(블루 계열)로 약하게 강조 */
+      border-color: rgba(124,196,255,.55);
+      background: rgba(124,196,255,.08);
       box-shadow: var(--shadow2);
+    }
+    .gameSlot.static{
+      cursor:default;
+      opacity:.78;
+      pointer-events:none;
     }
 
     /* ✅ 게임 드롭다운 */
@@ -191,14 +197,24 @@
       border:1px solid rgba(39,52,74,.6);
       background: rgba(14,22,38,.35);
       cursor:pointer;
+      min-width:0;
     }
     .gRow.active{
-      outline:2px solid rgba(57,217,138,.35);
-      border-color: rgba(57,217,138,.55);
+      /* ✅ 녹색 계열 제거 */
+      outline:2px solid rgba(124,196,255,.25);
+      border-color: rgba(124,196,255,.45);
       background: rgba(14,22,38,.55);
     }
-    .gRow .nm{ font-weight:900; font-size:14px; }
-    .gRow .acts{ display:flex; gap:8px; }
+    .gRow .nm{
+      font-weight:900;
+      font-size:14px;
+      flex:1 1 auto;
+      min-width:0;
+      white-space:nowrap;            /* ✅ (4) 한 줄 고정 */
+      overflow:hidden;               /* ✅ (4) 넘치면 ... */
+      text-overflow:ellipsis;        /* ✅ (4) ... */
+    }
+    .gRow .acts{ display:flex; gap:8px; flex:0 0 auto; }
     .miniBtn{
       height:34px;
       padding:0 12px;
@@ -675,7 +691,7 @@
   </div>
 
   <!-- TOPBAR -->
-  <div class="topbar">
+  <div class="topbar" id="topbar">
     <div class="top-left">
       <!-- Logo -->
       <div class="slot fixed logo">
@@ -684,9 +700,21 @@
         </div>
       </div>
 
-      <!-- ✅ (2) 상단 슬롯: 아이온2(드롭다운)만 표시 -->
+      <!-- ✅ (2) 상단 게임 슬롯 4칸 표시 -->
       <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
         <div class="gameSlot active" id="gSlot1" title="게임 선택 / 클릭하여 관리">아이온2</div>
+      </div>
+
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="gameSlot static" id="gSlot2" title="(표시용 슬롯)">패스오브엑자일</div>
+      </div>
+
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="gameSlot static" id="gSlot3" title="(표시용 슬롯)">추가</div>
+      </div>
+
+      <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="gameSlot static" id="gSlot4" title="(표시용 슬롯)">추가</div>
       </div>
 
       <!-- Admin label -->
@@ -694,7 +722,7 @@
         <div style="font-weight:900; color:rgba(57,217,138,.95);">ADMIN</div>
       </div>
 
-      <!-- 지도 업로드 / state 내보내기 / 전체 초기화 -->
+      <!-- ✅ (3) 지도 업로드 / state 내보내기 / 전체 초기화: 게임 슬롯 뒤로 이동 -->
       <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
         <label class="gameSlot" style="cursor:pointer;">
           지도 업로드
@@ -890,7 +918,8 @@
           <div class="styleCard">
             <h4>글씨 크기 <span class="subtle" style="float:right;">라벨</span></h4>
             <div class="rangeRow">
-              <input type="range" id="mfFs" min="8" max="40" step="1" />
+              <!-- ✅ (6) mfFs 범위: 최소=기존의 절반(8→4), 최대=기존의 2배(40→80) -->
+              <input type="range" id="mfFs" min="4" max="80" step="1" />
               <div class="numBox" id="mfFsVal">15</div>
             </div>
             <div class="subtle" style="margin-top:10px;">* 현재는 자동 동기화 우선</div>
@@ -921,7 +950,6 @@
 
       <div class="modalFoot">
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <!-- (기존 버튼 유지 - 동작은 최소 유지) -->
           <button class="btnBig" id="btnNewChain">새로운 번호로 시작</button>
           <button class="btnBig" id="btnInsertAfter">해당 마커를 이어서 시작</button>
         </div>
@@ -1225,6 +1253,9 @@
   let mapImg = new Image();
   mapImg.crossOrigin = "anonymous";
 
+  // ✅ (7) 현재 페이지에서 우클릭 추가 시 이어질 "현재 체인" (chainId 사용)
+  const currentChainByPage = Object.create(null);
+
   function mergeState(st){
     const merged = structuredClone(defaultState);
     if(st && typeof st === "object") Object.assign(merged, st);
@@ -1242,6 +1273,9 @@
       if(typeof m.order !== "number") m.order = (typeof m.chainIndex==="number" ? m.chainIndex : null);
       if(typeof m.dim !== "boolean") m.dim = false;
       if(m.order == null) m.order = 0;
+
+      // ✅ chainId (기존 필드 활용): 없으면 null 유지
+      if(typeof m.chainId === "undefined") m.chainId = null;
     }
     return merged;
   }
@@ -1323,7 +1357,7 @@
       const row = document.createElement("div");
       row.className = "gRow" + (g===S.game ? " active" : "");
       row.innerHTML = `
-        <div class="nm">${g}</div>
+        <div class="nm" title="${String(g).replace(/"/g,'&quot;')}">${g}</div>
         <div class="acts">
           <button class="miniBtn icon edit" type="button" title="이름 편집">✎</button>
           <button class="miniBtn icon del" type="button" title="삭제">🗑</button>
@@ -1399,9 +1433,21 @@
     }
   }
 
+  function placeGameDropUnderSlot(){
+    const anchor = gSlot1;
+    const r = anchor.getBoundingClientRect();
+    const w = Math.min((anchor.offsetWidth || r.width) + 20, window.innerWidth - 28);
+    gameDropWrap.style.width = w + "px";
+    const left = clamp(r.left, 14, window.innerWidth - w - 14);
+    const top = r.bottom + 8;
+    gameDropWrap.style.left = left + "px";
+    gameDropWrap.style.top = top + "px";
+  }
+
   function openGameDrop(){
     requireAuth(); if(!isAuthed()) return;
     renderGameDropList();
+    placeGameDropUnderSlot(); /* ✅ (4) 아이온2 슬롯 바로 아래 */
     gameDropWrap.classList.add("show");
   }
   function closeGameDrop(){
@@ -1415,6 +1461,10 @@
   gSlot1.addEventListener("click", (e)=>{
     requireAuth(); if(!isAuthed()) return;
     toggleGameDrop();
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(gameDropWrap.classList.contains("show")) placeGameDropUnderSlot();
   });
 
   // 바깥 클릭 / ESC 닫기
@@ -1800,6 +1850,45 @@
     $("kpi").textContent = `표시 중 마커: ${shown} / 페이지 전체: ${total}`;
   }
 
+  // ---------- chain helpers (번호/선 분리) ----------
+  function ensureMarkerChain(m){
+    if(!m.chainId) m.chainId = "c0";
+    return m.chainId;
+  }
+  function getPageMarkersSorted(pageId){
+    return (S.markers||[]).filter(m=>m.pageId===pageId).slice().sort((a,b)=>(a.order||0)-(b.order||0) || (a.id>b.id?1:-1));
+  }
+  function getChainMarkersOnPage(pageId, chainId){
+    const ms = getPageMarkersSorted(pageId).filter(m=>ensureMarkerChain(m)===chainId);
+    return ms;
+  }
+  function recomputeChainIndices(pageId){
+    const ms = getPageMarkersSorted(pageId);
+    const byChain = new Map();
+    for(const m of ms){
+      const cid = ensureMarkerChain(m);
+      if(!byChain.has(cid)) byChain.set(cid, []);
+      byChain.get(cid).push(m);
+    }
+    for(const [cid, arr] of byChain){
+      for(let i=0;i<arr.length;i++){
+        arr[i].chainIndex = i+1;
+      }
+    }
+  }
+  function getActiveChainIdForPage(pageId){
+    const v = currentChainByPage[pageId];
+    if(v) return v;
+    const ms = getPageMarkersSorted(pageId);
+    const last = ms[ms.length-1];
+    const cid = last ? ensureMarkerChain(last) : "c0";
+    currentChainByPage[pageId] = cid;
+    return cid;
+  }
+  function setActiveChainIdForPage(pageId, cid){
+    currentChainByPage[pageId] = cid;
+  }
+
   // ---------- style propagation (카테고리 1번 기준 전파) ----------
   function leaderOfCat(pageId, catId){
     const ms = (S.markers||[]).filter(m=>m.pageId===pageId && m.cat===catId);
@@ -1818,7 +1907,6 @@
       m.fs = leader.fs;
       m.fw = leader.fw;
       m.labelColor = leader.labelColor;
-      // "색/모양"도 1번 기준: useCatColor/override도 동기화
       m.useCatColor = leader.useCatColor;
       m.colorOverride = leader.colorOverride || "";
     }
@@ -1827,6 +1915,38 @@
   function applyAllCatStylesOnPage(pageId){
     const cats = new Set((S.markers||[]).filter(m=>m.pageId===pageId).map(m=>m.cat));
     for(const catId of cats) applyCatLeaderStyle(pageId, catId);
+  }
+
+  // ---------- auto label (체인 1번 텍스트 기반) ----------
+  function splitBaseAndNumber(name){
+    const s = (name||"").trim();
+    const m = s.match(/^(.*?)(\d+)$/);
+    if(!m) return { base:s, hasNum:false, num:null };
+    const base = (m[1]||"").trim();
+    const num = parseInt(m[2], 10);
+    if(!base) return { base:s, hasNum:false, num:null };
+    if(!Number.isFinite(num)) return { base:s, hasNum:false, num:null };
+    return { base, hasNum:true, num };
+  }
+  function makeAutoNameFromLeader(leaderName, idx){
+    const info = splitBaseAndNumber(leaderName);
+    if(info.hasNum){
+      return `${info.base}${idx}`;
+    }
+    return `${(leaderName||"").trim()}${idx}`;
+  }
+  function applyAutoNamesForChainOnPage(pageId, chainId){
+    const ms = getChainMarkersOnPage(pageId, chainId);
+    if(!ms.length) return;
+    const leader = ms[0];
+    const leaderName = (leader.name||"").trim();
+    if(!leaderName) return;
+    for(let i=1;i<ms.length;i++){
+      const m = ms[i];
+      if((m.name||"").trim()) continue; // ✅ 수동으로 이름이 있으면 덮어쓰기 금지
+      const idx = (m.chainIndex || (i+1));
+      m.name = makeAutoNameFromLeader(leaderName, idx);
+    }
   }
 
   // ---------- drawing ----------
@@ -1873,18 +1993,32 @@
     ctx.translate(S.map.tx, S.map.ty);
     ctx.scale(S.map.scale, S.map.scale);
 
-    // map
     if(mapImg && mapImg.complete){
       const iw = S.map.naturalW || (mapImg.naturalWidth||1);
       const ih = S.map.naturalH || (mapImg.naturalHeight||1);
       ctx.drawImage(mapImg, 0,0, iw, ih);
     }
 
-    const ms = getVisibleMarkers();
+    const visible = getVisibleMarkers();
+    const onCats = new Set(S.categories.filter(c=>c.on).map(c=>c.id));
+    const allOn = onCats.has("전체");
 
-    // lines + arrows (번호 순)
+    // ✅ chainIndex 최신화
+    recomputeChainIndices(S.currentPageId);
+
+    // ✅ (7) 선은 체인별로만 표시(새로운 번호로 시작 시 연결 금지)
     if(S.showLinesWithCatFilter){
-      if(ms.length >= 2){
+      const byChain = new Map();
+      for(const m of visible){
+        const cid = ensureMarkerChain(m);
+        if(!byChain.has(cid)) byChain.set(cid, []);
+        byChain.get(cid).push(m);
+      }
+
+      for(const [cid, ms] of byChain){
+        ms.sort((a,b)=>(a.order||0)-(b.order||0));
+        if(ms.length < 2) continue;
+
         ctx.save();
         ctx.globalAlpha = 0.92;
         ctx.lineWidth = 2 / S.map.scale;
@@ -1898,12 +2032,10 @@
         }
         ctx.stroke();
 
-        // arrows on each segment end
-        const arrowSize = 14 / S.map.scale; // in world units after scaling
+        const arrowSize = 14 / S.map.scale;
         for(let i=0;i<ms.length-1;i++){
           const a = worldFromNorm(ms[i].x, ms[i].y);
           const b = worldFromNorm(ms[i+1].x, ms[i+1].y);
-          // place arrow near b but not inside marker circle
           const br = (ms[i+1].r ?? 10);
           const dx = b.x-a.x, dy = b.y-a.y;
           const len = Math.hypot(dx,dy);
@@ -1913,7 +2045,6 @@
           const endY = b.y - uy*(br + 3);
           const startX = a.x + ux*( (ms[i].r ?? 10) + 3 );
           const startY = a.y + uy*( (ms[i].r ?? 10) + 3 );
-          // if still too short, skip
           if(Math.hypot(endX-startX, endY-startY) < 10) continue;
           drawArrowheadWorld(startX, startY, endX, endY, arrowSize);
         }
@@ -1922,12 +2053,11 @@
     }
 
     // markers
-    for(const m of ms){
+    for(const m of visible){
       const p = worldFromNorm(m.x, m.y);
       const r = (m.r ?? 10);
       const col = markerColor(m);
 
-      // circle only dim toggle
       ctx.save();
       ctx.globalAlpha = m.dim ? 0.30 : 1;
       ctx.beginPath();
@@ -1939,20 +2069,20 @@
       ctx.stroke();
       ctx.restore();
 
-      // number (always 1..n)
-      const num = (m.order != null) ? String(m.order) : "";
+      // ✅ (5) 숫자 폰트는 r와 항상 같은 비율로 스케일 (줌 시 튀어나옴 방지)
+      const num = (typeof m.chainIndex === "number" && m.chainIndex > 0) ? String(m.chainIndex) : "";
       if(num){
+        const numFs = Math.max(10, Math.round(r * 1.25));
         ctx.save();
         ctx.globalAlpha = 0.98;
         ctx.fillStyle = "rgba(0,0,0,.75)";
-        ctx.font = `${m.fw ?? 900} ${Math.max(10, Math.round((m.fs ?? 15) * 0.95))}px ui-sans-serif`;
+        ctx.font = `${m.fw ?? 900} ${numFs}px ui-sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(num, p.x, p.y + 0.5);
         ctx.restore();
       }
 
-      // label (must stay 100% even if dim)
       if(m.name){
         ctx.save();
         ctx.globalAlpha = 1;
@@ -1965,7 +2095,6 @@
         ctx.restore();
       }
 
-      // hitbox
       const sp = screenFromWorld(p.x, p.y);
       circleHitboxes.push({ id:m.id, sx:sp.sx, sy:sp.sy, rPx: r*S.map.scale });
     }
@@ -2021,7 +2150,7 @@
       dragStartSX = sx;
       dragStartSY = sy;
       dragMoved = false;
-      isPanning = false; // ✅ 드래그 중 패닝 금지
+      isPanning = false;
       return;
     }
 
@@ -2060,11 +2189,9 @@
   });
 
   cv.addEventListener("pointerup", ()=>{
-    // finalize
     if(draggingMarkerId){
       const m = S.markers.find(x=>x.id===draggingMarkerId);
       if(m){
-        // click (no drag) => dim toggle + select
         if(!dragMoved){
           m.dim = !m.dim;
           selectedMarker = m;
@@ -2073,7 +2200,7 @@
         }else{
           toast("마커 이동 완료");
         }
-        saveLocal(); // ✅ 드래그 종료 저장
+        saveLocal();
       }
       draggingMarkerId = null;
       dragPointerId = null;
@@ -2114,7 +2241,7 @@
 
   // ---------- marker create / select ----------
   let selectedMarker = null;
-  let insertAfterMarkerId = null; // 유지(기존 버튼)
+  let insertAfterMarkerId = null;
 
   function nextOrderForPage(pageId){
     const ms = (S.markers||[]).filter(m=>m.pageId===pageId);
@@ -2123,9 +2250,11 @@
   }
 
   function newMarkerAt(normX, normY){
+    const pageId = S.currentPageId;
+
     const m = {
       id:"m_"+uid(),
-      pageId:S.currentPageId,
+      pageId:pageId,
       x:normX, y:normY,
       name:"",
       cat: (S.categories.find(c=>c.on && c.id!=="전체")?.id) || "기텔",
@@ -2138,19 +2267,17 @@
       fs:15,
       fw:900,
       labelColor:"#e7eef8",
-      // new numbering
-      order: nextOrderForPage(S.currentPageId),
-      // dim toggle
+      order: nextOrderForPage(pageId),
       dim:false,
-      // keep old fields to avoid breaking existing state consumers
       chainId:null,
       chainIndex:null,
     };
 
-    // 기존 "중간 삽입" 느낌 유지: insertAfterMarker 뒤로 번호 삽입
+    // ✅ 체인 결정: 중간 삽입이면 기준 마커 체인, 아니면 현재 활성 체인
     if(insertAfterMarkerId){
       const base = S.markers.find(x=>x.id===insertAfterMarkerId);
       if(base && base.pageId===m.pageId){
+        m.chainId = ensureMarkerChain(base);
         const insertAt = (base.order||0) + 1;
         for(const mm of S.markers){
           if(mm.pageId===m.pageId && (mm.order||0) >= insertAt){
@@ -2160,7 +2287,10 @@
         m.order = insertAt;
         renumberPage(m.pageId);
       }
+    }else{
+      m.chainId = getActiveChainIdForPage(pageId);
     }
+    ensureMarkerChain(m);
 
     S.markers.push(m);
 
@@ -2171,9 +2301,11 @@
       m.useCatColor = leader.useCatColor; m.colorOverride = leader.colorOverride || "";
     }
 
-    renumberPage(S.currentPageId);
-    // keep backward compat chainIndex
-    for(const mm of S.markers.filter(x=>x.pageId===S.currentPageId)) mm.chainIndex = mm.order;
+    renumberPage(pageId);
+    recomputeChainIndices(pageId);
+
+    // ✅ (9) 체인 1번 텍스트 기반 자동 이어쓰기 (우클릭 추가 시)
+    applyAutoNamesForChainOnPage(pageId, ensureMarkerChain(m));
 
     saveLocal();
     selectMarker(m.id);
@@ -2195,10 +2327,8 @@
     $("btnUseCatColor").disabled = !selectedMarker;
   }
 
-  // click empty to clear selection (circle click is handled by pointerup toggle)
   cv.addEventListener("click", (e)=>{
     requireAuth(); if(!isAuthed()) return;
-    // prevent click after drag marker
     if(dragMoved) return;
 
     const rect = cv.getBoundingClientRect();
@@ -2206,7 +2336,6 @@
     const sy = e.clientY - rect.top;
     const hit = pickCircleAt(sx, sy);
     if(hit){
-      // selection already handled by pointerup for toggle; ensure selected sync
       selectMarker(hit.id);
       return;
     }
@@ -2215,7 +2344,7 @@
     syncSelectedPanel();
   });
 
-  // right-click add marker (번호 자동 1..n)
+  // right-click add marker
   cv.addEventListener("contextmenu", (e)=>{
     e.preventDefault();
     requireAuth(); if(!isAuthed()) return;
@@ -2236,7 +2365,6 @@
     toast("마커 추가");
   });
 
-  // selected quick edit fields
   $("selLink").addEventListener("input", ()=>{
     if(!selectedMarker) return;
     selectedMarker.yt = $("selLink").value.trim();
@@ -2289,7 +2417,6 @@
     selectedMarker.colorOverride = pickedQuick;
     selectedMarker.useCatColor = false;
 
-    // leader style changed? if selectedMarker is leader then propagate
     applyAllCatStylesOnPage(S.currentPageId);
 
     saveLocal();
@@ -2310,7 +2437,6 @@
     toast("카테고리 색상 적용");
   });
 
-  // line tools (기존 유지 톤: 숨김/다시표시)
   $("btnClearLines").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
     S.showLinesWithCatFilter = false;
@@ -2323,7 +2449,7 @@
   $("btnRechain").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
     renumberPage(S.currentPageId);
-    for(const mm of S.markers.filter(x=>x.pageId===S.currentPageId)) mm.chainIndex = mm.order;
+    recomputeChainIndices(S.currentPageId);
     S.showLinesWithCatFilter = true;
     setChipToggle($("tgShowChainSameCat"), true);
     applyAllCatStylesOnPage(S.currentPageId);
@@ -2406,7 +2532,6 @@
   $("btnSaveMarker").addEventListener("click", saveMarkerModal);
   $("btnDeleteMarker").addEventListener("click", deleteMarkerModal);
 
-  // ✅ Enter 저장 + 자동 닫기
   mMarker.addEventListener("keydown", (e)=>{
     if(e.key==="Enter"){
       if(e.target && e.target.tagName==="TEXTAREA") return;
@@ -2452,7 +2577,8 @@
   $("mfR").addEventListener("input", ()=>{
     $("mfRVal").textContent = $("mfR").value;
     const r = Number($("mfR").value);
-    const fs = clamp(Math.round(r * 1.5), 8, 40);
+    // ✅ (6) 범위 변경에 맞춰 clamp 조정 (4~80)
+    const fs = clamp(Math.round(r * 1.5), 4, 80);
     $("mfFs").value = fs;
     $("mfFsVal").textContent = fs;
   });
@@ -2463,11 +2589,6 @@
   function getEditing(){
     if(!editingId) return null;
     return S.markers.find(x=>x.id===editingId) || null;
-  }
-
-  function isLeaderMarker(m){
-    const leader = leaderOfCat(m.pageId, m.cat);
-    return leader && leader.id === m.id;
   }
 
   function saveMarkerModal(){
@@ -2493,14 +2614,14 @@
     m.fw = Number($("mfFw").value);
     m.labelColor = ($("mfLabelColor").value || "#e7eef8").trim();
 
-    // renumber always 1..n and keep chainIndex for compat
     renumberPage(m.pageId);
-    for(const mm of S.markers.filter(x=>x.pageId===m.pageId)) mm.chainIndex = mm.order;
+    recomputeChainIndices(m.pageId);
 
-    // ✅ (4-4) leader style propagate
-    // if marker moved cat or leader edited, apply to relevant categories
     applyCatLeaderStyle(m.pageId, prevCat);
     applyCatLeaderStyle(m.pageId, m.cat);
+
+    // ✅ (9) 저장 시에도 체인 자동 이름(빈 이름만) 정리
+    applyAutoNamesForChainOnPage(m.pageId, ensureMarkerChain(m));
 
     saveLocal();
     selectMarker(m.id);
@@ -2508,7 +2629,6 @@
     renderKpi();
     draw();
     toast("저장 완료");
-    // ✅ (4-5) 저장 후 자동 닫기
     closeMarkerModal();
   }
 
@@ -2517,24 +2637,15 @@
     const m = getEditing();
     if(!m) return;
 
-    const ok = await openPopConfirm({
-      anchor: $("btnDeleteMarker"),
-      title: "마커 삭제",
-      message: "이 마커를 삭제할까요?",
-      okText: "삭제",
-      cancelText: "취소",
-      danger: true
-    });
-    if(!ok) return;
-
+    // ✅ (10) 마커 삭제 confirm 제거: 즉시 삭제
     const pid = m.pageId;
     const catId = m.cat;
+    const cid = ensureMarkerChain(m);
 
     S.markers = S.markers.filter(x=>x.id!==m.id);
     renumberPage(pid);
-    for(const mm of S.markers.filter(x=>x.pageId===pid)) mm.chainIndex = mm.order;
+    recomputeChainIndices(pid);
 
-    // leader may have changed
     applyCatLeaderStyle(pid, catId);
 
     saveLocal();
@@ -2546,21 +2657,20 @@
     toast("삭제 완료");
   }
 
-  // (기존 버튼 유지)
   $("btnNewChain").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
     const m = getEditing();
     if(!m) return;
-    // 현재 마커를 "앞으로"로 만들기: order=1로 당기고 나머지 밀기
+
+    // ✅ (7) 새 체인 생성: 기존 체인과 선 연결 금지 + 이 마커가 새 체인의 1번
     const pid = m.pageId;
-    for(const mm of S.markers){
-      if(mm.pageId===pid && mm.id!==m.id){
-        mm.order = (mm.order||0) + 1;
-      }
-    }
-    m.order = 1;
+    const newCid = "c_" + uid();
+    m.chainId = newCid;
+    ensureMarkerChain(m);
+    setActiveChainIdForPage(pid, newCid);
+
     renumberPage(pid);
-    for(const mm of S.markers.filter(x=>x.pageId===pid)) mm.chainIndex = mm.order;
+    recomputeChainIndices(pid);
 
     applyCatLeaderStyle(pid, m.cat);
 
@@ -2681,16 +2791,8 @@
 
       del.addEventListener("click", async (e)=>{
         e.stopPropagation();
-        const ok = await openPopConfirm({
-          anchor: del,
-          title: "카테고리 삭제",
-          message: `"${c.name}" 카테고리를 삭제할까요?\n(해당 마커는 다른 카테고리로 이동됩니다)`,
-          okText: "삭제",
-          cancelText: "취소",
-          danger: true
-        });
-        if(!ok) return;
 
+        // ✅ (11) 카테고리 삭제 confirm 제거: 즉시 삭제
         const fallback = S.categories.find(x=>x.id==="기텔") || S.categories[0];
         for(const m of S.markers){
           if(m.cat === c.id) m.cat = fallback.id;
@@ -2803,9 +2905,8 @@
     resizeCanvas();
     if(!S.map.scale || S.map.scale<=0) fitToScreen();
 
-    // ensure numbering/styling
     renumberPage(S.currentPageId);
-    for(const mm of S.markers.filter(x=>x.pageId===S.currentPageId)) mm.chainIndex = mm.order;
+    recomputeChainIndices(S.currentPageId);
     applyAllCatStylesOnPage(S.currentPageId);
 
     draw();
