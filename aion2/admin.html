@@ -1354,7 +1354,7 @@
     const blob = new Blob([JSON.stringify(S, null, 2)], {type:"application/json"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "state99.json";
+    a.download = "state.json";
     a.click();
     URL.revokeObjectURL(a.href);
     toast("state99.json 다운로드");
