@@ -361,7 +361,7 @@
       </div>
 
       <div class="top-right">
-        <a class="pill small ghost" id="btnOpenAdmin" href="./admin99.html" target="_blank" rel="noopener">ADMIN</a>
+        <a class="pill small ghost" id="btnOpenAdmin" href="#" target="_blank" rel="noopener">ADMIN</a>
       </div>
     </div>
 
@@ -458,14 +458,11 @@
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    // 가로가 좁으면 축소 (PC는 1)
     const scaleW = vw / baseW;
-    const scaleH = vh / (700); // 너무 과한 축소 방지용 최소 높이 기준(대충)
+    const scaleH = vh / (700);
     let s = Math.min(1, scaleW, scaleH);
 
-    // 너무 작아지면 조작 힘드니 하한
     s = Math.max(0.35, s);
-
     document.documentElement.style.setProperty("--uiScale", String(s));
   }
 
@@ -474,21 +471,42 @@
   applyUIScale();
 
   /******************************************************************
-   * index99 전용 분리 설정
+   * ✅ 깃허브 구조 대응 (root에 index를 두든 /aion2/에 두든 둘 다 작동)
+   * - /MAPMODE/      에 있으면: state는 /MAPMODE/aion2/data/state.json
+   * - /MAPMODE/aion2/에 있으면: state는 /MAPMODE/aion2/data/state.json (./data/state.json)
    ******************************************************************/
+  const IN_AION2_DIR = /\/aion2\//i.test(location.pathname);
+  const BASE_DIR = IN_AION2_DIR ? "." : "./aion2"; // ✅ 인덱스 위치에 따라 자동
+
   const LS_KEY = "mapmode_state_v99"; // ✅ admin99와 동일 (v99 전용)
-  const REMOTE_STATE_URL = new URL("./data/state.json", location.href).toString(); // ✅ 원격 우선
+
+  // ✅ remote state 후보들 (한 번에 맞추기 어려운 경우를 대비해 순차 시도)
+  const REMOTE_STATE_CANDIDATES = [
+    new URL(`${BASE_DIR}/data/state.json`, location.href).toString(),
+    new URL(`./data/state.json`, location.href).toString(),
+    new URL(`./aion2/data/state.json`, location.href).toString(),
+    new URL(`../aion2/data/state.json`, location.href).toString(),
+  ].filter((v, i, a) => a.indexOf(v) === i);
+
+  // ✅ ADMIN 링크도 같은 기준으로 자동 세팅
+  const ADMIN_URL = new URL(`${BASE_DIR}/admin99.html`, location.href).toString();
+
   const defaultCats = [
     { id:"전체", name:"전체", color:"#7cc4ff", on:true },
     { id:"보스", name:"보스", color:"#ff5d5d", on:true },
     { id:"기텔", name:"기텔", color:"#ffd60a", on:true },
     { id:"큐브", name:"큐브", color:"#2b8cff", on:true },
   ];
+
+  // ✅ 기본 페이지 URL을 "깃허브 구조(assets/aion2/maps)"에 맞춰 미리 넣어둠
+  // (admin에서 저장된 state가 있으면 그 값이 덮어씀)
   const defaultState = {
     version:99,
     game:"아이온2",
     logoUrl:"",
-    pages: [{id:"p_all", name:"전체지도", url:""}],
+    pages: [
+      { id:"p_all", name:"전체지도", url:"assets/aion2/maps/aion2map.jpg" }
+    ],
     currentPageId:"p_all",
     categories: defaultCats,
     markerLabelDefault:"#e7eef8",
@@ -510,6 +528,9 @@
   const tipMemo = $("tipMemo");
   const tipClose = $("tipClose");
 
+  // ✅ ADMIN 버튼 링크 적용
+  $("btnOpenAdmin").href = ADMIN_URL;
+
   const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
   const safeParse = (json, fallback) => { try{ return JSON.parse(json); }catch(e){ return fallback; } };
   const escapeHtml = (s)=>String(s)
@@ -528,16 +549,29 @@
   let mapImg = new Image();
   mapImg.crossOrigin = "anonymous";
 
+  async function fetchFirstOkJson(urls){
+    for(const u of urls){
+      try{
+        const r = await fetch(u, { cache:"no-store" });
+        if(r.ok){
+          const st = await r.json();
+          return { st, url:u };
+        }
+      }catch(e){}
+    }
+    return { st:null, url:null };
+  }
+
   async function loadStateRemoteFirst(){
-    // 1) remote (state99.json)
-    try{
-      const r = await fetch(REMOTE_STATE_URL, { cache:"no-store" });
-      if(r.ok){
-        const st = await r.json();
-        localStorage.setItem(LS_KEY, JSON.stringify(st));
-        return st;
-      }
-    }catch(e){}
+    // 1) remote (순차 시도)
+    const { st, url } = await fetchFirstOkJson(REMOTE_STATE_CANDIDATES);
+    if(st){
+      localStorage.setItem(LS_KEY, JSON.stringify(st));
+      // 필요하면 어디서 읽었는지 확인용
+      // toast("state 로드: " + (url || "remote"), 1200);
+      return st;
+    }
+
     // 2) local
     const raw = localStorage.getItem(LS_KEY);
     return raw ? safeParse(raw, structuredClone(defaultState)) : structuredClone(defaultState);
@@ -546,12 +580,14 @@
   function mergeState(st){
     const merged = structuredClone(defaultState);
     if(st && typeof st === "object") Object.assign(merged, st);
+
     merged.pages = Array.isArray(st?.pages) && st.pages.length ? st.pages : structuredClone(defaultState.pages);
     merged.categories = Array.isArray(st?.categories) && st.categories.length ? st.categories : structuredClone(defaultCats);
     merged.markers = Array.isArray(st?.markers) ? st.markers : [];
     merged.chains = Array.isArray(st?.chains) ? st.chains : [];
     merged.map = Object.assign(structuredClone(defaultState.map), st?.map||{});
-    if(!merged.pages.find(p=>p.id===merged.currentPageId)) merged.currentPageId = merged.pages[0].id;
+
+    if(!merged.pages.find(p=>p.id===merged.currentPageId)) merged.currentPageId = merged.pages[0]?.id || "p_all";
     return merged;
   }
 
@@ -592,7 +628,9 @@
         saveLocal();
         renderPages();
         renderKPIs();
-        draw();
+
+        // ✅ 페이지 바뀌면 지도도 해당 페이지 URL로 로드 (admin 구조 대응)
+        loadMapForCurrentPage(true);
       });
       pageList.appendChild(item);
     }
@@ -621,28 +659,25 @@
   }
 
   /******************************************************************
-   * Local save (index에서도 view 관련 값 저장)
+   * Local save
    ******************************************************************/
   function saveLocal(){
     localStorage.setItem(LS_KEY, JSON.stringify(S));
   }
 
   /******************************************************************
-   * Map load
+   * Map load (✅ admin 구조: 페이지 URL 기반 지도 로드 지원)
    ******************************************************************/
-  function loadMap(){
-    if(S.map.imgDataUrl){
-      mapImg = new Image();
-      mapImg.onload = ()=>{
-        S.map.naturalW = mapImg.naturalWidth || 1;
-        S.map.naturalH = mapImg.naturalHeight || 1;
-        if(!S.map.scale || S.map.scale<=0) fitToScreen();
-        draw();
-      };
-      mapImg.src = S.map.imgDataUrl;
-      return;
-    }
-    // placeholder
+  function getCurrentPage(){
+    return S.pages.find(p=>p.id===S.currentPageId) || S.pages[0] || null;
+  }
+
+  function toAbsUrlMaybe(url){
+    if(!url) return "";
+    try{ return new URL(url, location.href).toString(); }catch(e){ return url; }
+  }
+
+  function loadPlaceholder(){
     mapImg = new Image();
     mapImg.onload = ()=>draw();
     mapImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
@@ -654,9 +689,43 @@
           </radialGradient>
         </defs>
         <rect width="100%" height="100%" fill="url(#g)"/>
-        <text x="50%" y="50%" text-anchor="middle" font-family="Arial" font-size="28" fill="#7a889e">state99.json 또는 로컬 데이터가 필요합니다</text>
+        <text x="50%" y="50%" text-anchor="middle" font-family="Arial" font-size="28" fill="#7a889e">지도 URL 또는 state.json 경로를 확인해주세요</text>
       </svg>`
     );
+  }
+
+  function loadMapForCurrentPage(fitAfter=false){
+    const p = getCurrentPage();
+
+    // 1) state에 dataURL이 있으면 최우선
+    let src = S.map?.imgDataUrl ? String(S.map.imgDataUrl) : "";
+
+    // 2) 없으면 현재 페이지 URL 사용 (✅ 지금 깃허브 구조에 맞는 핵심)
+    if(!src && p?.url){
+      src = toAbsUrlMaybe(p.url);
+    }
+
+    if(!src){
+      loadPlaceholder();
+      return;
+    }
+
+    mapImg = new Image();
+    mapImg.crossOrigin = "anonymous";
+    mapImg.onload = ()=>{
+      S.map.naturalW = mapImg.naturalWidth || 1;
+      S.map.naturalH = mapImg.naturalHeight || 1;
+
+      if(fitAfter || !S.map.scale || S.map.scale<=0){
+        fitToScreen();
+        saveLocal();
+      }
+      draw();
+    };
+    mapImg.onerror = ()=>{
+      loadPlaceholder();
+    };
+    mapImg.src = src;
   }
 
   /******************************************************************
@@ -693,11 +762,12 @@
     hideTip(true);
     const st = await loadStateRemoteFirst();
     S = mergeState(st);
+
     renderLogo();
     renderPages();
     renderCats();
     resizeCanvas();
-    loadMap();
+    loadMapForCurrentPage(true);
     renderKPIs();
     toast("새로고침 완료");
   });
@@ -713,7 +783,7 @@
   /******************************************************************
    * Markers: filtering, drawing, picking
    ******************************************************************/
-  let dimmedMarkerIds = new Set(); // user: 클릭한 마커만 dim 유지
+  let dimmedMarkerIds = new Set();
   let hoveredLabelMarkerId = null;
 
   function getCat(id){ return S.categories.find(c=>c.id===id); }
@@ -1053,11 +1123,13 @@
 
     renderLogo();
     renderPages();
-    renderCats();   // ✅ 오타 제거 완료
+    renderCats();
     renderKPIs();
 
     resizeCanvas();
-    loadMap();
+
+    // ✅ 가장 중요한 부분: "페이지 URL 기반"으로 지도 로드
+    loadMapForCurrentPage(true);
 
     if(!S.map.scale || S.map.scale<=0){
       setTimeout(()=>{
@@ -1065,8 +1137,6 @@
         saveLocal();
         draw();
       }, 0);
-    }else{
-      draw();
     }
 
     cv.addEventListener("contextmenu", (e)=>e.preventDefault());
