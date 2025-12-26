@@ -10,12 +10,12 @@
     {
       "id": "p_all",
       "name": "전체지도",
-      "url": "https://mode82.github.io/MAPMODE/assets/maps/aion2map.jpg"
+      "url": "https://mode82.github.io/MAPMODE/assets/aion2/maps/aion2map.jpg"
     },
     {
       "id": "p_c808f23eb9594819b58a59afe",
       "name": "도망자마을",
-      "url": "https://mode82.github.io/MAPMODE/assets/maps/aion2test.jpg"
+      "url": "https://mode82.github.io/MAPMODE/assets/aion2/maps/aion2test.jpg"
     }
   ],
   "currentPageId": "p_all",
