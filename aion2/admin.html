@@ -631,7 +631,7 @@
           지도 업로드
           <input id="fileMap" type="file" accept="image/*" style="display:none;" />
         </label>
-        <button class="pill small ghost" id="btnExport">state.json 내보내기</button>
+        <button class="pill small ghost" id="btnExport">state 내보내기</button>
         <button class="pill small danger" id="btnResetAll">전체 초기화</button>
       </div>
     </div>
@@ -849,7 +849,7 @@
 
             <div class="labelRow" style="margin-top:10px;">글씨 색상 (라벨)</div>
             <div style="display:flex; gap:10px; align-items:center;">
-              <input class="field” style="flex:1;" id="mfLabelColor" placeholder="#e7eef8" />
+              <input class="field" style="flex:1;" id="mfLabelColor" placeholder="#e7eef8" />
               <button class="btnBig" id="mfLabelDefault" type="button">기본값</button>
             </div>
 
@@ -1143,7 +1143,7 @@
         saveLocal();
         renderPages();
         renderKpi();
-        draw();
+        loadMap(); // ✅ 페이지 전환 시 페이지 URL 지도 로드
       });
 
       const [bUrl, bEdit, bDel] = item.querySelectorAll("button");
@@ -1157,6 +1157,7 @@
         p.url = (next || "").trim();
         saveLocal();
         toast("페이지 URL 저장");
+        if(p.id === S.currentPageId) loadMap(); // ✅ 현재 페이지면 즉시 반영
       });
 
       bEdit.addEventListener("click", (e)=>{
@@ -1188,7 +1189,7 @@
         saveLocal();
         renderPages();
         renderKpi();
-        draw();
+        loadMap(); // ✅ 삭제 후 현재 페이지 지도 갱신
         toast("페이지 삭제");
       });
 
@@ -1207,7 +1208,7 @@
     saveLocal();
     renderPages();
     renderKpi();
-    draw();
+    loadMap(); // ✅ 추가 후 현재 페이지 지도 갱신
     toast("페이지 추가");
   });
 
@@ -1317,8 +1318,34 @@
   }
 
   function loadMap(){
+    // ✅ 현재 페이지 URL이 있으면 그걸 최우선으로 사용
+    const curPage = S.pages.find(p => p.id === S.currentPageId);
+    const pageUrl = (curPage?.url || "").trim();
+
+    if(pageUrl){
+      mapImg = new Image();
+      mapImg.crossOrigin = "anonymous";
+      mapImg.onload = ()=>{
+        S.map.naturalW = mapImg.naturalWidth || 1;
+        S.map.naturalH = mapImg.naturalHeight || 1;
+
+        fitToScreen();
+        saveLocal();
+        draw();
+        renderKpi();
+      };
+      mapImg.onerror = ()=>{
+        toast("지도 URL 로드 실패");
+        draw();
+      };
+      mapImg.src = pageUrl;
+      return;
+    }
+
+    // ✅ 페이지 URL이 없으면 업로드(DataURL) 지도 사용
     if(S.map.imgDataUrl){
       mapImg = new Image();
+      mapImg.crossOrigin = "anonymous";
       mapImg.onload = ()=>{
         S.map.naturalW = mapImg.naturalWidth || 1;
         S.map.naturalH = mapImg.naturalHeight || 1;
@@ -1328,6 +1355,7 @@
       mapImg.src = S.map.imgDataUrl;
       return;
     }
+
     // placeholder
     mapImg = new Image();
     mapImg.onload = ()=>draw();
@@ -1340,7 +1368,7 @@
           </radialGradient>
         </defs>
         <rect width="100%" height="100%" fill="url(#g)"/>
-        <text x="50%" y="50%" text-anchor="middle" font-family="Arial" font-size="28" fill="#7a889e">지도 업로드 또는 state99.json 필요</text>
+        <text x="50%" y="50%" text-anchor="middle" font-family="Arial" font-size="28" fill="#7a889e">페이지 URL 또는 지도 업로드가 필요</text>
       </svg>`
     );
   }
@@ -1350,14 +1378,13 @@
     requireAuth();
     if(!isAuthed()) return;
 
-    // index에서 원격(state99.json) 읽을 수 있도록: 사용자가 /data/state99.json으로 업로드하면 됨
     const blob = new Blob([JSON.stringify(S, null, 2)], {type:"application/json"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "state.json";
     a.click();
     URL.revokeObjectURL(a.href);
-    toast("state99.json 다운로드");
+    toast("state.json 다운로드");
   });
 
   $("btnResetAll").addEventListener("click", ()=>{
