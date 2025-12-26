@@ -164,6 +164,44 @@
       pointer-events:none;
     }
 
+    /* ✅ (7) 상단 4슬롯: 활성/비활성 체크 버튼 */
+    .gameSlot.gameItem{
+      justify-content:space-between;
+      padding:0 10px;
+      gap:10px;
+      min-width:0;
+    }
+    .gameSlot.gameItem .gNm{
+      flex:1 1 auto;
+      min-width:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      font-weight:900;
+    }
+    .gEnBtn{
+      flex:0 0 auto;
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(10,15,24,.35);
+      color: rgba(231,238,248,.92);
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900;
+      font-size:14px;
+      padding:0;
+      user-select:none;
+    }
+    .gEnBtn.off{
+      opacity:.75;
+      border-color: rgba(255,93,93,.45);
+    }
+    .gameSlot.gameItem.off{
+      opacity:.62;
+    }
+
     /* ✅ 게임 드롭다운 */
     .gameDropWrap{
       position:fixed;
@@ -205,6 +243,9 @@
       border-color: rgba(124,196,255,.45);
       background: rgba(14,22,38,.55);
     }
+    .gRow.off{
+      opacity:.65;
+    }
     .gRow .nm{
       font-weight:900;
       font-size:14px;
@@ -234,6 +275,7 @@
     .miniBtn.url{ border-color: rgba(57,217,138,.55); }
     .miniBtn.edit{ border-color: rgba(124,196,255,.55); }
     .miniBtn.del{ border-color: rgba(255,93,93,.55); }
+    .miniBtn.en{ border-color: rgba(255,214,10,.55); }
 
     .top-right{ flex-wrap:wrap; justify-content:flex-end; }
     .top-right .pill{ flex: 0 0 auto; }
@@ -702,19 +744,19 @@
 
       <!-- ✅ (2) 상단 게임 슬롯 4칸 표시 -->
       <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
-        <div class="gameSlot active" id="gSlot1" title="게임 선택 / 클릭하여 관리">아이온2</div>
+        <div class="gameSlot gameItem active" id="gSlot1" title="게임 선택 / 클릭하여 관리">아이온2</div>
       </div>
 
       <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
-        <div class="gameSlot static" id="gSlot2" title="(표시용 슬롯)">패스오브엑자일</div>
+        <div class="gameSlot gameItem" id="gSlot2" title="게임 선택 / 클릭하여 관리">패스오브엑자일</div>
       </div>
 
       <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
-        <div class="gameSlot static" id="gSlot3" title="(표시용 슬롯)">추가</div>
+        <div class="gameSlot gameItem" id="gSlot3" title="게임 선택 / 클릭하여 관리">추가</div>
       </div>
 
       <div class="slot fixed" style="padding:0; border:none; background:transparent; box-shadow:none;">
-        <div class="gameSlot static" id="gSlot4" title="(표시용 슬롯)">추가</div>
+        <div class="gameSlot gameItem" id="gSlot4" title="게임 선택 / 클릭하여 관리">추가</div>
       </div>
 
       <!-- Admin label -->
@@ -909,7 +951,8 @@
           <div class="styleCard">
             <h4>원 크기 <span class="subtle" style="float:right;">px</span></h4>
             <div class="rangeRow">
-              <input type="range" id="mfR" min="4" max="40" step="1" />
+              <!-- ✅ (2) mfR 최소값 범위 확장: 기존 최소(4) 대비 50% 더 작게(2) -->
+              <input type="range" id="mfR" min="2" max="40" step="1" />
               <div class="numBox" id="mfRVal">10</div>
             </div>
             <div class="subtle" style="margin-top:10px;">* 원 크기 변경 시 글씨 크기가 같은 비율로 자동 변경됩니다.</div>
@@ -1069,6 +1112,9 @@
 
   // game dropdown
   const gSlot1 = $("gSlot1");
+  const gSlot2 = $("gSlot2");
+  const gSlot3 = $("gSlot3");
+  const gSlot4 = $("gSlot4");
   const gameDropWrap = $("gameDropWrap");
   const gameDropList = $("gameDropList");
   const btnAddGameDrop = $("btnAddGameDrop");
@@ -1334,31 +1380,93 @@
     toast("로고 설정 저장");
   });
 
+  // ---------- games helpers (enabled flag via string suffix) ----------
+  function parseGameRaw(raw){
+    const s = String(raw ?? "");
+    const m = s.match(/^(.*)\|([01])$/);
+    if(m){
+      return { raw:s, name:m[1], enabled: m[2] === "1" };
+    }
+    return { raw:s, name:s, enabled:true };
+  }
+  function buildGameRaw(name, enabled){
+    const nm = String(name ?? "").trim();
+    if(!nm) return "";
+    return enabled ? nm : (nm + "|0");
+  }
+  function setGameRawAtIndex(i, newRaw){
+    if(i < 0 || i >= (S.games||[]).length) return;
+    const prevRaw = S.games[i];
+    S.games[i] = newRaw;
+    if(S.game === prevRaw) S.game = newRaw;
+  }
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#39;");
+  }
+
   // ---------- games dropdown ----------
-  function setGameActive(name){
-    S.game = name;
-    $("pathGameTop").textContent = S.game;
-    $("pathGame").textContent = S.game;
+  function setGameActive(raw){
+    S.game = raw;
+    $("pathGameTop").textContent = parseGameRaw(S.game).name || "아이온2";
+    $("pathGame").textContent = parseGameRaw(S.game).name || "아이온2";
     saveLocal();
     renderGamesTop();
     toast("게임 변경");
   }
 
   function renderGamesTop(){
-    gSlot1.textContent = S.game || "아이온2";
-    gSlot1.classList.toggle("active", true);
-    $("pathGameTop").textContent = S.game;
-    $("pathGame").textContent = S.game;
+    const slots = [gSlot1,gSlot2,gSlot3,gSlot4];
+    for(let i=0;i<slots.length;i++){
+      const el = slots[i];
+      const raw = (S.games && S.games[i]) ? S.games[i] : "";
+      if(raw){
+        const info = parseGameRaw(raw);
+        el.classList.toggle("active", raw === S.game);
+        el.classList.toggle("off", !info.enabled);
+        el.innerHTML = `
+          <span class="gNm" title="${escapeHtml(info.name)}">${escapeHtml(info.name)}</span>
+          <button class="gEnBtn${info.enabled ? "" : " off"}" type="button" title="활성/비활성">${info.enabled ? "✓" : "–"}</button>
+        `;
+      }else{
+        el.classList.remove("active");
+        el.classList.add("off");
+        el.innerHTML = `
+          <span class="gNm" style="opacity:.7;">추가</span>
+          <button class="gEnBtn off" type="button" title="비활성" disabled>–</button>
+        `;
+      }
+    }
+    $("pathGameTop").textContent = parseGameRaw(S.game).name || "아이온2";
+    $("pathGame").textContent = parseGameRaw(S.game).name || "아이온2";
+  }
+
+  function toggleGameEnabledByRaw(raw){
+    const idx = (S.games||[]).indexOf(raw);
+    if(idx < 0) return;
+    const info = parseGameRaw(raw);
+    const nextRaw = buildGameRaw(info.name, !info.enabled);
+    setGameRawAtIndex(idx, nextRaw);
+    saveLocal();
+    renderGamesTop();
+    renderGameDropList();
+    toast(!info.enabled ? "활성화" : "비활성화");
   }
 
   function renderGameDropList(){
     gameDropList.innerHTML = "";
-    for(const g of S.games){
+    for(const g of (S.games||[])){
+      const info = parseGameRaw(g);
       const row = document.createElement("div");
-      row.className = "gRow" + (g===S.game ? " active" : "");
+      row.className = "gRow" + (g===S.game ? " active" : "") + (!info.enabled ? " off" : "");
       row.innerHTML = `
-        <div class="nm" title="${String(g).replace(/"/g,'&quot;')}">${g}</div>
+        <div class="nm" title="${String(info.name).replace(/"/g,'&quot;')}">${escapeHtml(info.name)}</div>
         <div class="acts">
+          <button class="miniBtn icon en" type="button" title="활성/비활성">${info.enabled ? "✓" : "–"}</button>
           <button class="miniBtn icon edit" type="button" title="이름 편집">✎</button>
           <button class="miniBtn icon del" type="button" title="삭제">🗑</button>
         </div>
@@ -1375,8 +1483,14 @@
         draw();
       });
 
+      const bEn = row.querySelector(".en");
       const bEdit = row.querySelector(".edit");
       const bDel = row.querySelector(".del");
+
+      bEn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        toggleGameEnabledByRaw(g);
+      });
 
       bEdit.addEventListener("click", async (e)=>{
         e.stopPropagation();
@@ -1385,20 +1499,28 @@
           title: "게임 이름 편집",
           message: "게임 이름을 수정하세요.",
           placeholder: "예: 아이온2",
-          value: g,
+          value: info.name,
           okText: "저장",
           cancelText: "취소"
         });
         if(nn === null) return;
         const name = (nn||"").trim();
         if(!name) return;
-        if(S.games.includes(name) && name !== g){
+
+        const exists = (S.games||[]).some(x=>{
+          if(x === g) return false;
+          return parseGameRaw(x).name === name;
+        });
+        if(exists){
           toast("이미 존재하는 게임");
           return;
         }
-        const idx = S.games.indexOf(g);
-        if(idx>=0) S.games[idx] = name;
-        if(S.game === g) S.game = name;
+
+        const idx = (S.games||[]).indexOf(g);
+        if(idx>=0){
+          const nextRaw = buildGameRaw(name, info.enabled);
+          setGameRawAtIndex(idx, nextRaw);
+        }
         saveLocal();
         renderGamesTop();
         renderGameDropList();
@@ -1407,21 +1529,21 @@
 
       bDel.addEventListener("click", async (e)=>{
         e.stopPropagation();
-        if(S.games.length <= 1){
+        if((S.games||[]).length <= 1){
           toast("최소 1개 게임은 필요합니다");
           return;
         }
         const ok = await openPopConfirm({
           anchor: bDel,
           title: "게임 삭제",
-          message: `"${g}" 게임을 삭제할까요?\n(게임 목록에서만 제거됩니다)`,
+          message: `"${info.name}" 게임을 삭제할까요?\n(게임 목록에서만 제거됩니다)`,
           okText: "삭제",
           cancelText: "취소",
           danger: true
         });
         if(!ok) return;
 
-        S.games = S.games.filter(x=>x!==g);
+        S.games = (S.games||[]).filter(x=>x!==g);
         if(S.game === g) S.game = S.games[0] || "아이온2";
         saveLocal();
         renderGamesTop();
@@ -1433,10 +1555,12 @@
     }
   }
 
-  function placeGameDropUnderSlot(){
-    const anchor = gSlot1;
-    const r = anchor.getBoundingClientRect();
-    const w = Math.min((anchor.offsetWidth || r.width) + 20, window.innerWidth - 28);
+  let _gameDropAnchorEl = null;
+
+  function placeGameDropUnderSlot(anchor){
+    const anchorEl = anchor || gSlot1;
+    const r = anchorEl.getBoundingClientRect();
+    const w = Math.min((anchorEl.offsetWidth || r.width) + 20, window.innerWidth - 28);
     gameDropWrap.style.width = w + "px";
     const left = clamp(r.left, 14, window.innerWidth - w - 14);
     const top = r.bottom + 8;
@@ -1444,34 +1568,49 @@
     gameDropWrap.style.top = top + "px";
   }
 
-  function openGameDrop(){
+  function openGameDrop(anchor){
     requireAuth(); if(!isAuthed()) return;
+    _gameDropAnchorEl = anchor || gSlot1;
     renderGameDropList();
-    placeGameDropUnderSlot(); /* ✅ (4) 아이온2 슬롯 바로 아래 */
+    placeGameDropUnderSlot(_gameDropAnchorEl);
     gameDropWrap.classList.add("show");
   }
   function closeGameDrop(){
     gameDropWrap.classList.remove("show");
   }
-  function toggleGameDrop(){
+  function toggleGameDrop(anchor){
     if(gameDropWrap.classList.contains("show")) closeGameDrop();
-    else openGameDrop();
+    else openGameDrop(anchor);
   }
 
-  gSlot1.addEventListener("click", (e)=>{
-    requireAuth(); if(!isAuthed()) return;
-    toggleGameDrop();
-  });
+  function onTopSlotClickFactory(slotEl, slotIndex){
+    slotEl.addEventListener("click", (e)=>{
+      requireAuth(); if(!isAuthed()) return;
+      const btn = e.target.closest(".gEnBtn");
+      const raw = (S.games && S.games[slotIndex]) ? S.games[slotIndex] : "";
+      if(btn){
+        e.stopPropagation();
+        if(!raw) return;
+        toggleGameEnabledByRaw(raw);
+        return;
+      }
+      toggleGameDrop(slotEl);
+    });
+  }
+  onTopSlotClickFactory(gSlot1, 0);
+  onTopSlotClickFactory(gSlot2, 1);
+  onTopSlotClickFactory(gSlot3, 2);
+  onTopSlotClickFactory(gSlot4, 3);
 
   window.addEventListener("resize", ()=>{
-    if(gameDropWrap.classList.contains("show")) placeGameDropUnderSlot();
+    if(gameDropWrap.classList.contains("show")) placeGameDropUnderSlot(_gameDropAnchorEl || gSlot1);
   });
 
   // 바깥 클릭 / ESC 닫기
   document.addEventListener("mousedown", (e)=>{
     if(!gameDropWrap.classList.contains("show")) return;
     if(e.target.closest("#gameDropWrap")) return;
-    if(e.target.closest("#gSlot1")) return;
+    if(e.target.closest("#gSlot1") || e.target.closest("#gSlot2") || e.target.closest("#gSlot3") || e.target.closest("#gSlot4")) return;
     closeGameDrop();
   });
   window.addEventListener("keydown", (e)=>{
@@ -1492,12 +1631,16 @@
     if(nn === null) return;
     const name = (nn||"").trim();
     if(!name) return;
-    if(S.games.includes(name)){
+
+    const exists = (S.games||[]).some(x=>parseGameRaw(x).name === name);
+    if(exists){
       toast("이미 존재하는 게임");
       return;
     }
-    S.games.push(name);
-    S.game = name;
+
+    const raw = buildGameRaw(name, true);
+    S.games.push(raw);
+    S.game = raw;
     saveLocal();
     renderGamesTop();
     renderGameDropList();
@@ -1838,7 +1981,13 @@
     const allOn = onCats.has("전체");
     return (S.markers||[]).filter(m=>{
       if(m.pageId !== curPage) return false;
-      if(allOn) return true;
+
+      // ✅ (6) "전체"가 ON이어도 개별 카테고리 OFF가 항상 우선
+      if(allOn){
+        const c = getCat(m.cat);
+        if(c && c.on === false) return false;
+        return true;
+      }
       return onCats.has(m.cat);
     }).sort((a,b)=>(a.order||0)-(b.order||0));
   }
@@ -1920,19 +2069,37 @@
   // ---------- auto label (체인 1번 텍스트 기반) ----------
   function splitBaseAndNumber(name){
     const s = (name||"").trim();
-    const m = s.match(/^(.*?)(\d+)$/);
-    if(!m) return { base:s, hasNum:false, num:null };
-    const base = (m[1]||"").trim();
-    const num = parseInt(m[2], 10);
-    if(!base) return { base:s, hasNum:false, num:null };
-    if(!Number.isFinite(num)) return { base:s, hasNum:false, num:null };
-    return { base, hasNum:true, num };
+
+    // ✅ (5) "1번 깃털" / "12번 ㅇㅇ" 패턴: 맨 앞 숫자 + (공백) + 번 + 나머지
+    const mFront = s.match(/^(\s*)(\d+)(\s*)번(.*)$/);
+    if(mFront){
+      const num = parseInt(mFront[2], 10);
+      if(Number.isFinite(num)) return { kind:"front_bun", pre:mFront[1]||"", num, mid:mFront[3]||"", rest:mFront[4]||"" };
+    }
+
+    // ✅ (5) 끝 숫자 패턴: "깃털1", "깃털 1"
+    const mTail = s.match(/^(.*?)(\d+)(\s*)$/);
+    if(mTail){
+      const num = parseInt(mTail[2], 10);
+      if(Number.isFinite(num)) return { kind:"tail", base:(mTail[1]||""), num, tailSpace:(mTail[3]||"") };
+    }
+
+    return { kind:"none", raw:s };
   }
   function makeAutoNameFromLeader(leaderName, idx){
     const info = splitBaseAndNumber(leaderName);
-    if(info.hasNum){
-      return `${info.base}${idx}`;
+    const leaderIdx = 1;
+    const delta = Math.max(0, (idx||1) - leaderIdx);
+
+    if(info.kind === "front_bun"){
+      const nextNum = info.num + delta;
+      return `${info.pre}${nextNum}${info.mid}번${info.rest}`;
     }
+    if(info.kind === "tail"){
+      const nextNum = info.num + delta;
+      return `${info.base}${nextNum}${info.tailSpace}`;
+    }
+
     return `${(leaderName||"").trim()}${idx}`;
   }
   function applyAutoNamesForChainOnPage(pageId, chainId){
@@ -2021,7 +2188,9 @@
 
         ctx.save();
         ctx.globalAlpha = 0.92;
-        ctx.lineWidth = 2 / S.map.scale;
+
+        const lineW = 2 / S.map.scale;
+        ctx.lineWidth = lineW;
         ctx.strokeStyle = "rgba(255,255,255,.78)";
         ctx.fillStyle = "rgba(255,255,255,.78)";
         ctx.beginPath();
@@ -2033,18 +2202,25 @@
         ctx.stroke();
 
         const arrowSize = 14 / S.map.scale;
+
         for(let i=0;i<ms.length-1;i++){
           const a = worldFromNorm(ms[i].x, ms[i].y);
           const b = worldFromNorm(ms[i+1].x, ms[i+1].y);
+          const ar = (ms[i].r ?? 10);
           const br = (ms[i+1].r ?? 10);
+
           const dx = b.x-a.x, dy = b.y-a.y;
           const len = Math.hypot(dx,dy);
           if(len < 1e-6) continue;
           const ux = dx/len, uy = dy/len;
-          const endX = b.x - ux*(br + 3);
-          const endY = b.y - uy*(br + 3);
-          const startX = a.x + ux*( (ms[i].r ?? 10) + 3 );
-          const startY = a.y + uy*( (ms[i].r ?? 10) + 3 );
+
+          // ✅ (3) 화살표 끝이 다음 마커 원 테두리에 정확히 닿도록 (stroke 반영, +3 제거)
+          const halfStroke = (lineW * 0.5);
+          const endX = b.x - ux*(br + halfStroke);
+          const endY = b.y - uy*(br + halfStroke);
+          const startX = a.x + ux*(ar + halfStroke);
+          const startY = a.y + uy*(ar + halfStroke);
+
           if(Math.hypot(endX-startX, endY-startY) < 10) continue;
           drawArrowheadWorld(startX, startY, endX, endY, arrowSize);
         }
@@ -2069,17 +2245,20 @@
       ctx.stroke();
       ctx.restore();
 
-      // ✅ (5) 숫자 폰트는 r와 항상 같은 비율로 스케일 (줌 시 튀어나옴 방지)
+      // ✅ (1) 숫자(fontSize)는 원(r)과 동일 스케일 비율로 항상 동기화 + 중앙 유지 (축소 시 튀어나옴 방지)
       const num = (typeof m.chainIndex === "number" && m.chainIndex > 0) ? String(m.chainIndex) : "";
       if(num){
-        const numFs = Math.max(10, Math.round(r * 1.25));
+        const digits = num.length;
+        const ratio = (digits===1) ? 1.20 : (digits===2 ? 1.00 : 0.86);
+        const numFs = Math.max(1, Math.round(r * ratio));
+
         ctx.save();
         ctx.globalAlpha = 0.98;
         ctx.fillStyle = "rgba(0,0,0,.75)";
         ctx.font = `${m.fw ?? 900} ${numFs}px ui-sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(num, p.x, p.y + 0.5);
+        ctx.fillText(num, p.x, p.y);
         ctx.restore();
       }
 
@@ -2577,7 +2756,7 @@
   $("mfR").addEventListener("input", ()=>{
     $("mfRVal").textContent = $("mfR").value;
     const r = Number($("mfR").value);
-    // ✅ (6) 범위 변경에 맞춰 clamp 조정 (4~80)
+    // ✅ (2) 범위 확장에 맞춰 clamp 조정 (2~80)
     const fs = clamp(Math.round(r * 1.5), 4, 80);
     $("mfFs").value = fs;
     $("mfFsVal").textContent = fs;
@@ -2617,6 +2796,7 @@
     renumberPage(m.pageId);
     recomputeChainIndices(m.pageId);
 
+    // ✅ (4) 카테고리 1번 기준 스타일 전파 강제: 저장 즉시 동기화
     applyCatLeaderStyle(m.pageId, prevCat);
     applyCatLeaderStyle(m.pageId, m.cat);
 
