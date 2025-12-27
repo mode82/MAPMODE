@@ -1,98 +1,2460 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MAPMODE · ADMIN</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>MAPMODE · ADMIN99</title>
+
   <style>
-    :root {
+    :root{
       color-scheme: dark;
-      --bg: #070b12;
-      --panel: #0b1220cc;
-      --card: #0e1626cc;
-      --stroke: #1f2a3a;
-      --text: #e7eef8;
-      --muted: #9fb0c6;
-      --accent: #7cc4ff;
-      --danger: #ff5d5d;
-      --ok: #39d98a;
-      --warn: #ffd60a;
-      --r14: 14px;
-      --r16: 16px;
-      --r18: 18px;
+
+      --bg:#070b12;
+      --panel:#0b1220cc;
+      --card:#0e1626cc;
+      --stroke:#1f2a3a;
+      --stroke2:#27344a;
+
+      --text:#e7eef8;
+      --muted:#9fb0c6;
+
+      --accent:#7cc4ff;
+      --danger:#ff5d5d;
+      --ok:#39d98a;
+      --warn:#ffd60a;
+
+      --r12:12px;
+      --r14:14px;
+      --r16:16px;
+      --r18:18px;
+
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --shadow2: 0 8px 24px rgba(0,0,0,.35);
+      --blur: 14px;
+
+      --topH: 58px;
+      --leftW: 300px;
+      --rightW: 330px;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
     }
-    body {
-      background-color: var(--bg);
+
+    html,body{ height:100%; margin:0; background:radial-gradient(1200px 700px at 20% 0%, #0d1630 0%, rgba(13,22,48,0) 60%) , var(--bg); color:var(--text); font-family:var(--font); }
+    *{ box-sizing:border-box; }
+    a{ color:var(--accent); text-decoration:none; }
+    button, input, select, textarea{ font-family:inherit; }
+
+    .app{
+      position:fixed; inset:0;
+      display:grid;
+      grid-template-rows: var(--topH) 1fr;
+      grid-template-columns: var(--leftW) 1fr var(--rightW);
+      gap:12px;
+      padding:12px;
+      padding-top: calc(12px + env(safe-area-inset-top));
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      padding-left: calc(12px + env(safe-area-inset-left));
+      padding-right: calc(12px + env(safe-area-inset-right));
+    }
+
+    .topbar{
+      grid-column: 1 / 4;
+      height:var(--topH);
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(11,18,32,.85), rgba(11,18,32,.65));
+      backdrop-filter: blur(var(--blur));
+      border-radius: var(--r18);
+      box-shadow: var(--shadow2);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 12px;
+      overflow:hidden;
+      min-width:0;
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width: 230px;
+      border-right: 1px solid rgba(255,255,255,.06);
+      padding-right: 12px;
+    }
+    .logoBox{
+      width:38px; height:38px; border-radius: 12px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.04);
+      display:grid; place-items:center;
+      overflow:hidden;
+      cursor:pointer;
+      flex: 0 0 auto;
+    }
+    .logoBox img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .brandMeta{ display:flex; flex-direction:column; line-height:1.1; min-width:0; }
+    .brandTitle{ font-weight:800; letter-spacing:.2px; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .brandSub{ font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    .topGroup{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+      flex: 1 1 auto;
+    }
+
+    .pill{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      border-radius: 999px;
+      padding: 6px 10px;
+      display:flex; align-items:center; gap:8px;
+      min-width:0;
+    }
+    .pill label{ font-size:12px; color:var(--muted); white-space:nowrap; }
+    .pill .mini{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.25);
+      color:var(--text);
+      border-radius: 10px;
+      padding: 6px 8px;
+      font-size:12px;
+      outline:none;
+      width: 260px;
+      max-width: 38vw;
+    }
+
+    .btn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
       color: var(--text);
-      font-family: Arial, sans-serif;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size:12px;
+      cursor:pointer;
+      transition: transform .06s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      white-space:nowrap;
     }
-    /* Add other styling like layout for sidebar, buttons, and map */
+    .btn:hover{ background: rgba(255,255,255,.10); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{ border-color: rgba(124,196,255,.35); background: rgba(124,196,255,.10); }
+    .btn.ok{ border-color: rgba(57,217,138,.35); background: rgba(57,217,138,.10); }
+    .btn.warn{ border-color: rgba(255,214,10,.35); background: rgba(255,214,10,.10); }
+    .btn.danger{ border-color: rgba(255,93,93,.55); background: rgba(255,93,93,.10); }
+    .btn.small{ padding:6px 8px; border-radius: 10px; }
+    .btn.tiny{ padding:4px 7px; border-radius: 9px; font-size:11px; }
+
+    .authBox{
+      display:flex; align-items:center; gap:8px;
+      margin-left:auto;
+      padding-left:12px;
+      border-left:1px solid rgba(255,255,255,.06);
+    }
+    .authState{
+      font-size:12px; color:var(--muted);
+      display:flex; align-items:center; gap:6px;
+      white-space:nowrap;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px; background: rgba(255,93,93,.9);
+      box-shadow: 0 0 0 3px rgba(255,93,93,.12);
+    }
+    .dot.ok{
+      background: rgba(57,217,138,.95);
+      box-shadow: 0 0 0 3px rgba(57,217,138,.14);
+    }
+
+    .panel{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(11,18,32,.82), rgba(11,18,32,.62));
+      backdrop-filter: blur(var(--blur));
+      border-radius: var(--r18);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .panelHead{
+      padding:10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .panelHead .title{
+      font-weight:800; letter-spacing:.2px; font-size:13px;
+      display:flex; align-items:center; gap:8px;
+      min-width:0;
+    }
+    .panelHead .subtitle{
+      font-size:12px; color:var(--muted);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .panelBody{
+      padding:12px;
+      overflow:auto;
+      min-height:0;
+    }
+
+    .left{ grid-row: 2; grid-column: 1; }
+    .right{ grid-row: 2; grid-column: 3; }
+    .center{
+      grid-row: 2; grid-column: 2;
+      position:relative;
+      border-radius: var(--r18);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow: var(--shadow2);
+      background:
+        radial-gradient(1000px 600px at 30% 10%, rgba(124,196,255,.10), rgba(124,196,255,0) 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(255,214,10,.07), rgba(255,214,10,0) 60%),
+        rgba(0,0,0,.18);
+      min-width:0;
+      min-height:0;
+    }
+
+    canvas{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      display:block;
+      touch-action: none;
+      user-select:none;
+      -webkit-user-select:none;
+    }
+
+    .hintBar{
+      position:absolute; left:12px; bottom:12px;
+      display:flex; gap:10px; align-items:center;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(10,15,24,.55);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      box-shadow: var(--shadow2);
+      color: var(--muted);
+      font-size:12px;
+      pointer-events:none;
+    }
+
+    .list{
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .card{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      border-radius: 16px;
+      padding:10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.20);
+    }
+    .row{
+      display:flex; gap:8px; align-items:center;
+      flex-wrap:wrap;
+    }
+    .row.nowrap{ flex-wrap:nowrap; }
+    .row > *{ min-width:0; }
+    .grow{ flex:1 1 auto; min-width:0; }
+    .muted{ color:var(--muted); font-size:12px; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+    .inp, .sel, .ta{
+      width:100%;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.26);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size:12px;
+      outline:none;
+    }
+    .ta{ min-height:72px; resize: vertical; }
+    .inp:focus, .sel:focus, .ta:focus{ border-color: rgba(124,196,255,.35); box-shadow: 0 0 0 4px rgba(124,196,255,.10); }
+
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      padding:6px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .chip.on{
+      border-color: rgba(124,196,255,.35);
+      background: rgba(124,196,255,.10);
+    }
+    .swatch{
+      width:12px; height:12px; border-radius: 4px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.22);
+    }
+
+    .divider{ height:1px; background: rgba(255,255,255,.06); margin:10px 0; }
+
+    .pageBtn{
+      display:flex; align-items:center; gap:8px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      border-radius: 14px;
+      padding:10px;
+      cursor:pointer;
+      transition: background .12s ease, border-color .12s ease;
+    }
+    .pageBtn:hover{ background: rgba(255,255,255,.08); }
+    .pageBtn.active{
+      border-color: rgba(124,196,255,.40);
+      background: rgba(124,196,255,.12);
+    }
+    .pageBtn .name{ font-weight:800; font-size:12px; }
+    .pageBtn .url{ font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    .miniTools{
+      display:flex; gap:6px; align-items:center;
+    }
+
+    .modalBack{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index: 50;
+    }
+    .modal{
+      width:min(860px, 96vw);
+      max-height: min(86vh, 820px);
+      overflow:hidden;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(14,22,38,.92), rgba(14,22,38,.78));
+      box-shadow: 0 24px 90px rgba(0,0,0,.55);
+      display:flex;
+      flex-direction:column;
+    }
+    .modalHead{
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .modalHead .t{ font-weight:900; font-size:13px; letter-spacing:.2px; }
+    .modalBody{
+      padding:14px;
+      overflow:auto;
+      min-height:0;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .grid3{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:12px;
+    }
+
+    .palette{
+      display:flex; gap:6px; flex-wrap:wrap;
+    }
+    .pbtn{
+      width:26px; height:26px; border-radius: 10px;
+      border:1px solid rgba(255,255,255,.12);
+      cursor:pointer;
+      background: rgba(255,255,255,.10);
+      display:inline-block;
+    }
+
+    @media (max-width: 1180px){
+      :root{ --leftW: 280px; --rightW: 320px; }
+      .pill .mini{ width: 220px; }
+    }
+    @media (max-width: 1040px){
+      :root{ --leftW: 270px; --rightW: 310px; }
+    }
+    @media (max-width: 920px){
+      :root{ --leftW: 260px; --rightW: 300px; }
+      .pill .mini{ width: 180px; }
+    }
   </style>
 </head>
 <body>
-  <div id="app">
-    <!-- Add Header, Sidebars, Main Content -->
-    <header>
-      <button id="loginButton">로그인</button>
-      <!-- Add Logo, Category Management, Export JSON, Reset -->
-    </header>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logoBox" id="logoBox" title="로고 클릭 → 로고 URL 등록">
+          <img id="logoImg" alt="logo" />
+        </div>
+        <div class="brandMeta">
+          <div class="brandTitle">MAPMODE · ADMIN99</div>
+          <div class="brandSub" id="pathHint" class="mono">/aion2/admin.html → ./data/state.json</div>
+        </div>
+      </div>
 
-    <!-- Admin Left Sidebar: Page Management -->
-    <aside id="leftSidebar">
-      <!-- Add URL input, page list, add/delete page -->
-    </aside>
+      <div class="topGroup">
+        <div class="pill">
+          <label>로고 URL</label>
+          <input id="logoUrlInput" class="mini" placeholder="https://.../assets/logo/MAPMODELOGO2.png" />
+          <button class="btn small" id="logoApplyBtn">적용</button>
+        </div>
 
-    <!-- Admin Right Sidebar: Marker Category & Tools -->
-    <aside id="rightSidebar">
-      <!-- Add Category Edit, Color Picker, Marker Control -->
-    </aside>
+        <button class="btn primary" id="exportBtn">state.json 내보내기</button>
+        <button class="btn danger" id="resetAllBtn">전체 초기화</button>
 
-    <main id="mapContainer">
-      <canvas id="mapCanvas"></canvas>
-      <!-- Add Map Elements, Markers, Tool Functions -->
-    </main>
+        <div class="authBox">
+          <div class="authState" id="authState">
+            <span class="dot" id="authDot"></span>
+            <span id="authText">관리자 잠김</span>
+          </div>
+          <button class="btn ok" id="loginBtn">관리자 로그인</button>
+          <button class="btn" id="logoutBtn" style="display:none;">로그아웃</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel left">
+      <div class="panelHead">
+        <div class="title">
+          <span>좌측 메뉴바</span>
+          <span class="subtitle" id="whereAmI">현재: -</span>
+        </div>
+        <button class="btn small" id="addPageBtn">페이지 추가</button>
+      </div>
+      <div class="panelBody">
+        <div class="card" style="margin-bottom:10px;">
+          <div class="row" style="justify-content:space-between;">
+            <div class="muted">페이지 목록 (버튼 UI)</div>
+            <div class="muted mono" id="pageCount">0</div>
+          </div>
+          <div class="divider"></div>
+          <div id="pageList" class="list"></div>
+        </div>
+
+        <div class="card">
+          <div class="row" style="justify-content:space-between;">
+            <div class="muted">상단 카테고리 1~4 (게임/항목)</div>
+            <button class="btn tiny" id="openTopCatsBtn">편집</button>
+          </div>
+          <div class="divider"></div>
+          <div id="topCatsPreview" class="list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="center">
+      <canvas id="cv"></canvas>
+      <div class="hintBar" id="hintBar">
+        <span>좌클릭 드래그: 지도 이동</span>
+        <span>·</span>
+        <span>좌클릭 마커: 불투명 30% 토글</span>
+        <span>·</span>
+        <span>마커 더블클릭: 편집</span>
+        <span>·</span>
+        <span>우클릭: 마커 추가(번호/선/화살표)</span>
+        <span>·</span>
+        <span>선/마커 드래그: 곡선/위치 조정</span>
+      </div>
+    </div>
+
+    <div class="panel right">
+      <div class="panelHead">
+        <div class="title">
+          <span>우측 메뉴바</span>
+          <span class="subtitle" id="selInfo">선택 마커: -</span>
+        </div>
+        <button class="btn tiny" id="openCatEditorBtn">카테고리/색상 편집</button>
+      </div>
+      <div class="panelBody">
+        <div class="card">
+          <div class="row" style="justify-content:space-between;">
+            <div class="muted">마커 카테고리 (전체/추가/활성)</div>
+            <button class="btn tiny" id="addMarkerCatBtn">카테고리 추가</button>
+          </div>
+          <div class="divider"></div>
+          <div id="markerCatList" class="list"></div>
+        </div>
+
+        <div class="card" style="margin-top:10px;">
+          <div class="row" style="justify-content:space-between;">
+            <div class="muted">관리자 툴</div>
+            <div class="miniTools">
+              <button class="btn tiny" id="showAllLinesBtn">모든 선 표시</button>
+              <button class="btn tiny" id="hideAllLinesBtn">모든 선 제거</button>
+            </div>
+          </div>
+          <div class="divider"></div>
+
+          <div class="row" style="gap:8px;">
+            <div class="muted" style="min-width:92px;">빠른 색상</div>
+            <div class="palette" id="quickPalette"></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row" style="gap:8px;">
+            <button class="btn danger" id="resetMarkersBtn" style="flex:1;">마커 초기화</button>
+            <button class="btn" id="toggleNumbersBtn" style="flex:1;">마커 숫자 가리기</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row" style="gap:8px;">
+            <button class="btn primary" id="openMarkerEditorBtn" style="flex:1;">마커 편집</button>
+            <button class="btn" id="focusSelectedBtn" style="flex:1;">선택 마커로 이동</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:10px;">
+          <div class="row" style="justify-content:space-between;">
+            <div class="muted">유튜브 링크</div>
+            <button class="btn tiny" id="applyYoutubePanelBtn">적용</button>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <div class="muted" style="min-width:110px;">유튜브 표시명</div>
+            <input id="ytDisplayInput" class="inp" placeholder="인덱스에서 보이는 이름" />
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <div class="muted" style="min-width:110px;">설명</div>
+            <input id="ytDescInput" class="inp" placeholder="설명 텍스트" />
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <div class="muted" style="min-width:110px;">링크 URL</div>
+            <input id="ytUrlInput" class="inp" placeholder="https://youtube.com/..." />
+          </div>
+          <div class="divider"></div>
+          <div class="muted">선택 마커에만 적용됩니다.</div>
+        </div>
+
+        <div class="card" style="margin-top:10px;">
+          <div class="row" style="justify-content:space-between;">
+            <div class="muted">상태</div>
+            <button class="btn tiny" id="saveLocalBtn">로컬 저장</button>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <div class="muted" style="min-width:90px;">저장소</div>
+            <div class="grow muted mono" id="saveInfo">-</div>
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <button class="btn tiny" id="reloadRemoteBtn" style="flex:1;">remote(state.json) 재로드</button>
+            <button class="btn tiny" id="reloadLocalBtn" style="flex:1;">localStorage 재로드</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modalBack" id="loginBack">
+    <div class="modal" style="width:min(520px, 96vw);">
+      <div class="modalHead">
+        <div class="t">관리자 로그인</div>
+        <button class="btn small" id="loginCloseBtn">닫기</button>
+      </div>
+      <div class="modalBody">
+        <div class="card">
+          <div class="muted">비밀번호를 입력하세요 (24시간 인증 유지)</div>
+          <div class="divider"></div>
+          <div class="row">
+            <input id="pwInput" type="password" class="inp" placeholder="0000000001" />
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <button class="btn ok" id="loginSubmitBtn" style="flex:1;">로그인</button>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <div class="muted" id="loginMsg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Categories Modal -->
+  <div class="modalBack" id="topCatsBack">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="t">상단 카테고리 1~4 편집 (게임/항목)</div>
+        <div class="row">
+          <button class="btn small" id="topCatsSaveBtn">저장</button>
+          <button class="btn small" id="topCatsCloseBtn">닫기</button>
+        </div>
+      </div>
+      <div class="modalBody">
+        <div class="muted">각 카테고리는 독립 관리이며, 항목(게임)을 추가/삭제할 수 있습니다.</div>
+        <div class="divider"></div>
+        <div id="topCatsEditor" class="list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marker Category/Color Editor Modal -->
+  <div class="modalBack" id="catEditorBack">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="t">카테고리/색상 편집</div>
+        <div class="row">
+          <button class="btn small" id="catEditorSaveBtn">저장</button>
+          <button class="btn small" id="catEditorCloseBtn">닫기</button>
+        </div>
+      </div>
+      <div class="modalBody">
+        <div class="card">
+          <div class="row" style="justify-content:space-between;">
+            <div class="muted">빠른 색상표 (빨/주/노/초/파/흰/검)</div>
+          </div>
+          <div class="divider"></div>
+          <div class="palette" id="catEditorPalette"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="card">
+          <div class="row" style="justify-content:space-between;">
+            <div class="muted">마커 카테고리 목록</div>
+            <button class="btn tiny" id="catEditorAddBtn">카테고리 추가</button>
+          </div>
+          <div class="divider"></div>
+          <div id="catEditorList" class="list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marker Editor Modal -->
+  <div class="modalBack" id="markerEditorBack">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="t">마커 편집</div>
+        <div class="row">
+          <button class="btn small" id="markerEditorSaveBtn">저장</button>
+          <button class="btn small" id="markerEditorCloseBtn">닫기</button>
+        </div>
+      </div>
+      <div class="modalBody">
+        <div class="muted">더블클릭한 마커(또는 선택 마커)를 편집합니다.</div>
+        <div class="divider"></div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="muted">기본 정보</div>
+            <div class="divider"></div>
+
+            <div class="row">
+              <div class="muted" style="min-width:110px;">마커 이름</div>
+              <input id="meName" class="inp" placeholder="마커 이름" />
+            </div>
+
+            <div class="row" style="margin-top:8px;">
+              <div class="muted" style="min-width:110px;">카테고리</div>
+              <select id="meCat" class="sel"></select>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="row">
+              <div class="muted" style="min-width:110px;">유튜브 표시명</div>
+              <input id="meYtDisplay" class="inp" placeholder="인덱스 표시명" />
+            </div>
+            <div class="row" style="margin-top:8px;">
+              <div class="muted" style="min-width:110px;">유튜브 링크</div>
+              <input id="meYtUrl" class="inp" placeholder="https://youtube.com/..." />
+            </div>
+            <div class="row" style="margin-top:8px;">
+              <div class="muted" style="min-width:110px;">설명</div>
+              <input id="meYtDesc" class="inp" placeholder="설명 텍스트" />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="muted">스타일</div>
+            <div class="divider"></div>
+
+            <div class="grid3">
+              <div>
+                <div class="muted">원 크기(px 1~100)</div>
+                <input id="meSize" type="number" class="inp" min="1" max="100" />
+              </div>
+              <div>
+                <div class="muted">텍스트 크기</div>
+                <input id="meTextSize" type="number" class="inp" min="6" max="80" />
+              </div>
+              <div>
+                <div class="muted">텍스트 굵기</div>
+                <select id="meWeight" class="sel">
+                  <option value="400">400</option>
+                  <option value="500">500</option>
+                  <option value="600">600</option>
+                  <option value="700">700</option>
+                  <option value="800">800</option>
+                  <option value="900">900</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="row" style="gap:10px;">
+              <div class="muted" style="min-width:110px;">글씨 색상</div>
+              <input id="meTextColor" class="inp" placeholder="#ffffff 또는 rgb()" />
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+              <div class="muted" style="min-width:110px;">빠른 색상</div>
+              <div class="palette" id="mePalette"></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="muted">카테고리별 마커는 “카테고리 1번 마커 기준”으로 동일 색/크기를 유지합니다.<br/>이 편집에서 크기/색을 바꾸면 해당 카테고리 전체에 적용됩니다.</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="card">
+          <div class="row" style="justify-content:space-between;">
+            <div class="muted">번호 제어</div>
+            <div class="muted mono" id="meChainInfo">-</div>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <button class="btn warn" id="meStartNewChainBtn" style="flex:1;">새로운 번호로 시작</button>
+            <button class="btn" id="meContinueFromThisBtn" style="flex:1;">해당 마커를 이어서 시작</button>
+          </div>
+          <div class="divider"></div>
+          <div class="muted">우클릭으로 마커를 추가할 때, “현재 체인”에 번호 순서대로 연결됩니다.</div>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <script>
+    "use strict";
+
+    // ===== Fixed requirements =====
+    const PASSWORD = "0000000001";
+    const AUTH_MS = 24 * 60 * 60 * 1000;
     const LS_AUTH_KEY = "mapmode_admin_auth_v99";
     const LS_KEY = "mapmode_state_v99";
-    const PASSWORD = "0000000001";
+    const REMOTE_STATE_URL = new URL("./data/state.json", location.href);
 
-    function checkAuth() {
-      const auth = localStorage.getItem(LS_AUTH_KEY);
-      if (auth !== PASSWORD) {
-        alert("로그인 실패");
+    // ===== Quick palette (must include 빨/주/노/초/파/흰/검) =====
+    const QUICK_COLORS = [
+      {name:"red",   value:"#ff5d5d"},
+      {name:"orange",value:"#ff9f43"},
+      {name:"yellow",value:"#ffd60a"},
+      {name:"green", value:"#39d98a"},
+      {name:"blue",  value:"#7cc4ff"},
+      {name:"white", value:"#ffffff"},
+      {name:"black", value:"#0a0f18"},
+    ];
+
+    // ===== Utilities =====
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+    const now = () => Date.now();
+    const deepClone = (o) => JSON.parse(JSON.stringify(o));
+
+    function safeJsonParse(s, fallback=null){
+      try{ return JSON.parse(s); } catch(e){ return fallback; }
+    }
+
+    function downloadText(filename, text){
+      const blob = new Blob([text], {type:"application/json;charset=utf-8"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 300);
+    }
+
+    // ===== State schema =====
+    function defaultState(){
+      return {
+        v: "admin99",
+        updatedAt: now(),
+        logoUrl: "./../assets/logo/MAPMODELOGO2.png",
+        // Top categories (1~4): each independent with items (games)
+        topCats: [
+          { id:"top1", name:"카테고리1", items:[ {id:uid(), name:"게임1"}, {id:uid(), name:"게임2"} ] },
+          { id:"top2", name:"카테고리2", items:[ {id:uid(), name:"아이온2"} ] },
+          { id:"top3", name:"카테고리3", items:[ ] },
+          { id:"top4", name:"카테고리4", items:[ ] },
+        ],
+        // Pages (left sidebar)
+        pages: [
+          { id: uid(), name:"페이지1", url:"", gamePath:"게임1/페이지1" }
+        ],
+        currentPageId: null,
+
+        // Map config
+        map: {
+          imageUrl: "",
+          imgW: 0,
+          imgH: 0,
+          // viewport transform
+          panX: 0,
+          panY: 0,
+          zoom: 1,
+        },
+
+        // Marker categories (right)
+        markerCategories: [
+          {
+            id: uid(),
+            name: "기본",
+            color: "#7cc4ff",
+            visible: true,
+            hideNumber: false,
+            // defaults that apply to all markers in this category
+            defaults: {
+              size: 18,
+              textSize: 14,
+              weight: 800,
+              textColor: "#e7eef8",
+            }
+          }
+        ],
+        // Markers data in map coordinate space
+        markers: [
+          // {
+          //  id, pageId, catId, chainId, seq,
+          //  x,y (map coords),
+          //  name, ytDisplay, ytDesc, ytUrl,
+          // }
+        ],
+        // Per-chain control points for edges: edgeKey = `${pageId}:${chainId}:${fromId}->${toId}`
+        edges: {
+          // edgeKey: { cx, cy }  (map coords control point for quadratic curve)
+        },
+
+        // chain control: per page current chain id
+        chainByPage: {
+          // pageId: { currentChainId, continueFromMarkerId }
+        },
+
+        // UI toggles
+        ui: {
+          showAllLines: true,
+          dimOpacity: 0.3
+        }
+      };
+    }
+
+    // ===== Runtime =====
+    let state = defaultState();
+
+    // Auth
+    function isAuthed(){
+      const t = safeJsonParse(localStorage.getItem(LS_AUTH_KEY), null);
+      if(!t || !t.exp) return false;
+      return now() < t.exp;
+    }
+    function setAuth(on){
+      if(on){
+        localStorage.setItem(LS_AUTH_KEY, JSON.stringify({exp: now() + AUTH_MS}));
+      }else{
+        localStorage.removeItem(LS_AUTH_KEY);
+      }
+      renderAuth();
+      renderLockOverlay();
+    }
+    function renderAuth(){
+      const ok = isAuthed();
+      const dot = $("#authDot");
+      const text = $("#authText");
+      const loginBtn = $("#loginBtn");
+      const logoutBtn = $("#logoutBtn");
+      if(ok){
+        dot.classList.add("ok");
+        text.textContent = "관리자 인증됨";
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "";
+      }else{
+        dot.classList.remove("ok");
+        text.textContent = "관리자 잠김";
+        loginBtn.style.display = "";
+        logoutBtn.style.display = "none";
+      }
+    }
+
+    // Lock overlay behavior: still show UI but block edits
+    function requireAuthOrWarn(){
+      if(isAuthed()) return true;
+      openLoginModal();
+      return false;
+    }
+
+    // ===== Storage =====
+    function saveLocal(){
+      state.updatedAt = now();
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+      renderSaveInfo();
+    }
+    function loadLocal(){
+      const s = safeJsonParse(localStorage.getItem(LS_KEY), null);
+      if(s && typeof s === "object"){
+        state = s;
+        normalizeState();
+        onStateLoaded();
+        renderAll();
+        return true;
+      }
+      return false;
+    }
+    async function loadRemote(){
+      try{
+        const res = await fetch(REMOTE_STATE_URL.toString(), {cache:"no-store"});
+        if(!res.ok) throw new Error("HTTP " + res.status);
+        const json = await res.json();
+        if(!json || typeof json !== "object") throw new Error("Invalid JSON");
+        state = json;
+        normalizeState();
+        onStateLoaded();
+        renderAll();
+        renderSaveInfo("remote");
+        return true;
+      }catch(e){
+        renderSaveInfo("remote-fail");
         return false;
       }
-      return true;
     }
 
-    // Add canvas for the map with interactive markers
-    const canvas = document.getElementById("mapCanvas");
-    const ctx = canvas.getContext("2d");
+    function normalizeState(){
+      // Ensure required fields exist
+      if(!state) state = defaultState();
+      if(!state.v) state.v = "admin99";
+      if(!state.ui) state.ui = {showAllLines:true, dimOpacity:0.3};
+      if(!Array.isArray(state.topCats)) state.topCats = defaultState().topCats;
+      if(!Array.isArray(state.pages)) state.pages = [];
+      if(!state.currentPageId) state.currentPageId = (state.pages[0]?.id) || null;
+      if(!state.map) state.map = defaultState().map;
+      if(!Array.isArray(state.markerCategories) || state.markerCategories.length===0){
+        state.markerCategories = defaultState().markerCategories;
+      }
+      for(const c of state.markerCategories){
+        if(!c.defaults) c.defaults = deepClone(defaultState().markerCategories[0].defaults);
+        if(typeof c.visible !== "boolean") c.visible = true;
+        if(typeof c.hideNumber !== "boolean") c.hideNumber = false;
+        if(!c.color) c.color = "#7cc4ff";
+        if(!c.name) c.name = "카테고리";
+      }
+      if(!Array.isArray(state.markers)) state.markers = [];
+      if(!state.edges || typeof state.edges !== "object") state.edges = {};
+      if(!state.chainByPage || typeof state.chainByPage !== "object") state.chainByPage = {};
+      if(!state.logoUrl) state.logoUrl = "./../assets/logo/MAPMODELOGO2.png";
 
-    function initializeMap() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
+      // Ensure chain tracking exists for pages
+      for(const p of state.pages){
+        if(!state.chainByPage[p.id]){
+          state.chainByPage[p.id] = { currentChainId: uid(), continueFromMarkerId: null };
+        }else{
+          if(!state.chainByPage[p.id].currentChainId) state.chainByPage[p.id].currentChainId = uid();
+        }
+      }
+      // Remove chainByPage entries for deleted pages
+      for(const k of Object.keys(state.chainByPage)){
+        if(!state.pages.some(p=>p.id===k)) delete state.chainByPage[k];
+      }
 
-    window.onload = initializeMap;
-
-    // Admin tools for managing markers, categories, and tools
-    function handleLogin() {
-      const password = prompt("비밀번호를 입력하세요:");
-      if (password === PASSWORD) {
-        localStorage.setItem(LS_AUTH_KEY, PASSWORD);
-        alert("로그인 성공");
-      } else {
-        alert("비밀번호가 틀렸습니다.");
+      // Ensure marker pageId/catId valid
+      const catIds = new Set(state.markerCategories.map(c=>c.id));
+      const pageIds = new Set(state.pages.map(p=>p.id));
+      state.markers = state.markers.filter(m => pageIds.has(m.pageId));
+      for(const m of state.markers){
+        if(!catIds.has(m.catId)){
+          m.catId = state.markerCategories[0].id;
+        }
+        if(!m.id) m.id = uid();
+        if(!m.chainId) m.chainId = uid();
+        if(typeof m.seq !== "number") m.seq = 1;
+        if(typeof m.x !== "number") m.x = 0;
+        if(typeof m.y !== "number") m.y = 0;
+        if(!m.name) m.name = "";
+        if(m.ytDisplay==null) m.ytDisplay = "";
+        if(m.ytDesc==null) m.ytDesc = "";
+        if(m.ytUrl==null) m.ytUrl = "";
       }
     }
 
-    // Add function to reset map, add markers, and handle categories
-    // Update state.json export and page management logic
+    function onStateLoaded(){
+      // initialize current page
+      if(!state.currentPageId){
+        state.currentPageId = state.pages[0]?.id || null;
+      }
+      if(state.currentPageId && !state.pages.some(p=>p.id===state.currentPageId)){
+        state.currentPageId = state.pages[0]?.id || null;
+      }
+      // map image load if exists
+      if(state.pages.length && !state.currentPageId){
+        state.currentPageId = state.pages[0].id;
+      }
+      // ensure logo display
+      $("#logoUrlInput").value = state.logoUrl || "";
+      renderLogo();
+      // ensure map image based on current page url if set
+      syncMapUrlFromCurrentPage();
+    }
+
+    function renderSaveInfo(source){
+      const el = $("#saveInfo");
+      const ts = state?.updatedAt ? new Date(state.updatedAt).toLocaleString() : "-";
+      const local = !!localStorage.getItem(LS_KEY);
+      let s = `updatedAt: ${ts} · local: ${local ? "OK" : "없음"} · remote: ${REMOTE_STATE_URL.pathname}`;
+      if(source==="remote") s += " · (remote 로드됨)";
+      if(source==="remote-fail") s += " · (remote 로드 실패)";
+      el.textContent = s;
+    }
+
+    // ===== UI: Logo =====
+    function renderLogo(){
+      const img = $("#logoImg");
+      const url = state.logoUrl || "";
+      img.src = url || "";
+      img.onerror = () => { img.removeAttribute("src"); };
+    }
+
+    // ===== Pages =====
+    function addPage(){
+      if(!requireAuthOrWarn()) return;
+      const id = uid();
+      const n = state.pages.length + 1;
+      state.pages.push({ id, name: `페이지${n}`, url:"", gamePath:`게임1/페이지${n}` });
+      state.chainByPage[id] = { currentChainId: uid(), continueFromMarkerId: null };
+      state.currentPageId = id;
+      saveLocal();
+      renderAll();
+      syncMapUrlFromCurrentPage();
+    }
+
+    function deletePage(pageId){
+      if(!requireAuthOrWarn()) return;
+      state.pages = state.pages.filter(p => p.id !== pageId);
+      state.markers = state.markers.filter(m => m.pageId !== pageId);
+      for(const k of Object.keys(state.edges)){
+        if(k.startsWith(pageId + ":")) delete state.edges[k];
+      }
+      delete state.chainByPage[pageId];
+      if(state.currentPageId === pageId){
+        state.currentPageId = state.pages[0]?.id || null;
+      }
+      saveLocal();
+      renderAll();
+      syncMapUrlFromCurrentPage();
+    }
+
+    function updatePage(pageId, patch){
+      if(!requireAuthOrWarn()) return;
+      const p = state.pages.find(p=>p.id===pageId);
+      if(!p) return;
+      Object.assign(p, patch);
+      saveLocal();
+      renderAll();
+      syncMapUrlFromCurrentPage();
+    }
+
+    function setCurrentPage(pageId){
+      if(!pageId) return;
+      state.currentPageId = pageId;
+      // reset selection for safety
+      selectedMarkerId = null;
+      draggingMode = null;
+      saveLocal();
+      renderAll();
+      syncMapUrlFromCurrentPage();
+    }
+
+    function syncMapUrlFromCurrentPage(){
+      const p = state.pages.find(p=>p.id===state.currentPageId);
+      const url = p?.url || "";
+      if(url && state.map.imageUrl !== url){
+        state.map.imageUrl = url;
+        loadMapImage(url);
+      }else if(!url){
+        // keep current image if any, do not clear (safe)
+        if(!state.map.imageUrl){
+          mapImg = null;
+          state.map.imgW = 0; state.map.imgH = 0;
+        }
+        redraw();
+      }
+      renderWhereAmI();
+    }
+
+    function renderWhereAmI(){
+      const el = $("#whereAmI");
+      const p = state.pages.find(p=>p.id===state.currentPageId);
+      el.textContent = "현재: " + (p?.gamePath || "-");
+    }
+
+    // ===== Top categories editor =====
+    function renderTopCatsPreview(){
+      const wrap = $("#topCatsPreview");
+      wrap.innerHTML = "";
+      state.topCats.forEach((cat, idx)=>{
+        const c = document.createElement("div");
+        c.className = "card";
+        c.style.padding = "10px";
+        c.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <div><span class="muted">카테고리${idx+1}</span> <span style="font-weight:900;">${escapeHtml(cat.name||("카테고리"+(idx+1)))}</span></div>
+            <div class="muted mono">${cat.items?.length||0}</div>
+          </div>
+          <div class="divider"></div>
+          <div class="row" style="gap:6px;">
+            ${(cat.items||[]).slice(0,8).map(it=>`<span class="chip" style="cursor:default;"><span class="swatch" style="opacity:.0;border:none;"></span>${escapeHtml(it.name)}</span>`).join("")}
+            ${(cat.items||[]).length>8 ? `<span class="muted">+${(cat.items||[]).length-8}</span>` : ""}
+          </div>
+        `;
+        wrap.appendChild(c);
+      });
+    }
+
+    function openTopCatsModal(){
+      if(!requireAuthOrWarn()) return;
+      const back = $("#topCatsBack");
+      const editor = $("#topCatsEditor");
+      const temp = deepClone(state.topCats);
+
+      editor.innerHTML = "";
+      temp.forEach((cat, idx)=>{
+        const block = document.createElement("div");
+        block.className = "card";
+        block.innerHTML = `
+          <div class="row nowrap" style="justify-content:space-between;">
+            <div class="row grow" style="gap:10px;">
+              <div class="muted" style="min-width:92px;">카테고리${idx+1}</div>
+              <input class="inp grow" data-k="name" value="${escapeAttr(cat.name||("카테고리"+(idx+1)))}" />
+            </div>
+            <button class="btn tiny" data-act="addItem">항목 추가</button>
+          </div>
+          <div class="divider"></div>
+          <div class="list" data-list="items"></div>
+        `;
+        const list = block.querySelector('[data-list="items"]');
+
+        function renderItems(){
+          list.innerHTML = "";
+          (cat.items||[]).forEach((it)=>{
+            const r = document.createElement("div");
+            r.className = "row nowrap";
+            r.innerHTML = `
+              <input class="inp grow" value="${escapeAttr(it.name||"")}"/>
+              <button class="btn tiny danger" data-act="del">삭제</button>
+            `;
+            const inp = r.querySelector("input");
+            inp.addEventListener("input", ()=>{
+              it.name = inp.value;
+            });
+            r.querySelector('[data-act="del"]').addEventListener("click", ()=>{
+              cat.items = cat.items.filter(x=>x.id!==it.id);
+              renderItems();
+            });
+            list.appendChild(r);
+          });
+          if((cat.items||[]).length===0){
+            const empty = document.createElement("div");
+            empty.className = "muted";
+            empty.textContent = "항목이 없습니다. '항목 추가'를 눌러 추가하세요.";
+            list.appendChild(empty);
+          }
+        }
+
+        block.querySelector('input[data-k="name"]').addEventListener("input", (e)=>{
+          cat.name = e.target.value;
+        });
+        block.querySelector('[data-act="addItem"]').addEventListener("click", ()=>{
+          cat.items = cat.items || [];
+          cat.items.push({id:uid(), name:`게임${(cat.items.length+1)}`});
+          renderItems();
+        });
+
+        renderItems();
+        editor.appendChild(block);
+      });
+
+      $("#topCatsSaveBtn").onclick = ()=>{
+        state.topCats = temp;
+        saveLocal();
+        renderTopCatsPreview();
+        back.style.display = "none";
+      };
+      $("#topCatsCloseBtn").onclick = ()=> back.style.display = "none";
+      back.style.display = "flex";
+    }
+
+    // ===== Marker categories =====
+    function addMarkerCategory(){
+      if(!requireAuthOrWarn()) return;
+      const n = state.markerCategories.length + 1;
+      const base = state.markerCategories[0];
+      state.markerCategories.push({
+        id: uid(),
+        name: `카테고리${n}`,
+        color: QUICK_COLORS[(n-1)%QUICK_COLORS.length].value,
+        visible: true,
+        hideNumber: false,
+        defaults: deepClone(base.defaults)
+      });
+      saveLocal();
+      renderAll();
+    }
+
+    function removeMarkerCategory(catId){
+      if(!requireAuthOrWarn()) return;
+      if(state.markerCategories.length <= 1) return;
+      const keepId = state.markerCategories[0].id;
+      state.markerCategories = state.markerCategories.filter(c=>c.id!==catId);
+      state.markers.forEach(m=>{
+        if(m.catId===catId) m.catId = keepId;
+      });
+      saveLocal();
+      renderAll();
+    }
+
+    function updateMarkerCategory(catId, patch){
+      if(!requireAuthOrWarn()) return;
+      const c = state.markerCategories.find(c=>c.id===catId);
+      if(!c) return;
+      Object.assign(c, patch);
+      saveLocal();
+      renderAll();
+    }
+
+    function renderMarkerCats(){
+      const wrap = $("#markerCatList");
+      wrap.innerHTML = "";
+
+      // "전체" toggle
+      const all = document.createElement("div");
+      all.className = "row";
+      const allVisible = state.markerCategories.every(c=>c.visible);
+      all.innerHTML = `
+        <div class="chip ${allVisible?"on":""}" id="allToggle">
+          <span class="swatch" style="background:${allVisible ? "#7cc4ff" : "rgba(255,255,255,.22)"}"></span>
+          전체
+        </div>
+        <button class="btn tiny" id="allNumbersToggle">${state.markerCategories.every(c=>c.hideNumber) ? "숫자 보이기" : "숫자 가리기"}</button>
+      `;
+      wrap.appendChild(all);
+
+      all.querySelector("#allToggle").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        const next = !allVisible;
+        state.markerCategories.forEach(c=>c.visible = next);
+        saveLocal();
+        renderAll();
+      };
+      all.querySelector("#allNumbersToggle").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        const next = !state.markerCategories.every(c=>c.hideNumber);
+        state.markerCategories.forEach(c=>c.hideNumber = next);
+        saveLocal();
+        renderAll();
+      };
+
+      const line = document.createElement("div");
+      line.className = "divider";
+      wrap.appendChild(line);
+
+      state.markerCategories.forEach((c)=>{
+        const row = document.createElement("div");
+        row.className = "card";
+        row.style.padding = "10px";
+        row.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <div class="row grow" style="gap:8px;">
+              <div class="chip ${c.visible?"on":""}" data-act="toggle">
+                <span class="swatch" style="background:${escapeAttr(c.color)}"></span>
+                <span style="font-weight:900;">${escapeHtml(c.name)}</span>
+              </div>
+              <div class="muted mono">${countMarkersByCat(c.id)}</div>
+            </div>
+            <div class="miniTools">
+              <button class="btn tiny" data-act="num">${c.hideNumber ? "숫자 보이기" : "숫자 가리기"}</button>
+              <button class="btn tiny danger" data-act="del">삭제</button>
+            </div>
+          </div>
+        `;
+        row.querySelector('[data-act="toggle"]').onclick = ()=>{
+          if(!requireAuthOrWarn()) return;
+          c.visible = !c.visible;
+          saveLocal();
+          renderAll();
+        };
+        row.querySelector('[data-act="num"]').onclick = ()=>{
+          if(!requireAuthOrWarn()) return;
+          c.hideNumber = !c.hideNumber;
+          saveLocal();
+          renderAll();
+        };
+        row.querySelector('[data-act="del"]').onclick = ()=>{
+          removeMarkerCategory(c.id);
+        };
+        wrap.appendChild(row);
+      });
+    }
+
+    function countMarkersByCat(catId){
+      return state.markers.filter(m=>m.pageId===state.currentPageId && m.catId===catId).length;
+    }
+
+    // ===== Category editor modal =====
+    function openCatEditor(){
+      if(!requireAuthOrWarn()) return;
+      const back = $("#catEditorBack");
+      const list = $("#catEditorList");
+      const palette = $("#catEditorPalette");
+      const tempCats = deepClone(state.markerCategories);
+
+      palette.innerHTML = "";
+      QUICK_COLORS.forEach(c=>{
+        const b = document.createElement("span");
+        b.className = "pbtn";
+        b.style.background = c.value;
+        b.title = c.name;
+        palette.appendChild(b);
+      });
+
+      function renderList(){
+        list.innerHTML = "";
+        tempCats.forEach((c)=>{
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <div class="row nowrap" style="justify-content:space-between;">
+              <div class="row grow" style="gap:10px;">
+                <div class="swatch" style="width:14px;height:14px;border-radius:5px;background:${escapeAttr(c.color)}"></div>
+                <input class="inp grow" value="${escapeAttr(c.name)}" />
+              </div>
+              <div class="miniTools">
+                <input class="inp" style="width:120px;" value="${escapeAttr(c.color)}" />
+                <button class="btn tiny danger" data-act="del">삭제</button>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="row">
+              <div class="muted" style="min-width:120px;">빠른 색상</div>
+              <div class="palette" data-pal></div>
+            </div>
+          `;
+          const nameInp = card.querySelectorAll("input")[0];
+          const colInp = card.querySelectorAll("input")[1];
+          const pal = card.querySelector("[data-pal]");
+
+          nameInp.addEventListener("input", ()=> c.name = nameInp.value);
+          colInp.addEventListener("input", ()=> {
+            c.color = colInp.value.trim();
+            card.querySelector(".swatch").style.background = c.color || "rgba(255,255,255,.2)";
+          });
+
+          pal.innerHTML = "";
+          QUICK_COLORS.forEach(pc=>{
+            const pb = document.createElement("span");
+            pb.className = "pbtn";
+            pb.style.background = pc.value;
+            pb.title = pc.name;
+            pb.onclick = ()=>{
+              c.color = pc.value;
+              colInp.value = c.color;
+              card.querySelector(".swatch").style.background = c.color;
+            };
+            pal.appendChild(pb);
+          });
+
+          card.querySelector('[data-act="del"]').onclick = ()=>{
+            if(tempCats.length<=1) return;
+            const idx = tempCats.findIndex(x=>x.id===c.id);
+            if(idx>=0) tempCats.splice(idx,1);
+            renderList();
+          };
+
+          list.appendChild(card);
+        });
+      }
+
+      $("#catEditorAddBtn").onclick = ()=>{
+        const n = tempCats.length+1;
+        tempCats.push({
+          id: uid(),
+          name: `카테고리${n}`,
+          color: QUICK_COLORS[(n-1)%QUICK_COLORS.length].value,
+          visible: true,
+          hideNumber: false,
+          defaults: deepClone(tempCats[0].defaults)
+        });
+        renderList();
+      };
+
+      $("#catEditorSaveBtn").onclick = ()=>{
+        // Merge back: preserve marker cat ids mapping
+        const oldCats = state.markerCategories.map(c=>c.id);
+        const newCats = tempCats.map(c=>c.id);
+        // if any old cat removed, reassign those markers to first new cat
+        const keepId = newCats[0];
+        state.markers.forEach(m=>{
+          if(!newCats.includes(m.catId)) m.catId = keepId;
+        });
+        state.markerCategories = tempCats;
+        saveLocal();
+        renderAll();
+        back.style.display = "none";
+      };
+      $("#catEditorCloseBtn").onclick = ()=> back.style.display = "none";
+
+      renderList();
+      back.style.display = "flex";
+    }
+
+    // ===== Marker editor modal =====
+    let markerEditorTargetId = null;
+
+    function openMarkerEditor(markerId){
+      if(!requireAuthOrWarn()) return;
+      const m = state.markers.find(x=>x.id===markerId && x.pageId===state.currentPageId);
+      if(!m) return;
+
+      markerEditorTargetId = m.id;
+
+      const catSel = $("#meCat");
+      catSel.innerHTML = "";
+      state.markerCategories.forEach(c=>{
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = c.name;
+        catSel.appendChild(opt);
+      });
+
+      $("#meName").value = m.name || "";
+      $("#meCat").value = m.catId;
+      $("#meYtDisplay").value = m.ytDisplay || "";
+      $("#meYtUrl").value = m.ytUrl || "";
+      $("#meYtDesc").value = m.ytDesc || "";
+
+      const cat = state.markerCategories.find(c=>c.id===m.catId) || state.markerCategories[0];
+      $("#meSize").value = cat.defaults.size;
+      $("#meTextSize").value = cat.defaults.textSize;
+      $("#meWeight").value = String(cat.defaults.weight);
+      $("#meTextColor").value = cat.defaults.textColor;
+
+      $("#meChainInfo").textContent = `chainId: ${m.chainId} · seq: ${m.seq}`;
+
+      // palette
+      const pal = $("#mePalette");
+      pal.innerHTML = "";
+      QUICK_COLORS.forEach(pc=>{
+        const b = document.createElement("span");
+        b.className = "pbtn";
+        b.style.background = pc.value;
+        b.title = pc.name;
+        b.onclick = ()=> { $("#meTextColor").value = pc.value; };
+        pal.appendChild(b);
+      });
+
+      // linkage rule: name -> ytDisplay unless user changed ytDisplay separately
+      let ytTouched = false;
+      $("#meYtDisplay").addEventListener("input", ()=> ytTouched = true, {once:true});
+      $("#meName").addEventListener("input", ()=>{
+        if(!ytTouched){
+          $("#meYtDisplay").value = $("#meName").value;
+        }
+      });
+
+      $("#markerEditorSaveBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        const mm = state.markers.find(x=>x.id===markerEditorTargetId);
+        if(!mm) return;
+
+        const newCatId = $("#meCat").value;
+        const oldCatId = mm.catId;
+
+        mm.name = $("#meName").value;
+        mm.catId = newCatId;
+        mm.ytDisplay = $("#meYtDisplay").value;
+        mm.ytUrl = $("#meYtUrl").value;
+        mm.ytDesc = $("#meYtDesc").value;
+
+        // Apply style changes to category defaults (category-based consistency requirement)
+        const c = state.markerCategories.find(c=>c.id===newCatId);
+        if(c){
+          c.defaults.size = clamp(parseInt($("#meSize").value || c.defaults.size,10), 1, 100);
+          c.defaults.textSize = clamp(parseInt($("#meTextSize").value || c.defaults.textSize,10), 6, 80);
+          c.defaults.weight = parseInt($("#meWeight").value || c.defaults.weight,10);
+          c.defaults.textColor = ($("#meTextColor").value || c.defaults.textColor).trim();
+        }
+
+        // If moved category, sync moved marker to new category chain numbering remains same (do not change)
+        // Category color consistency is by category itself; marker draws using category color.
+
+        saveLocal();
+        renderAll();
+        $("#markerEditorBack").style.display = "none";
+      };
+
+      $("#meStartNewChainBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        const pageId = state.currentPageId;
+        state.chainByPage[pageId].currentChainId = uid();
+        state.chainByPage[pageId].continueFromMarkerId = null;
+        saveLocal();
+        renderAll();
+        $("#meChainInfo").textContent = `chainId: ${state.chainByPage[pageId].currentChainId} · seq: (new start)`;
+      };
+
+      $("#meContinueFromThisBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        const pageId = state.currentPageId;
+        state.chainByPage[pageId].currentChainId = mm.chainId;
+        state.chainByPage[pageId].continueFromMarkerId = mm.id;
+        saveLocal();
+        renderAll();
+        $("#meChainInfo").textContent = `chainId: ${mm.chainId} · seq: (continue from seq ${mm.seq})`;
+      };
+
+      $("#markerEditorCloseBtn").onclick = ()=> $("#markerEditorBack").style.display = "none";
+      $("#markerEditorBack").style.display = "flex";
+    }
+
+    // ===== Selected marker + dim set =====
+    let selectedMarkerId = null;
+    const dimSet = new Set(); // runtime only (as requested: click toggles)
+
+    function selectMarker(id){
+      selectedMarkerId = id;
+      renderSelectedPanel();
+      renderAll();
+    }
+
+    function toggleDim(id){
+      if(dimSet.has(id)) dimSet.delete(id);
+      else dimSet.add(id);
+      renderAll();
+    }
+
+    function renderSelectedPanel(){
+      const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
+      const el = $("#selInfo");
+      if(!m){
+        el.textContent = "선택 마커: -";
+        $("#ytDisplayInput").value = "";
+        $("#ytDescInput").value = "";
+        $("#ytUrlInput").value = "";
+        return;
+      }
+      el.textContent = `선택 마커: #${m.seq} ${m.name ? ("· "+m.name) : ""}`;
+      $("#ytDisplayInput").value = m.ytDisplay || m.name || "";
+      $("#ytDescInput").value = m.ytDesc || "";
+      $("#ytUrlInput").value = m.ytUrl || "";
+    }
+
+    // ===== Canvas / Map rendering =====
+    const cv = $("#cv");
+    const ctx = cv.getContext("2d");
+    let dpr = 1;
+
+    let mapImg = null;
+    let mapImgReady = false;
+
+    function resizeCanvas(){
+      const rect = cv.getBoundingClientRect();
+      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      cv.width = Math.floor(rect.width * dpr);
+      cv.height = Math.floor(rect.height * dpr);
+      ctx.setTransform(1,0,0,1,0,0);
+      redraw();
+    }
+    window.addEventListener("resize", resizeCanvas);
+
+    function loadMapImage(url){
+      if(!url){ mapImg=null; mapImgReady=false; redraw(); return; }
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = ()=>{
+        mapImg = img;
+        mapImgReady = true;
+        state.map.imgW = img.naturalWidth || img.width;
+        state.map.imgH = img.naturalHeight || img.height;
+        // Fit image on first load
+        fitMapToView();
+        saveLocal();
+        redraw();
+      };
+      img.onerror = ()=>{
+        mapImg = null;
+        mapImgReady = false;
+        redraw();
+      };
+      img.src = url;
+    }
+
+    function fitMapToView(){
+      const rect = cv.getBoundingClientRect();
+      const vw = rect.width;
+      const vh = rect.height;
+      const iw = state.map.imgW || 1;
+      const ih = state.map.imgH || 1;
+      const scale = Math.min(vw / iw, vh / ih);
+      state.map.zoom = clamp(scale, 0.05, 8);
+      // Center
+      state.map.panX = (vw - iw * state.map.zoom) / 2;
+      state.map.panY = (vh - ih * state.map.zoom) / 2;
+    }
+
+    function screenToMap(sx, sy){
+      const rect = cv.getBoundingClientRect();
+      const x = (sx - rect.left) * dpr;
+      const y = (sy - rect.top) * dpr;
+      const px = state.map.panX * dpr;
+      const py = state.map.panY * dpr;
+      const z = state.map.zoom;
+      return {
+        x: (x - px) / (z * dpr),
+        y: (y - py) / (z * dpr)
+      };
+    }
+
+    function mapToScreen(mx, my){
+      const rect = cv.getBoundingClientRect();
+      const px = state.map.panX * dpr;
+      const py = state.map.panY * dpr;
+      const z = state.map.zoom;
+      return {
+        x: px + mx * z * dpr,
+        y: py + my * z * dpr
+      };
+    }
+
+    function drawBackground(){
+      ctx.save();
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.clearRect(0,0,cv.width,cv.height);
+
+      // Subtle grid
+      ctx.globalAlpha = 0.08;
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1;
+      const step = 60 * dpr;
+      for(let x=0; x<cv.width; x+=step){
+        ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,cv.height); ctx.stroke();
+      }
+      for(let y=0; y<cv.height; y+=step){
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(cv.width,y); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    function drawMapImage(){
+      if(!mapImgReady || !mapImg) return;
+      ctx.save();
+      // map transform
+      ctx.translate(state.map.panX * dpr, state.map.panY * dpr);
+      ctx.scale(state.map.zoom * dpr, state.map.zoom * dpr);
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(mapImg, 0, 0);
+      ctx.restore();
+    }
+
+    function getMarkersOnCurrentPage(){
+      return state.markers
+        .filter(m=>m.pageId===state.currentPageId)
+        .slice()
+        .sort((a,b)=> (a.chainId===b.chainId ? a.seq-b.seq : a.chainId.localeCompare(b.chainId)));
+    }
+
+    function getCat(catId){
+      return state.markerCategories.find(c=>c.id===catId) || state.markerCategories[0];
+    }
+
+    function drawEdges(){
+      if(!state.ui.showAllLines) return;
+      const markers = getMarkersOnCurrentPage();
+      const byChain = new Map();
+      for(const m of markers){
+        const cat = getCat(m.catId);
+        if(!cat.visible) continue;
+        if(!byChain.has(m.chainId)) byChain.set(m.chainId, []);
+        byChain.get(m.chainId).push(m);
+      }
+
+      ctx.save();
+      ctx.translate(state.map.panX * dpr, state.map.panY * dpr);
+      ctx.scale(state.map.zoom * dpr, state.map.zoom * dpr);
+      ctx.lineWidth = 2 / state.map.zoom;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      for(const [chainId, arr] of byChain.entries()){
+        arr.sort((a,b)=>a.seq-b.seq);
+        for(let i=0;i<arr.length-1;i++){
+          const a = arr[i], b = arr[i+1];
+          const edgeKey = `${state.currentPageId}:${chainId}:${a.id}->${b.id}`;
+          const cp = state.edges[edgeKey];
+          const ax=a.x, ay=a.y, bx=b.x, by=b.y;
+          const cx = (cp && typeof cp.cx==="number") ? cp.cx : (ax+bx)/2;
+          const cy = (cp && typeof cp.cy==="number") ? cp.cy : (ay+by)/2;
+
+          ctx.globalAlpha = 0.85;
+          ctx.strokeStyle = "#cfe6ff";
+          ctx.beginPath();
+          ctx.moveTo(ax, ay);
+          ctx.quadraticCurveTo(cx, cy, bx, by);
+          ctx.stroke();
+
+          // Arrow near the end toward b (tangent at t=0.92)
+          const t = 0.92;
+          const qx = quadAt(ax,cx,bx,t);
+          const qy = quadAt(ay,cy,by,t);
+          const tx = quadTangent(ax,cx,bx,t);
+          const ty = quadTangent(ay,cy,by,t);
+          const ang = Math.atan2(ty, tx);
+          const arrowLen = 14 / state.map.zoom;
+          const arrowW = 8 / state.map.zoom;
+
+          ctx.fillStyle = "#cfe6ff";
+          ctx.globalAlpha = 0.95;
+          ctx.save();
+          ctx.translate(qx, qy);
+          ctx.rotate(ang);
+          ctx.beginPath();
+          ctx.moveTo(0,0);
+          ctx.lineTo(-arrowLen, arrowW/2);
+          ctx.lineTo(-arrowLen, -arrowW/2);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+
+          // Draw control point handle if selected in drag mode (handled in overlay draw)
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function quadAt(a,c,b,t){
+      const mt = 1-t;
+      return mt*mt*a + 2*mt*t*c + t*t*b;
+    }
+    function quadTangent(a,c,b,t){
+      // derivative: 2(1-t)(c-a) + 2t(b-c)
+      return 2*(1-t)*(c-a) + 2*t*(b-c);
+    }
+
+    function drawMarkers(){
+      const markers = getMarkersOnCurrentPage();
+      ctx.save();
+      ctx.translate(state.map.panX * dpr, state.map.panY * dpr);
+      ctx.scale(state.map.zoom * dpr, state.map.zoom * dpr);
+
+      for(const m of markers){
+        const cat = getCat(m.catId);
+        if(!cat.visible) continue;
+
+        const size = cat.defaults.size;
+        const r = size;
+        const dim = dimSet.has(m.id);
+        const alpha = dim ? state.ui.dimOpacity : 1;
+
+        // Circle
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = cat.color;
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, r, 0, Math.PI*2);
+        ctx.fill();
+
+        // Stroke
+        ctx.globalAlpha = alpha * 0.95;
+        ctx.lineWidth = 2 / state.map.zoom;
+        ctx.strokeStyle = "rgba(0,0,0,.55)";
+        ctx.stroke();
+
+        // Number (optional)
+        if(!cat.hideNumber){
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = "#0a0f18";
+          ctx.font = `${cat.defaults.weight} ${cat.defaults.textSize}px ${getComputedStyle(document.documentElement).getPropertyValue("--font")}`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(String(m.seq), m.x, m.y+0.5);
+        }
+
+        // Label text (always, as requested)
+        const label = (m.name || m.ytDisplay || "").trim();
+        if(label){
+          ctx.globalAlpha = 0.92;
+          ctx.fillStyle = cat.defaults.textColor || "#e7eef8";
+          ctx.font = `${cat.defaults.weight} ${cat.defaults.textSize}px ${getComputedStyle(document.documentElement).getPropertyValue("--font")}`;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          const pad = r + (10 / state.map.zoom);
+          ctx.fillText(label, m.x + pad, m.y);
+        }
+
+        // Selected ring
+        if(m.id === selectedMarkerId){
+          ctx.globalAlpha = 0.95;
+          ctx.strokeStyle = "rgba(124,196,255,.95)";
+          ctx.lineWidth = 3 / state.map.zoom;
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, r + (4 / state.map.zoom), 0, Math.PI*2);
+          ctx.stroke();
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function drawEdgeHandles(){
+      // draw control points for edges near cursor selection (only when something is targeted)
+      if(!hoveredEdgeKey) return;
+      const cp = getEdgeControl(hoveredEdgeKey);
+      if(!cp) return;
+      ctx.save();
+      ctx.translate(state.map.panX * dpr, state.map.panY * dpr);
+      ctx.scale(state.map.zoom * dpr, state.map.zoom * dpr);
+
+      ctx.globalAlpha = 0.95;
+      ctx.fillStyle = "rgba(255,214,10,.95)";
+      ctx.strokeStyle = "rgba(0,0,0,.55)";
+      ctx.lineWidth = 2 / state.map.zoom;
+
+      ctx.beginPath();
+      ctx.arc(cp.cx, cp.cy, 7 / state.map.zoom, 0, Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function redraw(){
+      drawBackground();
+      drawMapImage();
+      drawEdges();
+      drawMarkers();
+      drawEdgeHandles();
+    }
+
+    // ===== Interaction =====
+    let draggingMode = null; // "pan" | "marker" | "edge"
+    let dragStart = {sx:0, sy:0, panX:0, panY:0, mx:0, my:0};
+    let dragMarkerId = null;
+    let hoveredEdgeKey = null;
+
+    function hitTestMarker(mapX, mapY){
+      const markers = getMarkersOnCurrentPage();
+      // iterate reverse for topmost
+      for(let i=markers.length-1;i>=0;i--){
+        const m = markers[i];
+        const cat = getCat(m.catId);
+        if(!cat.visible) continue;
+        const r = cat.defaults.size;
+        const dx = mapX - m.x, dy = mapY - m.y;
+        if(dx*dx + dy*dy <= r*r){
+          return m;
+        }
+      }
+      return null;
+    }
+
+    function findEdgeNear(mapX, mapY){
+      // find nearest quadratic curve in pixels threshold (approx with sampling)
+      const markers = getMarkersOnCurrentPage();
+      const byChain = new Map();
+      for(const m of markers){
+        const cat = getCat(m.catId);
+        if(!cat.visible) continue;
+        if(!byChain.has(m.chainId)) byChain.set(m.chainId, []);
+        byChain.get(m.chainId).push(m);
+      }
+
+      const threshold = 10 / state.map.zoom;
+      let best = {key:null, d:Infinity, cp:null};
+
+      for(const [chainId, arr] of byChain.entries()){
+        arr.sort((a,b)=>a.seq-b.seq);
+        for(let i=0;i<arr.length-1;i++){
+          const a = arr[i], b = arr[i+1];
+          const key = `${state.currentPageId}:${chainId}:${a.id}->${b.id}`;
+          const cp = getEdgeControl(key, a, b);
+          const ax=a.x, ay=a.y, bx=b.x, by=b.y, cx=cp.cx, cy=cp.cy;
+
+          // sample
+          let minD = Infinity;
+          for(let t=0;t<=1.001;t+=0.08){
+            const qx = quadAt(ax,cx,bx,t);
+            const qy = quadAt(ay,cy,by,t);
+            const dx = mapX-qx, dy=mapY-qy;
+            const d = Math.sqrt(dx*dx+dy*dy);
+            if(d<minD) minD=d;
+          }
+          if(minD < threshold && minD < best.d){
+            best = {key, d:minD, cp};
+          }
+        }
+      }
+      return best.key;
+    }
+
+    function getEdgeControl(edgeKey, a=null, b=null){
+      let cp = state.edges[edgeKey];
+      if(cp && typeof cp.cx==="number" && typeof cp.cy==="number") return cp;
+      // if not stored, create default from endpoints if provided
+      if(a && b){
+        return {cx:(a.x+b.x)/2, cy:(a.y+b.y)/2};
+      }
+      // cannot infer without endpoints
+      return cp || null;
+    }
+
+    function setEdgeControl(edgeKey, cx, cy){
+      if(!requireAuthOrWarn()) return;
+      state.edges[edgeKey] = {cx, cy};
+      saveLocal();
+    }
+
+    // Pointer handlers
+    cv.addEventListener("contextmenu", (e)=> e.preventDefault());
+
+    cv.addEventListener("pointerdown", (e)=>{
+      const rect = cv.getBoundingClientRect();
+      const sx = e.clientX, sy = e.clientY;
+      const mapPt = screenToMap(sx, sy);
+
+      const isRight = (e.button === 2);
+      const isLeft = (e.button === 0);
+
+      // On pointerdown capture for stable drag
+      cv.setPointerCapture(e.pointerId);
+
+      if(isRight){
+        // Add marker on right click
+        if(!requireAuthOrWarn()) return;
+        addMarkerAt(mapPt.x, mapPt.y);
+        return;
+      }
+
+      if(isLeft){
+        // First: marker hit
+        const m = hitTestMarker(mapPt.x, mapPt.y);
+        if(m){
+          // select
+          selectMarker(m.id);
+          // toggle dim on click (without dragging). We'll decide on pointerup if it was a click.
+          dragStart = {sx, sy, panX: state.map.panX, panY: state.map.panY, mx: mapPt.x, my: mapPt.y};
+          draggingMode = "marker";
+          dragMarkerId = m.id;
+          return;
+        }
+
+        // Second: edge near for curve drag
+        const edgeKey = findEdgeNear(mapPt.x, mapPt.y);
+        if(edgeKey){
+          hoveredEdgeKey = edgeKey;
+          dragStart = {sx, sy, panX: state.map.panX, panY: state.map.panY, mx: mapPt.x, my: mapPt.y};
+          draggingMode = "edge";
+          redraw();
+          return;
+        }
+
+        // Else: pan
+        dragStart = {sx, sy, panX: state.map.panX, panY: state.map.panY, mx: mapPt.x, my: mapPt.y};
+        draggingMode = "pan";
+        dragMarkerId = null;
+        return;
+      }
+    });
+
+    cv.addEventListener("pointermove", (e)=>{
+      const sx = e.clientX, sy = e.clientY;
+      const mapPt = screenToMap(sx, sy);
+
+      if(!draggingMode){
+        // hover edge handle
+        hoveredEdgeKey = findEdgeNear(mapPt.x, mapPt.y);
+        redraw();
+        return;
+      }
+
+      if(draggingMode==="pan"){
+        const dx = sx - dragStart.sx;
+        const dy = sy - dragStart.sy;
+        state.map.panX = dragStart.panX + dx;
+        state.map.panY = dragStart.panY + dy;
+        redraw();
+        return;
+      }
+
+      if(draggingMode==="marker"){
+        const m = state.markers.find(x=>x.id===dragMarkerId);
+        if(!m) return;
+        // drag threshold included
+        if(Math.hypot(sx-dragStart.sx, sy-dragStart.sy) > 2){
+          if(!requireAuthOrWarn()) return;
+          m.x = mapPt.x;
+          m.y = mapPt.y;
+          saveLocal();
+          redraw();
+        }
+        return;
+      }
+
+      if(draggingMode==="edge"){
+        if(!hoveredEdgeKey) return;
+        if(Math.hypot(sx-dragStart.sx, sy-dragStart.sy) > 1){
+          if(!requireAuthOrWarn()) return;
+          setEdgeControl(hoveredEdgeKey, mapPt.x, mapPt.y);
+          redraw();
+        }
+        return;
+      }
+    });
+
+    cv.addEventListener("pointerup", (e)=>{
+      const sx = e.clientX, sy = e.clientY;
+      const moved = Math.hypot(sx-dragStart.sx, sy-dragStart.sy);
+
+      // If marker mode and it was a click (not drag), toggle dim
+      if(draggingMode==="marker" && moved < 4){
+        const mapPt = screenToMap(sx, sy);
+        const m = hitTestMarker(mapPt.x, mapPt.y);
+        if(m && m.id===dragMarkerId){
+          toggleDim(m.id);
+        }
+      }
+
+      draggingMode = null;
+      dragMarkerId = null;
+
+      // keep hovered edge for visual
+      const mapPt = screenToMap(sx, sy);
+      hoveredEdgeKey = findEdgeNear(mapPt.x, mapPt.y);
+      redraw();
+    });
+
+    cv.addEventListener("dblclick", (e)=>{
+      const mapPt = screenToMap(e.clientX, e.clientY);
+      const m = hitTestMarker(mapPt.x, mapPt.y);
+      if(m){
+        selectMarker(m.id);
+        openMarkerEditor(m.id);
+      }
+    });
+
+    // Wheel zoom
+    cv.addEventListener("wheel", (e)=>{
+      e.preventDefault();
+      const rect = cv.getBoundingClientRect();
+      const sx = e.clientX, sy = e.clientY;
+      const before = screenToMap(sx, sy);
+
+      const zoomFactor = Math.exp((-e.deltaY) * 0.0012);
+      const newZoom = clamp(state.map.zoom * zoomFactor, 0.05, 8);
+
+      // Adjust pan so point under cursor stays fixed
+      const px = state.map.panX;
+      const py = state.map.panY;
+      const mx = before.x, my = before.y;
+
+      state.map.zoom = newZoom;
+
+      const afterScreen = mapToScreen(mx, my);
+      const targetScreenX = (sx - rect.left) * dpr;
+      const targetScreenY = (sy - rect.top) * dpr;
+
+      // pan in CSS pixels
+      state.map.panX = (targetScreenX - mx * newZoom * dpr) / dpr;
+      state.map.panY = (targetScreenY - my * newZoom * dpr) / dpr;
+
+      saveLocal();
+      redraw();
+    }, {passive:false});
+
+    // ===== Marker add logic =====
+    function addMarkerAt(x, y){
+      const pageId = state.currentPageId;
+      if(!pageId) return;
+
+      const chainInfo = state.chainByPage[pageId] || (state.chainByPage[pageId] = {currentChainId: uid(), continueFromMarkerId: null});
+      const chainId = chainInfo.currentChainId;
+
+      // Determine next seq
+      const chainMarkers = state.markers
+        .filter(m=>m.pageId===pageId && m.chainId===chainId)
+        .sort((a,b)=>a.seq-b.seq);
+
+      let nextSeq = 1;
+      if(chainInfo.continueFromMarkerId){
+        const from = state.markers.find(m=>m.id===chainInfo.continueFromMarkerId);
+        if(from && from.pageId===pageId){
+          // next seq is from.seq + 1, and we keep chainId of that marker
+          chainInfo.currentChainId = from.chainId;
+          chainInfo.continueFromMarkerId = null;
+          nextSeq = from.seq + 1;
+
+          // If there are markers with seq >= nextSeq, shift them up to keep uniqueness in this chain
+          const sameChain = state.markers.filter(m=>m.pageId===pageId && m.chainId===from.chainId);
+          const seqs = new Set(sameChain.map(m=>m.seq));
+          if(seqs.has(nextSeq)){
+            // shift seqs >= nextSeq by +1 preserving order
+            const toShift = sameChain.filter(m=>m.seq>=nextSeq).sort((a,b)=>b.seq-a.seq);
+            toShift.forEach(m=>m.seq += 1);
+          }
+        }
+      }else{
+        nextSeq = chainMarkers.length ? (chainMarkers[chainMarkers.length-1].seq + 1) : 1;
+      }
+
+      const catId = state.markerCategories[0]?.id || "";
+      const m = {
+        id: uid(),
+        pageId,
+        catId,
+        chainId: state.chainByPage[pageId].currentChainId,
+        seq: nextSeq,
+        x, y,
+        name: `마커 ${nextSeq}`,
+        ytDisplay: `마커 ${nextSeq}`,
+        ytDesc: "",
+        ytUrl: ""
+      };
+      state.markers.push(m);
+
+      // auto create edge default control for previous marker -> this marker
+      const prev = state.markers
+        .filter(mm=>mm.pageId===pageId && mm.chainId===m.chainId && mm.seq===m.seq-1)
+        .sort((a,b)=>a.seq-b.seq)[0];
+      if(prev){
+        const edgeKey = `${pageId}:${m.chainId}:${prev.id}->${m.id}`;
+        if(!state.edges[edgeKey]){
+          state.edges[edgeKey] = {cx:(prev.x+m.x)/2, cy:(prev.y+m.y)/2};
+        }
+      }
+
+      saveLocal();
+      selectMarker(m.id);
+      renderAll();
+    }
+
+    // ===== Rendering Pages list =====
+    function renderPages(){
+      const wrap = $("#pageList");
+      wrap.innerHTML = "";
+      $("#pageCount").textContent = String(state.pages.length);
+
+      state.pages.forEach((p)=>{
+        const btn = document.createElement("div");
+        btn.className = "pageBtn" + (p.id===state.currentPageId ? " active" : "");
+        btn.innerHTML = `
+          <div class="grow" style="min-width:0;">
+            <div class="name">${escapeHtml(p.name || "페이지")}</div>
+            <div class="url mono">${escapeHtml(p.url || "(URL 없음)")}</div>
+            <div class="muted" style="margin-top:4px;">${escapeHtml(p.gamePath || "-")}</div>
+          </div>
+          <div class="miniTools">
+            <button class="btn tiny" data-act="edit">편집</button>
+            <button class="btn tiny danger" data-act="del">삭제</button>
+          </div>
+        `;
+        btn.addEventListener("click", (e)=>{
+          // ignore when clicking tool buttons
+          if(e.target && e.target.closest("button")) return;
+          setCurrentPage(p.id);
+        });
+        btn.querySelector('[data-act="edit"]').onclick = ()=>{
+          if(!requireAuthOrWarn()) return;
+          const name = prompt("페이지 이름", p.name || "");
+          if(name==null) return;
+          const url = prompt("지도 이미지 URL (GitHub 저장소 이미지 URL)", p.url || "");
+          if(url==null) return;
+          const gp = prompt("현재 위치 표시용 경로 (예: 게임1/페이지2)", p.gamePath || "");
+          if(gp==null) return;
+          updatePage(p.id, {name, url, gamePath: gp});
+        };
+        btn.querySelector('[data-act="del"]').onclick = ()=>{
+          if(!requireAuthOrWarn()) return;
+          if(confirm("이 페이지를 삭제할까요? (해당 페이지의 마커/선도 함께 삭제됩니다)")){
+            deletePage(p.id);
+          }
+        };
+        wrap.appendChild(btn);
+      });
+
+      if(state.pages.length===0){
+        const empty = document.createElement("div");
+        empty.className = "muted";
+        empty.textContent = "페이지가 없습니다. 상단 '페이지 추가'를 눌러 생성하세요.";
+        wrap.appendChild(empty);
+      }
+
+      renderWhereAmI();
+    }
+
+    // ===== Quick palette UI =====
+    function renderQuickPalette(){
+      const pal = $("#quickPalette");
+      pal.innerHTML = "";
+      QUICK_COLORS.forEach(c=>{
+        const b = document.createElement("span");
+        b.className = "pbtn";
+        b.style.background = c.value;
+        b.title = c.name;
+        b.onclick = ()=>{
+          if(!requireAuthOrWarn()) return;
+          // Apply to selected marker category color (category/색상 편집 창과 별개로 "빠른 색상표" 제공)
+          const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
+          if(!m) return;
+          const cat = getCat(m.catId);
+          cat.color = c.value;
+          saveLocal();
+          renderAll();
+        };
+        pal.appendChild(b);
+      });
+    }
+
+    // ===== Buttons behavior =====
+    function setupButtons(){
+      $("#addPageBtn").onclick = addPage;
+      $("#openTopCatsBtn").onclick = openTopCatsModal;
+      $("#openCatEditorBtn").onclick = openCatEditor;
+      $("#addMarkerCatBtn").onclick = addMarkerCategory;
+
+      $("#showAllLinesBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        state.ui.showAllLines = true;
+        saveLocal();
+        renderAll();
+      };
+      $("#hideAllLinesBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        state.ui.showAllLines = false;
+        saveLocal();
+        renderAll();
+      };
+
+      $("#resetMarkersBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        // Reset dim + selection only (as "마커 초기화": visible state back)
+        dimSet.clear();
+        selectedMarkerId = null;
+        renderSelectedPanel();
+        renderAll();
+      };
+
+      $("#toggleNumbersBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        // Category-wise: toggle for selected marker's category; if none selected, toggle all
+        const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
+        if(m){
+          const cat = getCat(m.catId);
+          cat.hideNumber = !cat.hideNumber;
+        }else{
+          const next = !state.markerCategories.every(c=>c.hideNumber);
+          state.markerCategories.forEach(c=>c.hideNumber = next);
+        }
+        saveLocal();
+        renderAll();
+      };
+
+      $("#openMarkerEditorBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
+        if(m) openMarkerEditor(m.id);
+      };
+
+      $("#focusSelectedBtn").onclick = ()=>{
+        const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
+        if(!m) return;
+        // center view on marker
+        const rect = cv.getBoundingClientRect();
+        const vw = rect.width;
+        const vh = rect.height;
+        state.map.panX = (vw/2) - (m.x * state.map.zoom);
+        state.map.panY = (vh/2) - (m.y * state.map.zoom);
+        saveLocal();
+        redraw();
+      };
+
+      $("#applyYoutubePanelBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
+        if(!m) return;
+        m.ytDisplay = $("#ytDisplayInput").value;
+        m.ytDesc = $("#ytDescInput").value;
+        m.ytUrl = $("#ytUrlInput").value;
+        saveLocal();
+        renderAll();
+      };
+
+      $("#saveLocalBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        saveLocal();
+        renderSaveInfo();
+      };
+      $("#reloadRemoteBtn").onclick = async ()=>{
+        if(!requireAuthOrWarn()) return;
+        await loadRemote();
+      };
+      $("#reloadLocalBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        loadLocal();
+      };
+
+      $("#exportBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        const out = JSON.stringify(state, null, 2);
+        downloadText("state.json", out);
+      };
+
+      $("#resetAllBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        if(confirm("전체 초기화할까요? (페이지/마커/카테고리/설정 포함)")){
+          state = defaultState();
+          normalizeState();
+          onStateLoaded();
+          saveLocal();
+          renderAll();
+        }
+      };
+
+      $("#logoApplyBtn").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        state.logoUrl = $("#logoUrlInput").value.trim();
+        saveLocal();
+        renderLogo();
+      };
+
+      $("#logoBox").onclick = ()=>{
+        if(!requireAuthOrWarn()) return;
+        const url = prompt("로고 이미지 URL", state.logoUrl || "");
+        if(url==null) return;
+        state.logoUrl = url.trim();
+        $("#logoUrlInput").value = state.logoUrl;
+        saveLocal();
+        renderLogo();
+      };
+
+      // Auth buttons / modal
+      $("#loginBtn").onclick = openLoginModal;
+      $("#logoutBtn").onclick = ()=>{
+        setAuth(false);
+      };
+      $("#loginCloseBtn").onclick = ()=> $("#loginBack").style.display = "none";
+      $("#loginSubmitBtn").onclick = submitLogin;
+      $("#pwInput").addEventListener("keydown", (e)=>{
+        if(e.key==="Enter") submitLogin();
+      });
+    }
+
+    function openLoginModal(){
+      $("#loginMsg").textContent = "";
+      $("#pwInput").value = "";
+      $("#loginBack").style.display = "flex";
+      setTimeout(()=>$("#pwInput").focus(), 50);
+    }
+    function submitLogin(){
+      const pw = $("#pwInput").value;
+      if(pw === PASSWORD){
+        setAuth(true);
+        $("#loginBack").style.display = "none";
+      }else{
+        $("#loginMsg").textContent = "비밀번호가 올바르지 않습니다.";
+      }
+    }
+
+    // ===== Lock overlay: disable some inputs when not authed =====
+    function renderLockOverlay(){
+      const ok = isAuthed();
+      // disable inputs/buttons that modify state (but keep view)
+      const toDisable = [
+        "#logoUrlInput", "#logoApplyBtn", "#exportBtn", "#resetAllBtn",
+        "#addPageBtn", "#openTopCatsBtn", "#openCatEditorBtn", "#addMarkerCatBtn",
+        "#showAllLinesBtn", "#hideAllLinesBtn", "#resetMarkersBtn", "#toggleNumbersBtn",
+        "#openMarkerEditorBtn", "#applyYoutubePanelBtn", "#saveLocalBtn",
+        "#reloadRemoteBtn", "#reloadLocalBtn",
+      ];
+      toDisable.forEach(sel=>{
+        const el = $(sel);
+        if(!el) return;
+        el.disabled = !ok;
+        el.style.opacity = ok ? "" : "0.55";
+        el.style.pointerEvents = ok ? "" : "";
+      });
+      // Side-effect: canvas edits are gated by requireAuthOrWarn()
+    }
+
+    // ===== Escape helpers =====
+    function escapeHtml(s){
+      return String(s??"").replace(/[&<>"']/g, (m)=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
+      }[m]));
+    }
+    function escapeAttr(s){
+      return escapeHtml(s).replace(/"/g, "&quot;");
+    }
+
+    // ===== Render All =====
+    function renderAll(){
+      renderAuth();
+      renderLockOverlay();
+      renderPages();
+      renderTopCatsPreview();
+      renderMarkerCats();
+      renderSelectedPanel();
+      renderQuickPalette();
+      renderSaveInfo();
+      renderLogo();
+      redraw();
+    }
+
+    // ===== init =====
+    (async function init(){
+      setupButtons();
+      renderAuth();
+      renderLockOverlay();
+
+      // Load remote first, fallback local, else default
+      const okRemote = await loadRemote();
+      if(!okRemote){
+        const okLocal = loadLocal();
+        if(!okLocal){
+          normalizeState();
+          onStateLoaded();
+          saveLocal();
+          renderAll();
+        }
+      }
+
+      // Current page selection init
+      if(!state.currentPageId && state.pages[0]) state.currentPageId = state.pages[0].id;
+      if(state.currentPageId) syncMapUrlFromCurrentPage();
+
+      // Canvas
+      resizeCanvas();
+
+      // Path hint
+      $("#pathHint").textContent = `${location.pathname} → ${REMOTE_STATE_URL.pathname}`;
+
+      // Allow clicking in right panel selects nothing
+      document.addEventListener("keydown", (e)=>{
+        if(e.key==="Escape"){
+          // close any open modal
+          ["#loginBack","#topCatsBack","#catEditorBack","#markerEditorBack"].forEach(id=>{
+            const el = $(id);
+            if(el && el.style.display==="flex") el.style.display="none";
+          });
+          draggingMode = null;
+        }
+      });
+    })();
+
   </script>
 </body>
 </html>
