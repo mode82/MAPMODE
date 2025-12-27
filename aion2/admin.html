@@ -49,7 +49,6 @@
         linear-gradient(180deg, #0a0f18 0%, var(--bg) 100%);
       color:var(--text);
 
-      /* ✅ 1번 이미지 느낌: UI 글씨 굵고 또렷(마커 관련은 별도 클래스에서 제외) */
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
       font-weight: 800;
       letter-spacing: .1px;
@@ -110,28 +109,6 @@
       transform: translateY(1px);
     }
 
-    .select{
-      appearance:none;
-      border:none;
-      background:transparent;
-      color:var(--text);
-      font-weight:900;
-      padding-right:18px;
-      outline:none;
-      cursor:pointer;
-      max-width: 140px;
-      overflow:hidden;
-      text-overflow: ellipsis;
-    }
-    .chev{
-      width:0; height:0;
-      border-left:5px solid transparent;
-      border-right:5px solid transparent;
-      border-top:6px solid rgba(231,238,248,.7);
-      margin-left:-8px;
-      pointer-events:none;
-    }
-
     .pill{
       height:34px;
       display:inline-flex; align-items:center; justify-content:center;
@@ -154,9 +131,97 @@
     .pill.danger{ border-color: rgba(255,93,93,.55); }
     .pill.ok{ border-color: rgba(57,217,138,.55); }
 
-    /* ✅ 5번: 아이콘/버튼 겹침 방지 */
+    .miniBtn{
+      height:34px;
+      padding:0 12px;
+      border-radius:999px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(10,15,24,.35);
+      color: rgba(231,238,248,.92);
+      cursor:pointer;
+      font-weight:900;
+      font-size:13px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .miniBtn.icon{
+      width:34px;
+      padding:0;
+    }
+    .miniBtn.url{ border-color: rgba(57,217,138,.55); }
+    .miniBtn.edit{ border-color: rgba(124,196,255,.55); }
+    .miniBtn.del{ border-color: rgba(255,93,93,.55); }
+
     .top-right{ flex-wrap:wrap; justify-content:flex-end; }
     .top-right .pill{ flex: 0 0 auto; }
+
+    /* Top Categories */
+    .topCats{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      height:38px;
+    }
+    .topCatPill{
+      width:170px;
+      height:38px;
+      border-radius:999px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(14,22,38,.55);
+      box-shadow: var(--shadow2);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 10px;
+      cursor:pointer;
+      user-select:none;
+      gap:10px;
+    }
+    .topCatPill.active{
+      border-color: rgba(57,217,138,.65);
+      box-shadow: 0 0 0 2px rgba(57,217,138,.18), var(--shadow2);
+    }
+    .topCatPill.disabled{
+      opacity:.38;
+      border-color: rgba(39,52,74,.25);
+      background: rgba(14,22,38,.18);
+      box-shadow:none;
+    }
+    .topCatLabel{
+      font-weight:900;
+      font-size:15px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width: 116px;
+    }
+    .topCatToggle{
+      width:44px;
+      height:24px;
+      border-radius:999px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(10,15,24,.35);
+      position:relative;
+      flex:0 0 auto;
+      cursor:pointer;
+    }
+    .topCatToggle::after{
+      content:"";
+      position:absolute;
+      width:18px; height:18px;
+      border-radius:999px;
+      top:2px; left:2px;
+      background: rgba(231,238,248,.55);
+      box-shadow: var(--shadow2);
+      transition: transform .16s ease, background .16s ease;
+    }
+    .topCatToggle.on{
+      border-color: rgba(57,217,138,.55);
+      background: rgba(57,217,138,.12);
+    }
+    .topCatToggle.on::after{
+      transform: translateX(20px);
+      background: rgba(57,217,138,.92);
+    }
 
     /* ========== LAYOUT ========== */
     .layout{
@@ -206,11 +271,7 @@
       font-weight:800;
     }
 
-    /* ========== LEFT: Pages (1번 이미지 형태) ========== */
-    .pageHeader{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-bottom:10px;
-    }
+    /* ========== LEFT: Pages ========== */
     .btnAddPage{
       width:100%;
       height:52px;
@@ -240,25 +301,6 @@
     }
     .pageName{ font-weight:900; font-size:16px; }
     .pageActions{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
-    .miniBtn{
-      height:34px;
-      padding:0 12px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      color: rgba(231,238,248,.92);
-      cursor:pointer;
-      font-weight:900;
-      font-size:13px;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .miniBtn.icon{
-      width:34px;
-      padding:0;
-    }
-    .miniBtn.url{ border-color: rgba(57,217,138,.55); }
-    .miniBtn.edit{ border-color: rgba(124,196,255,.55); }
-    .miniBtn.del{ border-color: rgba(255,93,93,.55); }
 
     /* ========== CENTER: Canvas ========== */
     .center{
@@ -293,7 +335,7 @@
     }
     .hintToast.show{ display:block; }
 
-    /* ========== RIGHT: Tools (3,5번 느낌) ========== */
+    /* ========== RIGHT: Tools ========== */
     .chipRow{ display:flex; gap:10px; flex-wrap:wrap; }
     .chip{
       display:flex; align-items:center; gap:10px;
@@ -307,6 +349,7 @@
       font-weight:900;
     }
     .chip.on{ border-color: rgba(124,196,255,.6); background: rgba(124,196,255,.10); }
+    .chip.off{ opacity:.55; }
     .dotc{ width:10px; height:10px; border-radius:999px; box-shadow:0 0 0 2px rgba(255,255,255,.06); }
 
     .toggleRow{ display:flex; gap:10px; flex-direction:column; margin-top:10px; }
@@ -340,7 +383,6 @@
       justify-content:center;
     }
 
-    /* ✅ 5번 이미지: 빠른 색상표 */
     .palette{
       display:flex; gap:12px; align-items:flex-start;
       flex-wrap:wrap;
@@ -392,7 +434,6 @@
     }
     textarea.field{ min-height:90px; resize:vertical; }
 
-    /* ✅ 6번: 우측 하단 "선택한 마커" 영역 */
     .selectedBox .label{
       font-size:14px; font-weight:900; margin-bottom:8px;
     }
@@ -401,7 +442,7 @@
       margin-top:10px;
     }
 
-    /* ========== MODAL (마커 편집 / 카테고리 편집) ========== */
+    /* ========== MODAL ========== */
     .modalBack{
       position:fixed; inset:0;
       background: rgba(0,0,0,.55);
@@ -444,7 +485,6 @@
       font-weight:900;
     }
 
-    /* ✅ 9번 이미지 느낌: 마커 편집 UI */
     .grid2{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -528,7 +568,6 @@
     .btnBig.danger{ border-color: rgba(255,93,93,.65); }
     .btnBig.ok{ border-color: rgba(57,217,138,.65); }
 
-    /* ✅ 마커 텍스트/표시 자체는 "마커 관련 제외" */
     .markerFont{
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       font-weight: 900;
@@ -568,7 +607,6 @@
       font-size:14px;
     }
 
-    /* ========== responsive: 작은 화면에서 3컬럼 유지하되 가로 스크롤 허용 ========== */
     @media (max-width: 1200px){
       body{ overflow:auto; }
       .layout{
@@ -581,7 +619,8 @@
       .slot.fixed{ width:160px; }
       .slot.logo{ width:160px; }
       .logoBox{ width:160px; }
-      .select{ max-width:130px; }
+      .topCatPill{ width:160px; }
+      .topCatLabel{ max-width: 106px; }
     }
   </style>
 </head>
@@ -611,14 +650,8 @@
         </div>
       </div>
 
-      <!-- Slot 2: Game (추가 가능) -->
-      <div class="slot fixed" title="게임 선택/추가">
-        <select id="gameSelect" class="select">
-          <option value="아이온2">아이온2</option>
-        </select>
-        <div class="chev"></div>
-        <button class="miniBtn icon edit" id="btnAddGame" title="게임 추가">+</button>
-      </div>
+      <!-- Slot 2: Top Categories (4개 고정) -->
+      <div class="topCats" id="topCats"></div>
 
       <!-- Slot 3: Admin label -->
       <div class="slot fixed">
@@ -637,10 +670,12 @@
     </div>
 
     <div class="top-right">
-      <span class="pill small ghost" title="현재 페이지">
+      <span class="pill small ghost" title="현재 카테고리/페이지">
         관리자
         <span style="opacity:.7;">/</span>
-        <span id="pathGameTop">아이온2</span>
+        <span id="pathTopCat">카테고리1</span>
+        <span style="opacity:.7;">/</span>
+        <span id="pathPageTop">전체지도</span>
       </span>
     </div>
   </div>
@@ -652,14 +687,14 @@
         <div class="card">
           <div class="sectionTitle">
             <span>페이지</span>
-            <span class="subtle"><b id="pathGame">아이온2</b> / <b id="pathPage">전체지도</b></span>
+            <span class="subtle"><b id="pathCat">카테고리1</b> / <b id="pathPage">전체지도</b></span>
           </div>
 
           <button class="btnAddPage" id="btnAddPage">+ 페이지 추가</button>
 
           <div class="subtle" style="margin-top:10px;">
-            • 페이지 버튼 클릭 → 같은 게임 안에서 지도 페이지 이동<br/>
-            • 폰/다른 기기에서도 지도 보이게 하려면: 관리자에서 URL 버튼으로 지도 이미지 URL 설정
+            • 페이지 버튼 클릭 → 같은 카테고리 안에서 지도 페이지 이동<br/>
+            • 다른 기기에서도 지도 보이게 하려면: 페이지 URL 버튼으로 지도 이미지 URL 설정
           </div>
 
           <div class="pageList" id="pageList"></div>
@@ -693,27 +728,6 @@
               <div class="dot"></div>
               <div>같은 카테고리 필터 시 선도 같이 표시/숨김</div>
             </div>
-            <div class="toggle" id="tgAutoAddCatFromText">
-              <div class="dot"></div>
-              <div>발견하는 아이템 희귀도 증가 마을</div>
-            </div>
-            <div class="toggle" id="tgAutoAddCatFromText2">
-              <div class="dot"></div>
-              <div>발견하는 아이템 희귀도 증가</div>
-            </div>
-            <div class="toggle" id="tgAutoAddCatFromText3">
-              <div class="dot"></div>
-              <div>발견하는 아이템 희귀도 증가 마을 감소</div>
-            </div>
-
-            <div class="chipRow" style="gap:10px;">
-              <div class="chip" data-quickcat="4"><div class="dotc" style="background:#fff;"></div>4</div>
-              <div class="chip" data-quickcat="11"><div class="dotc" style="background:#fff;"></div>11</div>
-              <div class="chip" data-quickcat="22"><div class="dotc" style="background:#fff;"></div>22</div>
-              <div class="chip" data-quickcat="33"><div class="dotc" style="background:#fff;"></div>33</div>
-              <div class="chip" data-quickcat="44"><div class="dotc" style="background:#fff;"></div>44</div>
-              <div class="chip" data-quickcat="455"><div class="dotc" style="background:#fff;"></div>455</div>
-            </div>
 
             <div class="subtle" id="kpi" style="margin-top:2px;">표시 중 마커: 0 / 페이지 전체: 0</div>
 
@@ -721,7 +735,7 @@
           </div>
         </div>
 
-        <!-- 관리자 툴 (5번 느낌) -->
+        <!-- 관리자 툴 -->
         <div class="card">
           <div class="sectionTitle">
             <span>관리자 툴</span>
@@ -887,7 +901,7 @@
       </div>
 
       <div class="modalBody">
-        <div class="subtle">저장하면 현재 게임의 카테고리 목록이 완전히 교체됩니다.</div>
+        <div class="subtle">저장하면 현재 카테고리의 카테고리 목록이 완전히 교체됩니다.</div>
 
         <div class="labelRow" style="margin-top:14px;">빠른 색상 (선택한 카테고리 행에 적용)</div>
         <div class="palette" id="catQuickPalette" style="margin-top:10px;"></div>
@@ -929,11 +943,7 @@
     { id:"큐브", name:"큐브", color:"#2b8cff", on:true },
   ];
 
-  const defaultState = {
-    version:99,
-    game:"아이온2",
-    logoUrl:"",
-    games:["아이온2"],
+  const makeDefaultCatState = () => ({
     pages: [
       { id:"p_all", name:"전체지도", url:"" },
       { id:"p_2", name:"2번마을", url:"" },
@@ -948,7 +958,26 @@
     showLinesWithCatFilter:true,
     map:{ imgDataUrl:"", naturalW:1, naturalH:1, scale:0, tx:0, ty:0 },
     markers:[],
-    chains:[], // [{id, pageId, cat, markerIds:[...]}]
+    chains:[], // (legacy placeholder)
+    curves:{}  // key "aId|bId" => { cx, cy }  (world coords)
+  });
+
+  const defaultState = {
+    version:99,
+    logoUrl:"",
+    topCats: [
+      { id:"cat1", label:"카테고리1", enabled:true },
+      { id:"cat2", label:"카테고리2", enabled:true },
+      { id:"cat3", label:"카테고리3", enabled:true },
+      { id:"cat4", label:"카테고리4", enabled:true },
+    ],
+    activeTopCatId:"cat1",
+    cats: {
+      cat1: makeDefaultCatState(),
+      cat2: makeDefaultCatState(),
+      cat3: makeDefaultCatState(),
+      cat4: makeDefaultCatState(),
+    }
   };
 
   const $ = (id)=>document.getElementById(id);
@@ -1018,17 +1047,104 @@
   let mapImg = new Image();
   mapImg.crossOrigin = "anonymous";
 
-  function mergeState(st){
+  function currentTopCat(){
+    const id = S.activeTopCatId || "cat1";
+    const tc = (S.topCats||[]).find(x=>x.id===id) || (S.topCats?.[0] || {id:"cat1", label:"카테고리1", enabled:true});
+    return tc;
+  }
+  function currentCatState(){
+    const id = S.activeTopCatId || "cat1";
+    if(!S.cats) S.cats = {};
+    if(!S.cats[id]) S.cats[id] = makeDefaultCatState();
+    return S.cats[id];
+  }
+
+  function ensureCatSlotIntegrity(){
+    if(!Array.isArray(S.topCats) || !S.topCats.length){
+      S.topCats = structuredClone(defaultState.topCats);
+    }
+    const needed = ["cat1","cat2","cat3","cat4"];
+    for(const id of needed){
+      if(!S.topCats.some(x=>x.id===id)){
+        const base = defaultState.topCats.find(x=>x.id===id);
+        S.topCats.push(structuredClone(base));
+      }
+      if(!S.cats) S.cats = {};
+      if(!S.cats[id]) S.cats[id] = makeDefaultCatState();
+    }
+    // keep exactly 4 in order
+    S.topCats = needed.map(id=>{
+      const found = S.topCats.find(x=>x.id===id);
+      return {
+        id,
+        label: (found?.label ?? defaultState.topCats.find(x=>x.id===id).label),
+        enabled: (typeof found?.enabled==="boolean") ? found.enabled : true
+      };
+    });
+    if(!needed.includes(S.activeTopCatId)) S.activeTopCatId = "cat1";
+  }
+
+  function migrateLegacyStateToCat1(st){
+    // If prior schema existed (game/pages/markers/categories/map), fold into cats.cat1
+    const legacyHas = st && typeof st==="object" && (
+      Array.isArray(st.pages) || Array.isArray(st.markers) || Array.isArray(st.categories) || st.map
+    );
+    if(!legacyHas) return st;
+
     const merged = structuredClone(defaultState);
-    if(st && typeof st === "object") Object.assign(merged, st);
-    merged.pages = Array.isArray(st?.pages) && st.pages.length ? st.pages : structuredClone(defaultState.pages);
-    merged.categories = Array.isArray(st?.categories) && st.categories.length ? st.categories : structuredClone(defaultCats);
-    merged.markers = Array.isArray(st?.markers) ? st.markers : [];
-    merged.chains = Array.isArray(st?.chains) ? st.chains : [];
-    merged.map = Object.assign(structuredClone(defaultState.map), st?.map||{});
-    merged.games = Array.isArray(st?.games) && st.games.length ? st.games : ["아이온2"];
-    if(!merged.pages.find(p=>p.id===merged.currentPageId)) merged.currentPageId = merged.pages[0].id;
-    if(!merged.games.includes(merged.game)) merged.game = merged.games[0];
+    merged.logoUrl = (typeof st.logoUrl==="string") ? st.logoUrl : "";
+    merged.topCats = structuredClone(defaultState.topCats);
+    merged.activeTopCatId = "cat1";
+    merged.cats = structuredClone(defaultState.cats);
+
+    const c1 = merged.cats.cat1;
+    if(Array.isArray(st.pages) && st.pages.length) c1.pages = st.pages;
+    if(typeof st.currentPageId==="string") c1.currentPageId = st.currentPageId;
+    if(Array.isArray(st.categories) && st.categories.length) c1.categories = st.categories;
+    if(typeof st.showLinesWithCatFilter==="boolean") c1.showLinesWithCatFilter = st.showLinesWithCatFilter;
+    if(st.map && typeof st.map==="object") c1.map = Object.assign(structuredClone(c1.map), st.map);
+    if(Array.isArray(st.markers)) c1.markers = st.markers;
+    if(Array.isArray(st.chains)) c1.chains = st.chains;
+    if(st.curves && typeof st.curves==="object") c1.curves = st.curves;
+
+    return merged;
+  }
+
+  function mergeState(st){
+    // Accept new schema, else migrate legacy schema
+    let base = st;
+    if(st && typeof st==="object"){
+      const isNew = st.topCats && st.cats;
+      base = isNew ? st : migrateLegacyStateToCat1(st);
+    }else{
+      base = structuredClone(defaultState);
+    }
+
+    const merged = structuredClone(defaultState);
+    if(base && typeof base==="object"){
+      merged.version = 99;
+      merged.logoUrl = typeof base.logoUrl==="string" ? base.logoUrl : "";
+      merged.topCats = Array.isArray(base.topCats) ? base.topCats : structuredClone(defaultState.topCats);
+      merged.activeTopCatId = typeof base.activeTopCatId==="string" ? base.activeTopCatId : "cat1";
+      merged.cats = (base.cats && typeof base.cats==="object") ? base.cats : structuredClone(defaultState.cats);
+    }
+    ensureCatSlotIntegrity();
+
+    // normalize each cat state
+    for(const tc of merged.topCats){
+      const cs = merged.cats[tc.id] || makeDefaultCatState();
+      const norm = makeDefaultCatState();
+      norm.pages = Array.isArray(cs.pages) && cs.pages.length ? cs.pages : norm.pages;
+      norm.currentPageId = (typeof cs.currentPageId==="string" && norm.pages.some(p=>p.id===cs.currentPageId)) ? cs.currentPageId : norm.pages[0].id;
+      norm.categories = Array.isArray(cs.categories) && cs.categories.length ? cs.categories : structuredClone(defaultCats);
+      norm.showLinesWithCatFilter = (typeof cs.showLinesWithCatFilter==="boolean") ? cs.showLinesWithCatFilter : true;
+      norm.map = Object.assign(structuredClone(norm.map), (cs.map && typeof cs.map==="object") ? cs.map : {});
+      norm.markers = Array.isArray(cs.markers) ? cs.markers : [];
+      norm.chains = Array.isArray(cs.chains) ? cs.chains : [];
+      norm.curves = (cs.curves && typeof cs.curves==="object") ? cs.curves : {};
+      merged.cats[tc.id] = norm;
+    }
+    S = merged;
     return merged;
   }
 
@@ -1049,7 +1165,7 @@
     return raw ? safeParse(raw, structuredClone(defaultState)) : structuredClone(defaultState);
   }
 
-  // ---------- logo (4번: 로고 클릭 → URL 입력) ----------
+  // ---------- logo ----------
   const logoBox = $("logoBox");
   function renderLogo(){
     logoBox.innerHTML = "";
@@ -1078,56 +1194,61 @@
     toast("로고 설정 저장");
   });
 
-  // ---------- game select (2번: 아이온2 슬롯도 추가 가능) ----------
-  const gameSelect = $("gameSelect");
-  const btnAddGame = $("btnAddGame");
-  function renderGames(){
-    gameSelect.innerHTML = "";
-    for(const g of S.games){
-      const opt = document.createElement("option");
-      opt.value = g; opt.textContent = g;
-      gameSelect.appendChild(opt);
+  // ---------- top categories ----------
+  const topCatsEl = $("topCats");
+  function renderTopCats(){
+    topCatsEl.innerHTML = "";
+    ensureCatSlotIntegrity();
+    for(const tc of S.topCats){
+      const pill = document.createElement("div");
+      const isActive = (tc.id === S.activeTopCatId);
+      pill.className = "topCatPill" + (isActive ? " active" : "") + (!tc.enabled ? " disabled" : "");
+      pill.innerHTML = `
+        <div class="topCatLabel">${tc.id==="cat1" ? "아이온2" : tc.label}</div>
+        <div class="topCatToggle ${tc.enabled ? "on" : ""}" title="활성/비활성"></div>
+      `;
+
+      const toggle = pill.querySelector(".topCatToggle");
+
+      toggle.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        requireAuth(); if(!isAuthed()) return;
+        tc.enabled = !tc.enabled;
+        saveLocal();
+        renderTopCats();
+        toast(tc.enabled ? "카테고리 활성화" : "카테고리 비활성화");
+      });
+
+      pill.addEventListener("click", ()=>{
+        requireAuth(); if(!isAuthed()) return;
+        S.activeTopCatId = tc.id;
+        saveLocal();
+        selectedMarker = null;
+        insertAfterMarkerId = null;
+        syncSelectedPanel();
+        renderAll();
+        loadMap();
+        toast("카테고리 전환");
+      });
+
+      topCatsEl.appendChild(pill);
     }
-    gameSelect.value = S.game;
-    $("pathGameTop").textContent = S.game;
-    $("pathGame").textContent = S.game;
+
+    $("pathTopCat").textContent = (S.activeTopCatId==="cat1") ? "아이온2" : currentTopCat().label;
+    $("pathCat").textContent = (S.activeTopCatId==="cat1") ? "아이온2" : currentTopCat().label;
   }
-  gameSelect.addEventListener("change", ()=>{
-    requireAuth();
-    if(!isAuthed()) { gameSelect.value = S.game; return; }
-    S.game = gameSelect.value;
-    $("pathGameTop").textContent = S.game;
-    $("pathGame").textContent = S.game;
-    saveLocal();
-    toast("게임 변경");
-  });
-  btnAddGame.addEventListener("click", ()=>{
-    requireAuth();
-    if(!isAuthed()) return;
-    const name = prompt("추가할 게임 이름을 입력하세요");
-    if(!name) return;
-    const g = name.trim();
-    if(!g) return;
-    if(S.games.includes(g)){
-      toast("이미 존재하는 게임");
-      return;
-    }
-    S.games.push(g);
-    S.game = g;
-    renderGames();
-    saveLocal();
-    toast("게임 추가");
-  });
 
-  // ---------- pages (3번: 페이지 추가 + URL 설정 버튼) ----------
+  // ---------- pages ----------
   function renderPages(){
+    const C = currentCatState();
     pageList.innerHTML = "";
-    const cur = S.pages.find(p=>p.id===S.currentPageId) || S.pages[0];
+    const cur = C.pages.find(p=>p.id===C.currentPageId) || C.pages[0];
     $("pathPage").textContent = cur ? cur.name : "전체지도";
+    $("pathPageTop").textContent = cur ? cur.name : "전체지도";
 
-    for(const p of S.pages){
+    for(const p of C.pages){
       const item = document.createElement("div");
-      item.className = "pageItem" + (p.id===S.currentPageId ? " active" : "");
+      item.className = "pageItem" + (p.id===C.currentPageId ? " active" : "");
       item.innerHTML = `
         <div class="pageName">${p.name}</div>
         <div class="pageActions">
@@ -1139,11 +1260,11 @@
       item.addEventListener("click", (e)=>{
         const btn = e.target.closest("button");
         if(btn) return;
-        S.currentPageId = p.id;
+        C.currentPageId = p.id;
         saveLocal();
         renderPages();
         renderKpi();
-        loadMap(); // ✅ 페이지 전환 시 페이지 URL 지도 로드
+        loadMap();
       });
 
       const [bUrl, bEdit, bDel] = item.querySelectorAll("button");
@@ -1157,7 +1278,7 @@
         p.url = (next || "").trim();
         saveLocal();
         toast("페이지 URL 저장");
-        if(p.id === S.currentPageId) loadMap(); // ✅ 현재 페이지면 즉시 반영
+        if(p.id === C.currentPageId) loadMap();
       });
 
       bEdit.addEventListener("click", (e)=>{
@@ -1176,20 +1297,27 @@
         e.stopPropagation();
         requireAuth();
         if(!isAuthed()) return;
-        if(S.pages.length <= 1){ toast("최소 1개 페이지는 필요합니다"); return; }
+        if(C.pages.length <= 1){ toast("최소 1개 페이지는 필요합니다"); return; }
         if(!confirm(`"${p.name}" 페이지를 삭제할까요? (해당 페이지 마커도 같이 삭제됩니다)`)) return;
 
-        // remove markers
         const pid = p.id;
-        S.markers = S.markers.filter(m=>m.pageId !== pid);
-        S.chains = S.chains.filter(c=>c.pageId !== pid);
-        S.pages = S.pages.filter(x=>x.id !== pid);
-        if(S.currentPageId === pid) S.currentPageId = S.pages[0].id;
+        C.markers = C.markers.filter(m=>m.pageId !== pid);
+        C.pages = C.pages.filter(x=>x.id !== pid);
+        if(C.currentPageId === pid) C.currentPageId = C.pages[0].id;
+
+        // curves cleanup
+        const validIds = new Set(C.markers.map(m=>m.id));
+        const newCurves = {};
+        for(const k of Object.keys(C.curves||{})){
+          const [a,b] = k.split("|");
+          if(validIds.has(a) && validIds.has(b)) newCurves[k]=C.curves[k];
+        }
+        C.curves = newCurves;
 
         saveLocal();
         renderPages();
         renderKpi();
-        loadMap(); // ✅ 삭제 후 현재 페이지 지도 갱신
+        loadMap();
         toast("페이지 삭제");
       });
 
@@ -1200,20 +1328,24 @@
   $("btnAddPage").addEventListener("click", ()=>{
     requireAuth();
     if(!isAuthed()) return;
+    const C = currentCatState();
     const name = prompt("추가할 페이지 이름을 입력하세요 (예: 8번마을)");
     if(!name) return;
     const p = { id:"p_"+uid(), name:name.trim(), url:"" };
-    S.pages.push(p);
-    S.currentPageId = p.id;
+    C.pages.push(p);
+    C.currentPageId = p.id;
     saveLocal();
     renderPages();
     renderKpi();
-    loadMap(); // ✅ 추가 후 현재 페이지 지도 갱신
+    loadMap();
     toast("페이지 추가");
   });
 
-  // ---------- categories ----------
-  function getCat(id){ return S.categories.find(c=>c.id===id); }
+  // ---------- categories (filter chips) ----------
+  function getCat(id){
+    const C = currentCatState();
+    return C.categories.find(c=>c.id===id);
+  }
   function markerColor(m){
     if(!m) return "#7cc4ff";
     if(m.useCatColor){
@@ -1225,83 +1357,77 @@
     return (c && c.color) ? c.color : "#7cc4ff";
   }
 
+  function ensureCat(name, color){
+    const C = currentCatState();
+    if(C.categories.some(c=>c.id===name)) return;
+    C.categories.push({ id:name, name, color:color||"#ffffff", on:true });
+    renderCats();
+  }
+
+  function setToggle(el, on){
+    el.classList.toggle("on", !!on);
+    el.dataset.on = on ? "1" : "0";
+  }
+
   function renderCats(){
+    const C = currentCatState();
     catChips.innerHTML = "";
-    for(const c of S.categories){
+
+    for(const c of C.categories){
       const chip = document.createElement("div");
-      chip.className = "chip" + (c.on ? " on" : "");
+      chip.className = "chip" + (c.on ? " on" : " off");
       chip.innerHTML = `<div class="dotc" style="background:${c.color};"></div><div>${c.name}</div>`;
+
       chip.addEventListener("click", ()=>{
         requireAuth();
         if(!isAuthed()) return;
-        c.on = !c.on;
-        if(!S.categories.some(x=>x.on)){
-          c.on = true;
-          toast("최소 1개 카테고리는 켜져야 합니다");
+
+        if(c.id === "전체"){
+          // 전체 클릭: 모든 마커 ON/OFF (카테고리 토글 전체 반영)
+          const anyOn = C.categories.some(x=>x.id!=="전체" && x.on);
+          const toOn = !anyOn;
+          for(const x of C.categories){
+            if(x.id==="전체"){ x.on = true; continue; }
+            x.on = toOn;
+          }
+          saveLocal();
+          renderCats();
+          renderKpi();
+          draw();
+          toast(toOn ? "전체 ON" : "전체 OFF");
+          return;
         }
+
+        c.on = !c.on;
         saveLocal();
         renderCats();
         renderKpi();
         draw();
       });
+
       catChips.appendChild(chip);
     }
   }
 
-  // right toggles
-  function setToggle(el, on){
-    el.classList.toggle("on", !!on);
-    el.dataset.on = on ? "1" : "0";
-  }
   const tgShowLinesWithCatFilter = $("tgShowChainSameCat");
   tgShowLinesWithCatFilter.addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
-    S.showLinesWithCatFilter = !S.showLinesWithCatFilter;
-    setToggle(tgShowLinesWithCatFilter, S.showLinesWithCatFilter);
+    const C = currentCatState();
+    C.showLinesWithCatFilter = !C.showLinesWithCatFilter;
+    setToggle(tgShowLinesWithCatFilter, C.showLinesWithCatFilter);
     saveLocal();
     draw();
   });
-
-  // quick-cat chips (just quick set category for selected marker)
-  document.querySelectorAll('[data-quickcat]').forEach(ch=>{
-    ch.addEventListener("click", ()=>{
-      requireAuth(); if(!isAuthed()) return;
-      if(!selectedMarker){ toast("마커를 선택하세요"); return; }
-      const name = ch.getAttribute("data-quickcat");
-      ensureCat(name, "#ffffff");
-      selectedMarker.cat = name;
-      selectedMarker.useCatColor = true;
-      saveLocal();
-      syncSelectedPanel();
-      draw();
-      toast("카테고리 변경");
-    });
-  });
-
-  // The three extra toggles in screenshot: we keep UI only (can be used for quick add category text)
-  const tg1=$("tgAutoAddCatFromText"), tg2=$("tgAutoAddCatFromText2"), tg3=$("tgAutoAddCatFromText3");
-  setToggle(tg1,false); setToggle(tg2,false); setToggle(tg3,false);
-  [tg1,tg2,tg3].forEach(tg=>{
-    tg.addEventListener("click", ()=>{
-      requireAuth(); if(!isAuthed()) return;
-      setToggle(tg, !(tg.dataset.on==="1"));
-    });
-  });
-
-  function ensureCat(name, color){
-    if(S.categories.some(c=>c.id===name)) return;
-    S.categories.push({ id:name, name, color:color||"#ffffff", on:true });
-    renderCats();
-  }
 
   // ---------- map upload ----------
   $("fileMap").addEventListener("change", async (e)=>{
     requireAuth();
     if(!isAuthed()) return;
+    const C = currentCatState();
     const f = e.target.files && e.target.files[0];
     if(!f) return;
     const dataUrl = await fileToDataURL(f);
-    S.map.imgDataUrl = dataUrl;
+    C.map.imgDataUrl = dataUrl;
     saveLocal();
     loadMap();
     toast("지도 업로드 완료");
@@ -1318,17 +1444,16 @@
   }
 
   function loadMap(){
-    // ✅ 현재 페이지 URL이 있으면 그걸 최우선으로 사용
-    const curPage = S.pages.find(p => p.id === S.currentPageId);
+    const C = currentCatState();
+    const curPage = C.pages.find(p => p.id === C.currentPageId);
     const pageUrl = (curPage?.url || "").trim();
 
     if(pageUrl){
       mapImg = new Image();
       mapImg.crossOrigin = "anonymous";
       mapImg.onload = ()=>{
-        S.map.naturalW = mapImg.naturalWidth || 1;
-        S.map.naturalH = mapImg.naturalHeight || 1;
-
+        C.map.naturalW = mapImg.naturalWidth || 1;
+        C.map.naturalH = mapImg.naturalHeight || 1;
         fitToScreen();
         saveLocal();
         draw();
@@ -1342,21 +1467,19 @@
       return;
     }
 
-    // ✅ 페이지 URL이 없으면 업로드(DataURL) 지도 사용
-    if(S.map.imgDataUrl){
+    if(C.map.imgDataUrl){
       mapImg = new Image();
       mapImg.crossOrigin = "anonymous";
       mapImg.onload = ()=>{
-        S.map.naturalW = mapImg.naturalWidth || 1;
-        S.map.naturalH = mapImg.naturalHeight || 1;
-        if(!S.map.scale || S.map.scale<=0) fitToScreen();
+        C.map.naturalW = mapImg.naturalWidth || 1;
+        C.map.naturalH = mapImg.naturalHeight || 1;
+        if(!C.map.scale || C.map.scale<=0) fitToScreen();
         draw();
       };
-      mapImg.src = S.map.imgDataUrl;
+      mapImg.src = C.map.imgDataUrl;
       return;
     }
 
-    // placeholder
     mapImg = new Image();
     mapImg.onload = ()=>draw();
     mapImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
@@ -1390,9 +1513,11 @@
   $("btnResetAll").addEventListener("click", ()=>{
     requireAuth();
     if(!isAuthed()) return;
-    if(!confirm("전체 초기화할까요? (페이지/마커/지도 포함)")) return;
+    if(!confirm("전체 초기화할까요? (카테고리/페이지/마커/지도 포함)")) return;
     S = structuredClone(defaultState);
     saveLocal();
+    selectedMarker = null;
+    insertAfterMarkerId = null;
     renderAll();
     loadMap();
     toast("전체 초기화 완료");
@@ -1409,49 +1534,105 @@
   window.addEventListener("resize", ()=>{ resizeCanvas(); draw(); });
 
   function fitToScreen(){
+    const C = currentCatState();
     const pad = 40;
-    const iw = S.map.naturalW || (mapImg.naturalWidth||1);
-    const ih = S.map.naturalH || (mapImg.naturalHeight||1);
+    const iw = C.map.naturalW || (mapImg.naturalWidth||1);
+    const ih = C.map.naturalH || (mapImg.naturalHeight||1);
     const cw = cv.width, ch = cv.height;
     const scale = Math.min((cw - pad)/iw, (ch - pad)/ih);
-    S.map.scale = clamp(scale, 0.05, 10);
-    S.map.tx = (cw - iw*S.map.scale)/2;
-    S.map.ty = (ch - ih*S.map.scale)/2;
+    C.map.scale = clamp(scale, 0.05, 10);
+    C.map.tx = (cw - iw*C.map.scale)/2;
+    C.map.ty = (ch - ih*C.map.scale)/2;
   }
 
   // ---------- marker data ----------
   function getVisibleMarkers(){
-    const curPage = S.currentPageId;
-    const onCats = new Set(S.categories.filter(c=>c.on).map(c=>c.id));
+    const C = currentCatState();
+    const curPage = C.currentPageId;
+    const onCats = new Set(C.categories.filter(c=>c.on).map(c=>c.id));
     const allOn = onCats.has("전체");
-    return (S.markers||[]).filter(m=>{
+    const anyNonAllOn = C.categories.some(c=>c.id!=="전체" && c.on);
+
+    return (C.markers||[]).filter(m=>{
       if(m.pageId !== curPage) return false;
       if(allOn) return true;
+      if(!anyNonAllOn) return false; // 전체 OFF 상태
       return onCats.has(m.cat);
     });
   }
 
   function renderKpi(){
-    const curPage = S.currentPageId;
-    const total = (S.markers||[]).filter(m=>m.pageId===curPage).length;
+    const C = currentCatState();
+    const curPage = C.currentPageId;
+    const total = (C.markers||[]).filter(m=>m.pageId===curPage).length;
     const shown = getVisibleMarkers().length;
     $("kpi").textContent = `표시 중 마커: ${shown} / 페이지 전체: ${total}`;
   }
 
-  // ---------- drawing ----------
+  // ---------- drawing helpers ----------
   function worldFromNorm(nx, ny){
-    const iw = S.map.naturalW || (mapImg.naturalWidth||1);
-    const ih = S.map.naturalH || (mapImg.naturalHeight||1);
+    const C = currentCatState();
+    const iw = C.map.naturalW || (mapImg.naturalWidth||1);
+    const ih = C.map.naturalH || (mapImg.naturalHeight||1);
     return { x:nx*iw, y:ny*ih };
   }
+  function normFromWorld(wx, wy){
+    const C = currentCatState();
+    const iw = C.map.naturalW || (mapImg.naturalWidth||1);
+    const ih = C.map.naturalH || (mapImg.naturalHeight||1);
+    return { nx: iw ? wx/iw : 0, ny: ih ? wy/ih : 0 };
+  }
   function screenFromWorld(wx, wy){
-    return { sx: wx*S.map.scale + S.map.tx, sy: wy*S.map.scale + S.map.ty };
+    const C = currentCatState();
+    return { sx: wx*C.map.scale + C.map.tx, sy: wy*C.map.scale + C.map.ty };
+  }
+  function worldFromScreen(sx, sy){
+    const C = currentCatState();
+    return { wx: (sx - C.map.tx)/C.map.scale, wy: (sy - C.map.ty)/C.map.scale };
   }
 
+  function drawArrowAt(p, v, sizeWorld){
+    // p: {x,y} in world coords; v: direction vector in world coords (normalized)
+    const C = currentCatState();
+    const s = sizeWorld;
+    const nx = v.x, ny = v.y;
+    const px = -ny, py = nx;
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(p.x - nx*s + px*(s*0.55), p.y - ny*s + py*(s*0.55));
+    ctx.lineTo(p.x - nx*s - px*(s*0.55), p.y - ny*s - py*(s*0.55));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function quadPoint(a, c, b, t){
+    const u = 1-t;
+    return {
+      x: u*u*a.x + 2*u*t*c.x + t*t*b.x,
+      y: u*u*a.y + 2*u*t*c.y + t*t*b.y
+    };
+  }
+  function quadDeriv(a, c, b, t){
+    return {
+      x: 2*(1-t)*(c.x-a.x) + 2*t*(b.x-c.x),
+      y: 2*(1-t)*(c.y-a.y) + 2*t*(b.y-c.y)
+    };
+  }
+  function normVec(v){
+    const d = Math.hypot(v.x, v.y) || 1;
+    return { x:v.x/d, y:v.y/d };
+  }
+
+  function segmentKey(aId,bId){ return `${aId}|${bId}`; }
+
   let circleHitboxes = []; // {id,sx,sy,rPx}
+  let segHitboxes = [];    // {key,aId,bId, distFn(sx,sy)->d, midW:{x,y}, aW, bW}
+
   function draw(){
+    const C = currentCatState();
     ctx.clearRect(0,0,cv.width,cv.height);
     circleHitboxes = [];
+    segHitboxes = [];
 
     ctx.save();
     ctx.fillStyle = "rgba(0,0,0,.22)";
@@ -1459,20 +1640,20 @@
     ctx.restore();
 
     ctx.save();
-    ctx.translate(S.map.tx, S.map.ty);
-    ctx.scale(S.map.scale, S.map.scale);
+    ctx.translate(C.map.tx, C.map.ty);
+    ctx.scale(C.map.scale, C.map.scale);
 
     // map
     if(mapImg && mapImg.complete){
-      const iw = S.map.naturalW || (mapImg.naturalWidth||1);
-      const ih = S.map.naturalH || (mapImg.naturalHeight||1);
+      const iw = C.map.naturalW || (mapImg.naturalWidth||1);
+      const ih = C.map.naturalH || (mapImg.naturalHeight||1);
       ctx.drawImage(mapImg, 0,0, iw, ih);
     }
 
     const ms = getVisibleMarkers();
 
-    // chain lines
-    const showLines = !!S.showLinesWithCatFilter;
+    // chain lines + arrows + curve support
+    const showLines = !!C.showLinesWithCatFilter;
     if(showLines){
       const byChain = new Map();
       for(const m of ms){
@@ -1480,19 +1661,81 @@
         if(!byChain.has(m.chainId)) byChain.set(m.chainId, []);
         byChain.get(m.chainId).push(m);
       }
-      ctx.lineWidth = 2 / S.map.scale;
+
+      ctx.lineWidth = 2 / C.map.scale;
       ctx.strokeStyle = "rgba(255,255,255,.78)";
+      ctx.fillStyle = "rgba(255,255,255,.86)";
       ctx.globalAlpha = 0.9;
+
       for(const arr of byChain.values()){
         arr.sort((a,b)=>(a.chainIndex||0)-(b.chainIndex||0));
         if(arr.length<2) continue;
-        ctx.beginPath();
-        for(let i=0;i<arr.length;i++){
-          const p = worldFromNorm(arr[i].x, arr[i].y);
-          if(i===0) ctx.moveTo(p.x, p.y);
-          else ctx.lineTo(p.x, p.y);
+
+        for(let i=0;i<arr.length-1;i++){
+          const A = arr[i], B = arr[i+1];
+          const aW = worldFromNorm(A.x, A.y);
+          const bW = worldFromNorm(B.x, B.y);
+          const key = segmentKey(A.id,B.id);
+
+          const cc = (C.curves && C.curves[key]) ? C.curves[key] : null;
+          const hasCurve = !!cc && typeof cc.cx==="number" && typeof cc.cy==="number";
+          const cW = hasCurve ? { x: cc.cx, y: cc.cy } : { x: (aW.x+bW.x)/2, y: (aW.y+bW.y)/2 };
+
+          ctx.beginPath();
+          if(hasCurve){
+            ctx.moveTo(aW.x, aW.y);
+            ctx.quadraticCurveTo(cW.x, cW.y, bW.x, bW.y);
+          }else{
+            ctx.moveTo(aW.x, aW.y);
+            ctx.lineTo(bW.x, bW.y);
+          }
+          ctx.stroke();
+
+          // arrow at t=0.5 (straight or curve)
+          const t = 0.5;
+          const mid = hasCurve ? quadPoint(aW, cW, bW, t) : { x:(aW.x+bW.x)/2, y:(aW.y+bW.y)/2 };
+          const dv = hasCurve ? quadDeriv(aW, cW, bW, t) : { x:(bW.x-aW.x), y:(bW.y-aW.y) };
+          const dir = normVec(dv);
+
+          ctx.save();
+          ctx.globalAlpha = 0.95;
+          const arrowSize = 10 / C.map.scale; // world-size so looks consistent
+          drawArrowAt(mid, dir, arrowSize);
+          ctx.restore();
+
+          // segment hitbox (screen distance approximation)
+          const distFn = (sx,sy)=>{
+            const local = worldFromScreen(sx,sy);
+            const px = local.wx, py = local.wy;
+            // sample along curve/line
+            const samples = 18;
+            let best = Infinity;
+            let prev = aW;
+            for(let k=1;k<=samples;k++){
+              const tt = k/samples;
+              const cur = hasCurve ? quadPoint(aW,cW,bW,tt) : { x:aW.x + (bW.x-aW.x)*tt, y:aW.y + (bW.y-aW.y)*tt };
+              // distance from point to segment prev-cur
+              const vx = cur.x - prev.x, vy = cur.y - prev.y;
+              const wx = px - prev.x, wy = py - prev.y;
+              const vv = vx*vx + vy*vy || 1e-9;
+              const tproj = clamp((wx*vx + wy*vy)/vv, 0, 1);
+              const cxp = prev.x + vx*tproj;
+              const cyp = prev.y + vy*tproj;
+              const d = Math.hypot(px-cxp, py-cyp);
+              if(d<best) best=d;
+              prev = cur;
+            }
+            return best;
+          };
+
+          segHitboxes.push({
+            key, aId:A.id, bId:B.id,
+            aW, bW,
+            midW: mid,
+            hasCurve,
+            distFn
+          });
         }
-        ctx.stroke();
       }
     }
 
@@ -1502,14 +1745,13 @@
       const r = (m.r ?? 10);
       const col = markerColor(m);
 
-      // circle
       ctx.save();
       ctx.globalAlpha = 1;
       ctx.beginPath();
       ctx.arc(p.x, p.y, r, 0, Math.PI*2);
       ctx.fillStyle = col;
       ctx.fill();
-      ctx.lineWidth = 2 / S.map.scale;
+      ctx.lineWidth = 2 / C.map.scale;
       ctx.strokeStyle = "rgba(0,0,0,.35)";
       ctx.stroke();
       ctx.restore();
@@ -1527,7 +1769,7 @@
         ctx.restore();
       }
 
-      // label (marker related font uses .markerFont concept: keep crisp)
+      // label: offset reduced by 50% vs old (r + 8 -> r + 4)
       if(m.name){
         ctx.save();
         ctx.globalAlpha = 0.98;
@@ -1535,14 +1777,13 @@
         ctx.font = `${m.fw ?? 900} ${m.fs ?? 15}px ui-sans-serif`;
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
-        const off = r + 8;
+        const off = r + 4;
         ctx.fillText(m.name, p.x + off, p.y);
         ctx.restore();
       }
 
-      // hitbox
       const sp = screenFromWorld(p.x, p.y);
-      circleHitboxes.push({ id:m.id, sx:sp.sx, sy:sp.sy, rPx: r*S.map.scale });
+      circleHitboxes.push({ id:m.id, sx:sp.sx, sy:sp.sy, rPx: r*C.map.scale });
     }
 
     ctx.restore();
@@ -1560,56 +1801,113 @@
     return best;
   }
 
-  // ---------- pan/zoom ----------
+  function pickSegmentAt(sx,sy){
+    const C = currentCatState();
+    const tol = 10 / C.map.scale; // in world
+    let best=null, bestD=Infinity;
+    for(const s of segHitboxes){
+      const d = s.distFn(sx,sy);
+      if(d <= tol && d < bestD){
+        best = s;
+        bestD = d;
+      }
+    }
+    return best;
+  }
+
+  // ---------- pan/zoom + curve-drag ----------
   let isPanning=false, lastX=0,lastY=0;
+  let isDraggingCurve=false;
+  let draggingSegKey=null;
 
   cv.addEventListener("pointerdown", (e)=>{
+    requireAuth(); if(!isAuthed()) return;
     cv.setPointerCapture(e.pointerId);
     lastX=e.clientX; lastY=e.clientY;
+
+    const rect = cv.getBoundingClientRect();
+    const sx = e.clientX - rect.left;
+    const sy = e.clientY - rect.top;
+
+    // if near line segment -> start curve drag
+    const seg = pickSegmentAt(sx,sy);
+    if(seg){
+      isDraggingCurve = true;
+      draggingSegKey = seg.key;
+      toast("선 드래그: 곡선 조정");
+      return;
+    }
+
     isPanning=true;
   });
+
   cv.addEventListener("pointermove", (e)=>{
+    const C = currentCatState();
+    if(isDraggingCurve && draggingSegKey){
+      const rect = cv.getBoundingClientRect();
+      const sx = e.clientX - rect.left;
+      const sy = e.clientY - rect.top;
+      const w = worldFromScreen(sx,sy);
+      if(!C.curves) C.curves = {};
+      // set control point world coords
+      C.curves[draggingSegKey] = { cx: w.wx, cy: w.wy };
+      saveLocal();
+      draw();
+      return;
+    }
+
     if(!isPanning) return;
     const dx=e.clientX-lastX, dy=e.clientY-lastY;
     lastX=e.clientX; lastY=e.clientY;
-    S.map.tx += dx;
-    S.map.ty += dy;
+    C.map.tx += dx;
+    C.map.ty += dy;
     draw();
   });
-  cv.addEventListener("pointerup", ()=>{ isPanning=false; });
-  cv.addEventListener("pointercancel", ()=>{ isPanning=false; });
+
+  cv.addEventListener("pointerup", ()=>{
+    isPanning=false;
+    isDraggingCurve=false;
+    draggingSegKey=null;
+  });
+  cv.addEventListener("pointercancel", ()=>{
+    isPanning=false;
+    isDraggingCurve=false;
+    draggingSegKey=null;
+  });
 
   cv.addEventListener("wheel", (e)=>{
     e.preventDefault();
+    const C = currentCatState();
     const rect = cv.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
-    const old = S.map.scale || 1;
+    const old = C.map.scale || 1;
     const zoom = Math.exp(-e.deltaY * 0.0012);
     const next = clamp(old * zoom, 0.05, 10);
 
-    const wx = (mx - S.map.tx) / old;
-    const wy = (my - S.map.ty) / old;
+    const wx = (mx - C.map.tx) / old;
+    const wy = (my - C.map.ty) / old;
 
-    S.map.scale = next;
-    S.map.tx = mx - wx * next;
-    S.map.ty = my - wy * next;
+    C.map.scale = next;
+    C.map.tx = mx - wx * next;
+    C.map.ty = my - wy * next;
 
     draw();
   }, {passive:false});
 
   // ---------- marker create / select ----------
   let selectedMarker = null;
-  let insertAfterMarkerId = null; // for "중간 삽입" 느낌
+  let insertAfterMarkerId = null;
 
   function newMarkerAt(normX, normY){
+    const C = currentCatState();
     const m = {
       id:"m_"+uid(),
-      pageId:S.currentPageId,
+      pageId:C.currentPageId,
       x:normX, y:normY,
       name:"",
-      cat: (S.categories.find(c=>c.on && c.id!=="전체")?.id) || "기텔",
+      cat: (C.categories.find(c=>c.on && c.id!=="전체")?.id) || "기텔",
       colorOverride:"",
       useCatColor:true,
       yt:"",
@@ -1623,26 +1921,23 @@
       chainIndex:null,
     };
 
-    // chain logic (간단): 새 체인 or 기존 체인 이어붙이기
     if(insertAfterMarkerId){
-      const base = S.markers.find(x=>x.id===insertAfterMarkerId);
+      const base = C.markers.find(x=>x.id===insertAfterMarkerId);
       if(base && base.chainId){
         m.chainId = base.chainId;
         m.chainIndex = (base.chainIndex||0) + 1;
-        // shift 이후 인덱스 +1
-        for(const mm of S.markers){
+        for(const mm of C.markers){
           if(mm.chainId===m.chainId && (mm.chainIndex||0) >= m.chainIndex){
             mm.chainIndex = (mm.chainIndex||0) + 1;
           }
         }
       }
     }else{
-      // 기본: 페이지 내 새 체인 시작
       m.chainId = "c_"+uid();
       m.chainIndex = 1;
     }
 
-    S.markers.push(m);
+    C.markers.push(m);
     saveLocal();
     selectMarker(m.id);
     renderKpi();
@@ -1650,7 +1945,8 @@
   }
 
   function selectMarker(id){
-    selectedMarker = S.markers.find(m=>m.id===id) || null;
+    const C = currentCatState();
+    selectedMarker = C.markers.find(m=>m.id===id) || null;
     syncSelectedPanel();
   }
 
@@ -1663,12 +1959,14 @@
     $("btnUseCatColor").disabled = !selectedMarker;
   }
 
-  // click to select
   cv.addEventListener("click", (e)=>{
     requireAuth(); if(!isAuthed()) return;
+    if(isDraggingCurve) return;
+
     const rect = cv.getBoundingClientRect();
     const sx = e.clientX - rect.left;
     const sy = e.clientY - rect.top;
+
     const hit = pickCircleAt(sx, sy);
     if(hit){
       selectMarker(hit.id);
@@ -1680,20 +1978,20 @@
     syncSelectedPanel();
   });
 
-  // right-click add marker
   cv.addEventListener("contextmenu", (e)=>{
     e.preventDefault();
     requireAuth(); if(!isAuthed()) return;
 
+    const C = currentCatState();
     const rect = cv.getBoundingClientRect();
     const sx = e.clientX - rect.left;
     const sy = e.clientY - rect.top;
 
-    const wx = (sx - S.map.tx) / S.map.scale;
-    const wy = (sy - S.map.ty) / S.map.scale;
+    const wx = (sx - C.map.tx) / C.map.scale;
+    const wy = (sy - C.map.ty) / C.map.scale;
 
-    const iw = S.map.naturalW || (mapImg.naturalWidth||1);
-    const ih = S.map.naturalH || (mapImg.naturalHeight||1);
+    const iw = C.map.naturalW || (mapImg.naturalWidth||1);
+    const ih = C.map.naturalH || (mapImg.naturalHeight||1);
 
     const nx = clamp(wx / iw, 0, 1);
     const ny = clamp(wy / ih, 0, 1);
@@ -1702,7 +2000,6 @@
     toast("마커 추가");
   });
 
-  // selected quick edit fields (5번: 링크 → 유튜브 링크, 밑에 유튜브 표시명 표시)
   $("selLink").addEventListener("input", ()=>{
     if(!selectedMarker) return;
     selectedMarker.yt = $("selLink").value.trim();
@@ -1719,7 +2016,7 @@
     openMarkerModal(selectedMarker.id);
   });
 
-  // ---------- quick palette (5번 이미지 그대로 느낌) ----------
+  // ---------- quick palette ----------
   const QUICK = [
     {name:"빨", c:"#ff3b30"},
     {name:"주", c:"#ff9500"},
@@ -1748,12 +2045,31 @@
     }
   }
 
+  function propagateChainFromOne(m){
+    const C = currentCatState();
+    if(!m || !m.chainId || m.chainIndex !== 1) return;
+    const cid = m.chainId;
+    const base = m;
+    for(const mm of C.markers){
+      if(mm.chainId !== cid) continue;
+      // size + label style sync
+      mm.r = base.r;
+      mm.fs = base.fs;
+      mm.fw = base.fw;
+      mm.labelColor = base.labelColor;
+      // color sync per requirement
+      mm.useCatColor = base.useCatColor;
+      mm.colorOverride = base.useCatColor ? "" : (base.colorOverride || "");
+    }
+  }
+
   $("btnApplyQuick").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
     if(!selectedMarker){ toast("마커를 선택하세요"); return; }
     if(!pickedQuick){ toast("빠른 색상을 먼저 선택하세요"); return; }
     selectedMarker.colorOverride = pickedQuick;
     selectedMarker.useCatColor = false;
+    propagateChainFromOne(selectedMarker);
     saveLocal();
     draw();
     toast("색상 적용");
@@ -1764,6 +2080,7 @@
     if(!selectedMarker){ toast("마커를 선택하세요"); return; }
     selectedMarker.colorOverride = "";
     selectedMarker.useCatColor = true;
+    propagateChainFromOne(selectedMarker);
     saveLocal();
     draw();
     toast("카테고리 색상 적용");
@@ -1772,14 +2089,16 @@
   // chain tools
   $("btnClearLines").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
+    const C = currentCatState();
     if(!confirm("모든 선(체인)을 제거할까요?")) return;
-    for(const m of S.markers){
-      if(m.pageId===S.currentPageId){
+    for(const m of C.markers){
+      if(m.pageId===C.currentPageId){
         m.chainId = null;
         m.chainIndex = null;
       }
     }
-    S.chains = S.chains.filter(c=>c.pageId!==S.currentPageId);
+    // remove curves on current page
+    C.curves = {};
     insertAfterMarkerId = null;
     saveLocal();
     draw();
@@ -1788,14 +2107,15 @@
 
   $("btnRechain").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
-    // 간단: 현재 페이지에서 chainId 없는 마커를 1개의 체인으로 재부여 (배치 순서=생성순)
-    const pageMs = S.markers.filter(m=>m.pageId===S.currentPageId);
+    const C = currentCatState();
+    const pageMs = C.markers.filter(m=>m.pageId===C.currentPageId);
     const chainId = "c_"+uid();
     let idx=1;
     for(const m of pageMs){
       m.chainId = chainId;
       m.chainIndex = idx++;
     }
+    C.curves = {};
     saveLocal();
     draw();
     toast("선 다시 체인(전체)");
@@ -1803,10 +2123,11 @@
 
   $("btnResetMarkers").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
+    const C = currentCatState();
     if(!confirm("현재 페이지의 마커를 모두 삭제할까요?")) return;
-    const pid = S.currentPageId;
-    S.markers = S.markers.filter(m=>m.pageId!==pid);
-    S.chains = S.chains.filter(c=>c.pageId!==pid);
+    const pid = C.currentPageId;
+    C.markers = C.markers.filter(m=>m.pageId!==pid);
+    C.curves = {};
     selectedMarker = null;
     insertAfterMarkerId = null;
     saveLocal();
@@ -1816,18 +2137,23 @@
     toast("마커 초기화");
   });
 
-  // ---------- marker modal (9번) ----------
+  // ---------- marker modal ----------
   let editingId = null;
+  let ytTouched = false, memoTouched = false;
+
   function openMarkerModal(markerId){
     requireAuth(); if(!isAuthed()) return;
-    const m = S.markers.find(x=>x.id===markerId);
+    const C = currentCatState();
+    const m = C.markers.find(x=>x.id===markerId);
     if(!m) return;
 
     editingId = markerId;
-    // categories select
+    ytTouched = false;
+    memoTouched = false;
+
     const sel = $("mfCat");
     sel.innerHTML = "";
-    for(const c of S.categories){
+    for(const c of C.categories){
       if(c.id==="전체") continue;
       const o = document.createElement("option");
       o.value = c.id;
@@ -1867,10 +2193,8 @@
   $("btnSaveMarker").addEventListener("click", saveMarkerModal);
   $("btnDeleteMarker").addEventListener("click", deleteMarkerModal);
 
-  // Enter = 저장
   mMarker.addEventListener("keydown", (e)=>{
     if(e.key==="Enter"){
-      // textarea에서는 Enter 유지
       if(e.target && e.target.tagName==="TEXTAREA") return;
       e.preventDefault();
       saveMarkerModal();
@@ -1879,6 +2203,12 @@
       closeMarkerModal();
     }
   });
+
+  function getEditing(){
+    if(!editingId) return null;
+    const C = currentCatState();
+    return C.markers.find(x=>x.id===editingId) || null;
+  }
 
   function updateColorChip(){
     const m = getEditing();
@@ -1891,8 +2221,6 @@
   $("mfUseCatColor").addEventListener("change", updateColorChip);
   $("mfCat").addEventListener("change", updateColorChip);
 
-  // 8번: 이름 입력 시 유튜브 표시명 + 메모에도 동시에 같은 글(단, 표시명/메모를 사용자가 수정하면 유지)
-  let ytTouched = false, memoTouched = false;
   $("mfYtTitle").addEventListener("input", ()=>{ ytTouched = true; syncSelectedPanelLive(); });
   $("mfMemo").addEventListener("input", ()=>{ memoTouched = true; syncSelectedPanelLive(); });
 
@@ -1904,7 +2232,6 @@
   });
 
   function syncSelectedPanelLive(){
-    // 편집 중에도 우측 하단 표시 반영
     if(!editingId) return;
     if(selectedMarker && selectedMarker.id === editingId){
       $("selName").textContent = $("mfName").value || "(이름 없음)";
@@ -1915,7 +2242,6 @@
 
   $("mfR").addEventListener("input", ()=>{
     $("mfRVal").textContent = $("mfR").value;
-    // 원 크기에 맞춰 글씨 자동 스케일
     const r = Number($("mfR").value);
     const fs = clamp(Math.round(r * 1.5), 8, 40);
     $("mfFs").value = fs;
@@ -1925,13 +2251,9 @@
 
   $("mfLabelDefault").addEventListener("click", ()=>{ $("mfLabelColor").value = "#e7eef8"; });
 
-  function getEditing(){
-    if(!editingId) return null;
-    return S.markers.find(x=>x.id===editingId) || null;
-  }
-
   function saveMarkerModal(){
     requireAuth(); if(!isAuthed()) return;
+    const C = currentCatState();
     const m = getEditing();
     if(!m) return;
 
@@ -1951,6 +2273,9 @@
     m.fw = Number($("mfFw").value);
     m.labelColor = ($("mfLabelColor").value || "#e7eef8").trim();
 
+    // chain rule: if this is 1번, sync to all in chain
+    propagateChainFromOne(m);
+
     saveLocal();
     selectMarker(m.id);
     renderCats();
@@ -1961,21 +2286,32 @@
 
   function deleteMarkerModal(){
     requireAuth(); if(!isAuthed()) return;
+    const C = currentCatState();
     const m = getEditing();
     if(!m) return;
     if(!confirm("이 마커를 삭제할까요?")) return;
 
-    // remove and reindex chain
     const cid = m.chainId;
     const cidx = m.chainIndex;
-    S.markers = S.markers.filter(x=>x.id!==m.id);
+    C.markers = C.markers.filter(x=>x.id!==m.id);
+
     if(cid && cidx){
-      for(const mm of S.markers){
+      for(const mm of C.markers){
         if(mm.chainId===cid && (mm.chainIndex||0) > cidx){
           mm.chainIndex = (mm.chainIndex||0) - 1;
         }
       }
     }
+
+    // curves cleanup
+    const valid = new Set(C.markers.map(mm=>mm.id));
+    const newCurves = {};
+    for(const k of Object.keys(C.curves||{})){
+      const [a,b] = k.split("|");
+      if(valid.has(a) && valid.has(b)) newCurves[k]=C.curves[k];
+    }
+    C.curves = newCurves;
+
     saveLocal();
     closeMarkerModal();
     selectedMarker = null;
@@ -1992,6 +2328,7 @@
     m.chainId = "c_"+uid();
     m.chainIndex = 1;
     insertAfterMarkerId = null;
+    propagateChainFromOne(m);
     saveLocal();
     draw();
     toast("새 체인 시작");
@@ -2005,7 +2342,6 @@
     toast("중간 삽입 모드 활성화");
   });
 
-  // open modal via double click on marker
   cv.addEventListener("dblclick", (e)=>{
     requireAuth(); if(!isAuthed()) return;
     const rect = cv.getBoundingClientRect();
@@ -2014,12 +2350,11 @@
     const hit = pickCircleAt(sx, sy);
     if(hit){
       selectMarker(hit.id);
-      ytTouched = false; memoTouched = false;
       openMarkerModal(hit.id);
     }
   });
 
-  // ---------- category modal (7번 이미지) ----------
+  // ---------- category modal ----------
   let catSelectedRowId = null;
 
   $("btnEditCats").addEventListener("click", ()=>{
@@ -2044,7 +2379,8 @@
       w.innerHTML = `<div class="sw" style="--c:${q.c}"></div><div class="swLabel">${q.name}</div>`;
       w.querySelector(".sw").addEventListener("click", ()=>{
         if(!catSelectedRowId){ toast("카테고리 행을 먼저 선택하세요"); return; }
-        const c = S.categories.find(x=>x.id===catSelectedRowId);
+        const C = currentCatState();
+        const c = C.categories.find(x=>x.id===catSelectedRowId);
         if(!c) return;
         c.color = q.c;
         renderCatRows();
@@ -2054,10 +2390,11 @@
   }
 
   function renderCatRows(){
+    const C = currentCatState();
     const rows = $("catRows");
     rows.innerHTML = "";
 
-    const list = S.categories.filter(c=>c.id!=="전체"); // 편집은 전체 제외(필터칩은 유지)
+    const list = C.categories.filter(c=>c.id!=="전체");
     for(const c of list){
       const row = document.createElement("div");
       row.style.display = "grid";
@@ -2096,12 +2433,11 @@
       del.addEventListener("click", (e)=>{
         e.stopPropagation();
         if(!confirm(`"${c.name}" 카테고리를 삭제할까요?`)) return;
-        // markers with this cat -> move to "기텔"
-        const fallback = S.categories.find(x=>x.id==="기텔") || S.categories[0];
-        for(const m of S.markers){
+        const fallback = C.categories.find(x=>x.id==="기텔") || C.categories[0];
+        for(const m of C.markers){
           if(m.cat === c.id) m.cat = fallback.id;
         }
-        S.categories = S.categories.filter(x=>x.id!==c.id);
+        C.categories = C.categories.filter(x=>x.id!==c.id);
         renderCatRows();
         renderCats();
         saveLocal();
@@ -2113,43 +2449,43 @@
   }
 
   $("btnAddCat").addEventListener("click", ()=>{
+    const C = currentCatState();
     const name = prompt("카테고리 이름");
     if(!name) return;
     const id = name.trim();
     if(!id) return;
-    if(S.categories.some(c=>c.id===id)){ toast("이미 존재"); return; }
-    S.categories.push({ id, name:id, color:"#ffffff", on:true });
+    if(C.categories.some(c=>c.id===id)){ toast("이미 존재"); return; }
+    C.categories.push({ id, name:id, color:"#ffffff", on:true });
     renderCatRows();
   });
 
   $("btnCatsDefault").addEventListener("click", ()=>{
+    const C = currentCatState();
     if(!confirm("기본 카테고리로 되돌릴까요?")) return;
-    S.categories = structuredClone(defaultCats);
+    C.categories = structuredClone(defaultCats);
     renderCatRows();
   });
 
   $("btnSaveCats").addEventListener("click", ()=>{
     requireAuth(); if(!isAuthed()) return;
-    // ensure ids unique: use name as id
+    const C = currentCatState();
+
     const cleaned = [];
     const seen = new Set(["전체"]);
-    for(const c of S.categories){
+    for(const c of C.categories){
       const name = (c.name||c.id||"").trim();
       if(!name) continue;
-      const id = (c.id||name).trim();
-      const finalId = name; // ✅ 단순: 이름=ID
+      const finalId = name;
       if(seen.has(finalId)) continue;
       seen.add(finalId);
       cleaned.push({ id:finalId, name, color:(c.color||"#ffffff"), on:!!c.on });
     }
-    // prepend "전체"
     const all = { id:"전체", name:"전체", color:"#7cc4ff", on:true };
-    S.categories = [all, ...cleaned];
+    C.categories = [all, ...cleaned];
 
-    // remap markers cat if old id removed
-    const valid = new Set(S.categories.map(x=>x.id));
-    const fb = valid.has("기텔") ? "기텔" : (S.categories[1]?.id || "전체");
-    for(const m of S.markers){
+    const valid = new Set(C.categories.map(x=>x.id));
+    const fb = valid.has("기텔") ? "기텔" : (C.categories[1]?.id || "전체");
+    for(const m of C.markers){
       if(!valid.has(m.cat)) m.cat = fb;
     }
 
@@ -2178,26 +2514,23 @@
     }
   }
 
-  // ---------- selected marker row buttons ----------
-  $("btnOpenMarkerEdit").addEventListener("click", ()=>{
-    if(!selectedMarker) return;
-    ytTouched = false; memoTouched = false;
-    openMarkerModal(selectedMarker.id);
-  });
-
   // ---------- helpers ----------
   function renderAll(){
+    ensureCatSlotIntegrity();
     renderLogo();
-    renderGames();
+    renderTopCats();
     renderPages();
     renderCats();
     renderPalette();
     renderTextColors();
-    setToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
+
+    const C = currentCatState();
+    setToggle(tgShowLinesWithCatFilter, !!C.showLinesWithCatFilter);
+
     syncSelectedPanel();
     renderKpi();
     resizeCanvas();
-    if(!S.map.scale || S.map.scale<=0) fitToScreen();
+    if(!C.map.scale || C.map.scale<=0) fitToScreen();
     draw();
   }
 
@@ -2205,14 +2538,14 @@
   async function init(){
     requireAuth();
     const st = await loadStateRemoteFirst();
-    S = mergeState(st);
+    mergeState(st);
 
-    // ✅ 기본 toggle 값 반영
-    if(typeof S.showLinesWithCatFilter !== "boolean") S.showLinesWithCatFilter = true;
-
+    ensureCatSlotIntegrity();
     renderAll();
     loadMap();
-    if(!S.map.scale || S.map.scale<=0){
+
+    const C = currentCatState();
+    if(!C.map.scale || C.map.scale<=0){
       setTimeout(()=>{
         fitToScreen();
         saveLocal();
