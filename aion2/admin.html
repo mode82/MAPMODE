@@ -2403,6 +2403,8 @@
         const sy = e.clientY - rect.top;
 
         lastX=e.clientX; lastY=e.clientY;
+        dragStartSX = sx;
+        dragStartSY = sy;
 
         // ✅ [MOD#5] 먼저 선(곡선) 히트 체크 → 곡선 편집(관리자 모드에서만)
         const seg = pickCurveAt(sx, sy);
@@ -2418,8 +2420,6 @@
         const hit = pickCircleAt(sx, sy);
         if(hit){
           draggingMarkerId = hit.id;
-          dragStartSX = sx;
-          dragStartSY = sy;
           dragMoved = false;
           isPanning = false;
           return;
@@ -2715,6 +2715,25 @@
             toast("색상 선택");
           });
           palette.appendChild(wrap);
+        }
+      }
+
+      // marker label quick colors
+      function renderTextColors(){
+        const COLORS = [
+          "#e7eef8","#ffffff","#0b0b0f","#ffd60a","#ff5d5d","#7cc4ff","#39d98a","#ff9500"
+        ];
+        textColors.innerHTML = "";
+        for(const c of COLORS){
+          const sw = document.createElement("div");
+          sw.className = "tSw";
+          sw.style.setProperty("--c", c);
+          sw.title = c;
+          sw.addEventListener("click", ()=>{
+            $("mfLabelColor").value = c;
+            toast("글씨색 선택");
+          });
+          textColors.appendChild(sw);
         }
       }
 
@@ -3115,19 +3134,45 @@
             saveLocal();
             draw();
           });
-          del.addEventListener("click", (e)=>{
+
+          del.addEventListener("click", async (e)=>{
             e.stopPropagation();
-            const fallback = S.categories.find(x=>x.id==="기텔") || S.categories[0];
-            for(const m of S.markers){
+            requireAuth();
+            if(!isAuthed()) return;
+
+            const nonAll = S.categories.filter(x=>x.id!=="전체");
+            if(nonAll.length <= 1){
+              toast("최소 1개 카테고리는 필요합니다");
+              return;
+            }
+
+            const ok = await openPopConfirm({
+              anchor: del,
+              title: "카테고리 삭제",
+              message: `"${c.name}" 카테고리를 삭제할까요?\n(해당 카테고리 마커는 다른 카테고리로 이동됩니다)`,
+              okText: "삭제",
+              cancelText: "취소",
+              danger: true
+            });
+            if(!ok) return;
+
+            // fallback cat
+            const fallback = S.categories.find(x=>x.id!=="전체" && x.id!==c.id) || nonAll[0];
+            for(const m of (S.markers||[])){
               if(m.cat === c.id) m.cat = fallback.id;
             }
-            S.categories = S.categories.filter(x=>x.id!==c.id);
+
+            S.categories = S.categories.filter(x=>x.id !== c.id);
+            catSelectedRowId = null;
+
             applyAllCatStylesOnPage(S.currentPageId);
             applyAllChainStylesOnPage(S.currentPageId);
+            saveLocal();
             renderCatRows();
             renderCats();
-            saveLocal();
+            renderKpi();
             draw();
+            toast("삭제 완료");
           });
 
           rows.appendChild(row);
@@ -3135,58 +3180,87 @@
       }
 
       $("btnAddCat").addEventListener("click", async ()=>{
+        requireAuth();
+        if(!isAuthed()) return;
         const name = await openPopInput({
           anchor: $("btnAddCat"),
           title: "카테고리 추가",
           message: "추가할 카테고리 이름을 입력하세요.",
-          placeholder: "예: 11",
+          placeholder: "예: 던전",
           value: "",
           okText: "추가",
           cancelText: "취소"
         });
         if(name === null) return;
-        const id = (name||"").trim();
-        if(!id) return;
-        if(S.categories.some(c=>c.id===id)){ toast("이미 존재"); return; }
-        S.categories.push({ id, name:id, color:"#ffffff", on:true });
+        const n = (name||"").trim();
+        if(!n) return;
+        if(S.categories.some(x=>x.id===n)){ toast("이미 존재"); return; }
+        S.categories.push({ id:n, name:n, color:"#ffffff", on:true });
+        catSelectedRowId = n;
+        saveLocal();
         renderCatRows();
+        renderCats();
+        draw();
+        toast("카테고리 추가");
       });
 
       $("btnCatsDefault").addEventListener("click", async ()=>{
+        requireAuth();
+        if(!isAuthed()) return;
         const ok = await openPopConfirm({
           anchor: $("btnCatsDefault"),
           title: "기본값으로",
-          message: "기본 카테고리로 되돌릴까요?",
+          message: "카테고리를 기본값으로 되돌릴까요?",
           okText: "되돌리기",
           cancelText: "취소",
           danger: true
         });
         if(!ok) return;
+
+        // reset categories
         S.categories = structuredClone(defaultCats);
+
+        // markers cat normalize (삭제된 카테고리 있을 경우)
+        const exists = new Set(S.categories.map(x=>x.id));
+        const fallback = S.categories.find(x=>x.id!=="전체")?.id || "기텔";
+        for(const m of (S.markers||[])){
+          if(!exists.has(m.cat)) m.cat = fallback;
+        }
+
+        applyAllCatStylesOnPage(S.currentPageId);
+        applyAllChainStylesOnPage(S.currentPageId);
+        saveLocal();
         renderCatRows();
+        renderCats();
+        renderKpi();
+        draw();
+        toast("기본값 적용");
       });
 
       $("btnSaveCats").addEventListener("click", ()=>{
         requireAuth();
         if(!isAuthed()) return;
 
-        const cleaned = [];
-        const seen = new Set(["전체"]);
-        for(const c of S.categories){
-          const name = (c.name||c.id||"").trim();
-          if(!name) continue;
-          const finalId = name;
-          if(seen.has(finalId)) continue;
-          seen.add(finalId);
-          cleaned.push({ id:finalId, name, color:(c.color||"#ffffff"), on:!!c.on });
+        // ensure "전체" exists and is first
+        const hasAll = S.categories.some(x=>x.id==="전체");
+        if(!hasAll){
+          S.categories.unshift({ id:"전체", name:"전체", color:"#7cc4ff", on:true });
+        }else{
+          // move to front
+          const all = S.categories.find(x=>x.id==="전체");
+          S.categories = [all, ...S.categories.filter(x=>x.id!=="전체")];
         }
-        const all = { id:"전체", name:"전체", color:"#7cc4ff", on:true };
-        S.categories = [all, ...cleaned];
 
-        const valid = new Set(S.categories.map(x=>x.id));
-        const fb = valid.has("기텔") ? "기텔" : (S.categories[1]?.id || "전체");
-        for(const m of S.markers){
-          if(!valid.has(m.cat)) m.cat = fb;
+        // ensure at least one non-전체 exists
+        if(S.categories.filter(x=>x.id!=="전체").length === 0){
+          S.categories.push({ id:"기텔", name:"기텔", color:"#ffd60a", on:true });
+        }
+
+        // marker cat normalize
+        const exists = new Set(S.categories.map(x=>x.id));
+        const fallback = S.categories.find(x=>x.id!=="전체")?.id || "기텔";
+        for(const m of (S.markers||[])){
+          if(!exists.has(m.cat)) m.cat = fallback;
         }
 
         applyAllCatStylesOnPage(S.currentPageId);
@@ -3200,20 +3274,7 @@
         toast("카테고리 저장");
       });
 
-      // ---------- marker edit: text quick colors ----------
-      function renderTextColors(){
-        textColors.innerHTML = "";
-        const colors = [ "#ff3b30","#ff9500","#ffd60a","#34c759","#0a84ff","#ffffff","#0b0b0f" ];
-        for(const c of colors){
-          const d = document.createElement("div");
-          d.className = "tSw";
-          d.style.setProperty("--c", c);
-          d.addEventListener("click", ()=>{ $("mfLabelColor").value = c; });
-          textColors.appendChild(d);
-        }
-      }
-
-      // ---------- helpers ----------
+      // ---------- init / renderAll ----------
       function renderAll(){
         renderLogo();
         renderSlotsTop();
@@ -3222,41 +3283,28 @@
         renderPalette();
         renderTextColors();
         syncSelectedPanel();
-        renderKpi();
-        resizeCanvas();
-
-        if(!S.map.scale || S.map.scale<=0) fitToScreen();
-        renumberPage(S.currentPageId);
-        recomputeChainIndices(S.currentPageId);
-        applyAllCatStylesOnPage(S.currentPageId);
-        applyAllChainStylesOnPage(S.currentPageId);
-        draw();
+        setChipToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
       }
 
-      // ---------- init ----------
-      async function init(){
-        requireAuth();
+      // start
+      (async ()=>{
+        // canvas
+        resizeCanvas();
+
+        // state load
         const st = await loadStateRemoteFirst();
         S = mergeState(st);
-
-        // ensure slot1 legacy mirror
-        if(!Array.isArray(S.slotGroups) || S.slotGroups.length !== 4){
-          S.slotGroups = normalizeSlotGroups(S);
-        }
+        if(!S.slotGroups) S.slotGroups = normalizeSlotGroups(S);
         ensureSlot1FromLegacy();
-
-        if(typeof S.showLinesWithCatFilter !== "boolean") S.showLinesWithCatFilter = true;
 
         renderAll();
         loadMap();
+        renderKpi();
+        draw();
 
-        if(!S.map.scale || S.map.scale<=0){
-          setTimeout(()=>{ fitToScreen(); saveLocal(); draw(); }, 0);
-        }else{
-          draw();
-        }
-      }
-      init();
+        // auth overlay
+        requireAuth();
+      })();
     })();
   </script>
 </body>
