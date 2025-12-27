@@ -1,2563 +1,729 @@
+<!-- aion2/index.html -->
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MAPMODE · ADMIN99</title>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>MAPMODE · INDEX</title>
   <style>
     :root{
       color-scheme: dark;
-
       --bg:#070b12;
       --panel:#0b1220cc;
       --card:#0e1626cc;
-
       --stroke:#1f2a3a;
       --stroke2:#27344a;
-
       --text:#e7eef8;
       --muted:#9fb0c6;
-
       --accent:#7cc4ff;
       --danger:#ff5d5d;
       --ok:#39d98a;
       --warn:#ffd60a;
 
+      --r12:12px;
       --r14:14px;
       --r16:16px;
-      --r18:18px;
-
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --shadow2: 0 8px 24px rgba(0,0,0,.35);
       --blur: 14px;
 
-      --topH:58px;
-      --sideW:320px;
-      --sideW2:360px;
+      --topH: 58px;
+      --sideW: 310px;
+      --sideW2: 330px;
     }
-
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
       margin:0;
-      overflow:hidden;
-      background:
-        radial-gradient(1200px 700px at 50% -10%, rgba(124,196,255,.18), transparent 55%),
-        radial-gradient(900px 650px at 88% 10%, rgba(57,217,138,.12), transparent 55%),
-        radial-gradient(900px 650px at 12% 10%, rgba(255,214,10,.08), transparent 55%),
-        linear-gradient(180deg, #0a0f18 0%, var(--bg) 100%);
+      background: radial-gradient(1200px 700px at 20% 0%, rgba(124,196,255,.10), transparent 65%),
+                  radial-gradient(900px 500px at 90% 30%, rgba(57,217,138,.08), transparent 60%),
+                  var(--bg);
       color:var(--text);
-
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
-      font-weight: 800;
-      letter-spacing: .1px;
-    }
-
-    /* ========== TOPBAR ========== */
-    .topbar{
-      position:fixed; inset:0 0 auto 0;
-      height:var(--topH);
-      display:flex; align-items:center; justify-content:space-between;
-      padding:10px 14px;
-      z-index:90;
-      background: linear-gradient(180deg, rgba(9,14,23,.88), rgba(9,14,23,.58));
-      backdrop-filter: blur(var(--blur));
-      border-bottom:1px solid rgba(39,52,74,.65);
-    }
-    .top-left, .top-right{ display:flex; align-items:center; gap:10px; min-width:0; }
-
-    .slot{
-      height:38px;
-      display:flex; align-items:center;
-      padding:0 10px;
-      border-radius:999px;
-      background: rgba(14,22,38,.55);
-      border:1px solid rgba(39,52,74,.65);
-      box-shadow: var(--shadow2);
-      gap:8px;
-      white-space:nowrap;
-    }
-    .slot.fixed{ width:170px; justify-content:center; }
-    .slot.logo{
-      justify-content:flex-start;
-      border:none;
-      background: transparent;
-      box-shadow:none;
-      padding:0;
-      width:170px;
-    }
-    .logoBox{
-      width:170px; height:38px;
-      border-radius:999px;
-      display:flex; align-items:center; justify-content:center;
+      font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, "Noto Sans KR", sans-serif;
       overflow:hidden;
-      background: transparent;
-      border:none;
-      cursor:pointer;
-      user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
-    .logoBox img{ height:26px; width:auto; display:block; opacity:.98; }
-    .brand{ display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.5px; }
-    .brand .word{ font-size:20px; line-height:1; display:flex; align-items:center; }
-    .brand .word .o{
-      display:inline-block;
-      width:12px; height:12px; border-radius:999px;
-      margin:0 2px;
-      background:#fff;
-      box-shadow: 0 0 0 2px rgba(255,255,255,.12);
-      transform: translateY(1px);
-    }
-
-    .pill{
-      height:34px;
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:8px;
-      padding:0 12px;
-      border-radius:999px;
-      background: rgba(14,22,38,.55);
-      border:1px solid rgba(39,52,74,.65);
-      color:var(--text);
-      box-shadow: var(--shadow2);
-      cursor:pointer;
-      user-select:none;
-      text-decoration:none;
-      font-weight:900;
-    }
-    .pill:hover{ border-color: rgba(124,196,255,.55); }
-    .pill:active{ transform: translateY(1px); }
-    .pill.small{ height:32px; padding:0 10px; font-size:13px; font-weight:900; }
-    .pill.ghost{ background: rgba(14,22,38,.25); }
-    .pill.danger{ border-color: rgba(255,93,93,.55); }
-    .pill.ok{ border-color: rgba(57,217,138,.55); }
-
-    .miniBtn{
-      height:34px;
-      padding:0 12px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      color: rgba(231,238,248,.92);
-      cursor:pointer;
-      font-weight:900;
-      font-size:13px;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .miniBtn.icon{
-      width:34px;
-      padding:0;
-    }
-    .miniBtn.url{ border-color: rgba(57,217,138,.55); }
-    .miniBtn.edit{ border-color: rgba(124,196,255,.55); }
-    .miniBtn.del{ border-color: rgba(255,93,93,.55); }
-
-    .top-right{ flex-wrap:wrap; justify-content:flex-end; }
-    .top-right .pill{ flex: 0 0 auto; }
-
-    /* Top Categories */
-    .topCats{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      height:38px;
-    }
-    .topCatPill{
-      width:170px;
-      height:38px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(14,22,38,.55);
-      box-shadow: var(--shadow2);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 10px;
-      cursor:pointer;
-      user-select:none;
-      gap:10px;
-    }
-    .topCatPill.active{
-      border-color: rgba(57,217,138,.65);
-      box-shadow: 0 0 0 2px rgba(57,217,138,.18), var(--shadow2);
-    }
-    .topCatPill.disabled{
-      opacity:.38;
-      border-color: rgba(39,52,74,.25);
-      background: rgba(14,22,38,.18);
-      box-shadow:none;
-    }
-    .topCatLabel{
-      font-weight:900;
-      font-size:15px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-      max-width: 116px;
-    }
-    .topCatToggle{
-      width:44px;
-      height:24px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      position:relative;
-      flex:0 0 auto;
-      cursor:pointer;
-    }
-    .topCatToggle::after{
-      content:"";
-      position:absolute;
-      width:18px; height:18px;
-      border-radius:999px;
-      top:2px; left:2px;
-      background: rgba(231,238,248,.55);
-      box-shadow: var(--shadow2);
-      transition: transform .16s ease, background .16s ease;
-    }
-    .topCatToggle.on{
-      border-color: rgba(57,217,138,.55);
-      background: rgba(57,217,138,.12);
-    }
-    .topCatToggle.on::after{
-      transform: translateX(20px);
-      background: rgba(57,217,138,.92);
-    }
-
-    /* ========== LAYOUT ========== */
-    .layout{
-      position:fixed;
-      inset:var(--topH) 0 0 0;
+    .app{
+      position:fixed; inset:0;
       display:grid;
+      grid-template-rows: var(--topH) 1fr;
       grid-template-columns: var(--sideW) 1fr var(--sideW2);
-      height:calc(100% - var(--topH));
-      min-height: 0;
+      grid-template-areas:
+        "top top top"
+        "left center right";
     }
-    .side{
-      overflow:hidden;
-      border-right:1px solid rgba(39,52,74,.55);
-      background: rgba(8,12,20,.35);
+    .top{
+      grid-area:top;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      background: linear-gradient(180deg, rgba(11,18,32,.88), rgba(11,18,32,.55));
+      border-bottom:1px solid rgba(39,52,74,.8);
       backdrop-filter: blur(var(--blur));
-      min-height:0;
+      box-shadow: var(--shadow2);
+      z-index:10;
     }
-    .side.right{ border-right:none; border-left:1px solid rgba(39,52,74,.55); }
-
-    .sideInner{
-      height:100%;
+    .left{
+      grid-area:left;
       padding:12px;
+      border-right:1px solid rgba(39,52,74,.8);
+      background: linear-gradient(180deg, rgba(11,18,32,.66), rgba(11,18,32,.42));
+      backdrop-filter: blur(var(--blur));
       overflow:auto;
     }
-
-    .card{
-      background: rgba(14,22,38,.50);
-      border:1px solid rgba(39,52,74,.6);
-      border-radius: var(--r16);
+    .right{
+      grid-area:right;
       padding:12px;
-      box-shadow: var(--shadow2);
+      border-left:1px solid rgba(39,52,74,.8);
+      background: linear-gradient(180deg, rgba(11,18,32,.66), rgba(11,18,32,.42));
+      backdrop-filter: blur(var(--blur));
+      overflow:auto;
     }
-    .card + .card{ margin-top:12px; }
-
-    .sectionTitle{
-      font-size:12px;
-      color: rgba(231,238,248,.9);
-      margin:4px 0 10px 0;
-      display:flex; justify-content:space-between; align-items:center;
-      gap:10px;
-    }
-    .sectionTitle b{ font-weight:900; }
-    .subtle{
-      color: rgba(159,176,198,.92);
-      font-size:12px;
-      line-height:1.45;
-      font-weight:800;
-    }
-
-    /* ========== LEFT: Pages ========== */
-    .btnAddPage{
-      width:100%;
-      height:52px;
-      border-radius:18px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(14,22,38,.35);
-      color: rgba(231,238,248,.95);
-      font-weight:900;
-      cursor:pointer;
-      box-shadow: var(--shadow2);
-    }
-    .btnAddPage:hover{ border-color: rgba(124,196,255,.55); }
-
-    .pageList{ display:flex; flex-direction:column; gap:10px; margin-top:10px; }
-    .pageItem{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 10px;
-      border-radius: var(--r16);
-      border:1px solid rgba(39,52,74,.6);
-      background: rgba(14,22,38,.35);
-      cursor:pointer;
-    }
-    .pageItem.active{
-      outline:2px solid rgba(57,217,138,.35);
-      border-color: rgba(57,217,138,.55);
-      background: rgba(14,22,38,.55);
-    }
-    .pageName{ font-weight:900; font-size:16px; }
-    .pageActions{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
-
-    /* ========== CENTER: Canvas ========== */
     .center{
+      grid-area:center;
       position:relative;
       overflow:hidden;
       background:
-        radial-gradient(900px 700px at 50% 15%, rgba(124,196,255,.08), transparent 60%),
-        radial-gradient(900px 700px at 50% 80%, rgba(57,217,138,.05), transparent 60%);
-      min-height:0;
+        radial-gradient(900px 500px at 30% 20%, rgba(124,196,255,.06), transparent 60%),
+        radial-gradient(900px 500px at 70% 80%, rgba(255,214,10,.05), transparent 60%),
+        #050813;
     }
-    .canvasWrap{
-      position:absolute; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      padding:16px;
-    }
-    canvas{ background: transparent; touch-action:none; }
+    .canvasWrap{ position:absolute; inset:0; touch-action:none; }
+    canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
 
-    .hintToast{
-      position:absolute;
-      left:50%;
-      transform: translateX(-50%);
-      top:14px;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.6);
-      background: rgba(14,22,38,.55);
-      color: rgba(231,238,248,.9);
-      box-shadow: var(--shadow2);
-      font-size:12px;
-      display:none;
-      z-index:40;
-    }
-    .hintToast.show{ display:block; }
-
-    /* ========== RIGHT: Tools ========== */
-    .chipRow{ display:flex; gap:10px; flex-wrap:wrap; }
-    .chip{
+    .brand{
       display:flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.6);
-      background: rgba(10,15,24,.35);
-      cursor:pointer;
-      font-size:13px;
-      user-select:none;
-      font-weight:900;
+      min-width:220px;
     }
-    .chip.on{ border-color: rgba(124,196,255,.6); background: rgba(124,196,255,.10); }
-    .chip.off{ opacity:.55; }
-    .dotc{ width:10px; height:10px; border-radius:999px; box-shadow:0 0 0 2px rgba(255,255,255,.06); }
-
-    .toggleRow{ display:flex; gap:10px; flex-direction:column; margin-top:10px; }
-    .toggle{
-      display:flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.6);
-      background: rgba(10,15,24,.35);
-      cursor:pointer;
-      font-size:13px;
-      user-select:none;
-      font-weight:900;
-    }
-    .toggle .dot{
-      width:10px; height:10px; border-radius:999px;
-      background: rgba(231,238,248,.25);
-      border:1px solid rgba(231,238,248,.25);
-    }
-    .toggle.on{ border-color: rgba(57,217,138,.55); }
-    .toggle.on .dot{ background: rgba(57,217,138,.9); border-color: rgba(57,217,138,.9); }
-
-    .hr{ height:1px; background: rgba(39,52,74,.55); margin:12px 0; }
-
-    .btnFull{
-      width:100%;
-      height:52px;
-      border-radius:18px;
-      font-weight:900;
-      font-size:15px;
-      justify-content:center;
-    }
-
-    .palette{
-      display:flex; gap:12px; align-items:flex-start;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .sw{
-      width:42px; height:42px;
-      border-radius:14px;
-      border:1px solid rgba(39,52,74,.65);
-      box-shadow: var(--shadow2);
-      cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      position:relative;
-      overflow:hidden;
-      background: rgba(10,15,24,.35);
-    }
-    .sw::after{
-      content:"";
-      position:absolute; inset:6px;
-      border-radius:10px;
-      background: var(--c);
-    }
-    .swLabel{
-      margin-top:6px;
-      font-size:12px;
-      text-align:center;
-      color: rgba(231,238,248,.85);
-      font-weight:900;
-    }
-    .swWrap{ display:flex; flex-direction:column; align-items:center; }
-
-    .row2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-
-    .field{
-      width:100%;
-      padding:12px 14px;
-      border-radius:16px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      color: rgba(231,238,248,.95);
-      outline:none;
-      font-weight:900;
-      font-size:14px;
-    }
-    textarea.field{ min-height:90px; resize:vertical; }
-
-    .selectedBox .label{
-      font-size:14px; font-weight:900; margin-bottom:8px;
-    }
-    .selectedBox .sub{
-      font-size:12px; color: rgba(159,176,198,.92); font-weight:900;
-      margin-top:10px;
-    }
-
-    /* ========== MODAL ========== */
-    .modalBack{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      align-items:stretch;
-      justify-content:stretch;
-      z-index:200;
-    }
-    .modalBack.show{ display:flex; }
-    .modal{
-      margin:auto;
-      width:min(1050px, calc(100vw - 28px));
-      height:min(860px, calc(100vh - 28px));
-      background: linear-gradient(180deg, rgba(14,22,38,.96), rgba(10,15,24,.92));
-      border:1px solid rgba(39,52,74,.75);
-      border-radius:22px;
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      display:flex; flex-direction:column;
-    }
-    .modalHead{
-      padding:14px 16px;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom:1px solid rgba(39,52,74,.55);
-    }
-    .modalHead .title{ font-size:18px; font-weight:900; }
-    .modalBody{
-      padding:16px;
-      overflow:auto;
-      flex:1 1 auto;
-    }
-    .modalClose{
-      height:40px;
-      padding:0 14px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      color: rgba(231,238,248,.92);
-      cursor:pointer;
-      font-weight:900;
-    }
-
-    .grid2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
-    }
-    .labelRow{ color: rgba(159,176,198,.92); font-size:13px; font-weight:900; margin:10px 0 8px; }
-    .checkRow{ display:flex; align-items:center; gap:10px; justify-content:flex-end; }
-    .checkRow input{ width:18px; height:18px; accent-color:#a86bff; }
-    .colorChip{
-      width:46px; height:46px;
-      border-radius:16px;
-      border:1px solid rgba(39,52,74,.65);
-      box-shadow: var(--shadow2);
-      background: rgba(10,15,24,.35);
-      position:relative;
-      overflow:hidden;
-    }
-    .colorChip::after{ content:""; position:absolute; inset:7px; border-radius:12px; background: var(--c); }
-
-    .styleGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap:12px;
-      margin-top:14px;
-    }
-    .styleCard{
-      border-radius:18px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      padding:14px;
-      min-height:160px;
-    }
-    .styleCard h4{ margin:0 0 10px; font-size:18px; font-weight:900; }
-    .rangeRow{ display:flex; align-items:center; gap:12px; }
-    .rangeRow input[type="range"]{ width:100%; }
-    .numBox{
-      width:68px;
-      text-align:center;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      padding:8px 10px;
-      font-weight:900;
-    }
-    .fwSelect{ width:100%; }
-
-    .quickTextColors{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .tSw{
-      width:34px; height:34px;
+    .logo{
+      width:38px; height:38px;
       border-radius:12px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
+      border:1px solid rgba(39,52,74,.9);
+      background: rgba(14,22,38,.6);
       box-shadow: var(--shadow2);
-      cursor:pointer;
-      position:relative;
+      display:grid; place-items:center;
       overflow:hidden;
+      flex:0 0 auto;
     }
-    .tSw::after{ content:""; position:absolute; inset:7px; border-radius:9px; background: var(--c); }
+    .logo img{ width:100%; height:100%; object-fit:contain; }
+    .brandTitle{
+      display:flex; flex-direction:column; gap:2px; min-width:0;
+    }
+    .brandTitle b{ font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .brandTitle span{ color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-    .modalFoot{
-      padding:14px 16px;
-      border-top:1px solid rgba(39,52,74,.55);
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .btnBig{
-      height:46px;
-      padding:0 16px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      color: rgba(231,238,248,.95);
-      font-weight:900;
+    .btn{
+      height:34px;
+      border-radius:12px;
+      border:1px solid rgba(39,52,74,.95);
+      background: rgba(14,22,38,.65);
+      color:var(--text);
+      padding:0 12px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
       cursor:pointer;
+      box-shadow: var(--shadow2);
+      user-select:none;
+      white-space:nowrap;
     }
-    .btnBig.danger{ border-color: rgba(255,93,93,.65); }
-    .btnBig.ok{ border-color: rgba(57,217,138,.65); }
-
-    .markerFont{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-weight: 900;
-      letter-spacing: 0;
-    }
-
-    /* ========== LOGIN OVERLAY ========== */
-    .lock{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(8px);
-      display:none;
-      align-items:center; justify-content:center;
-      z-index:300;
-    }
-    .lock.show{ display:flex; }
-    .lockBox{
-      width:min(420px, calc(100vw - 28px));
-      background: linear-gradient(180deg, rgba(14,22,38,.96), rgba(10,15,24,.92));
-      border:1px solid rgba(39,52,74,.75);
-      border-radius:22px;
-      box-shadow: var(--shadow);
-      padding:18px;
-    }
-    .lockBox h3{ margin:0 0 10px; font-size:18px; font-weight:900; }
-    .lockBox p{ margin:0 0 14px; color:rgba(159,176,198,.92); font-size:13px; font-weight:900; }
-    .lockRow{ display:flex; gap:10px; }
-    .lockRow input{
-      flex:1;
-      padding:12px 14px;
+    .btn:hover{ border-color: rgba(124,196,255,.7); }
+    .btn.small{ height:30px; border-radius:10px; padding:0 10px; font-size:13px; }
+    .card{
+      background: rgba(14,22,38,.55);
+      border:1px solid rgba(39,52,74,.85);
       border-radius:16px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      color: rgba(231,238,248,.95);
-      outline:none;
-      font-weight:900;
-      font-size:14px;
+      box-shadow: var(--shadow2);
+      padding:12px;
+      margin-bottom:12px;
     }
+    .card h3{
+      margin:0 0 10px 0;
+      font-size:13px;
+      color: var(--muted);
+      font-weight:600;
+      letter-spacing:.2px;
+    }
+    .row{ display:flex; gap:8px; align-items:center; }
+    .col{ display:flex; flex-direction:column; gap:8px; }
+    .grow{ flex:1; min-width:0; }
+    .list{ display:flex; flex-direction:column; gap:8px; }
+    .item{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid rgba(39,52,74,.75);
+      background: rgba(7,11,18,.35);
+    }
+    .item.active{
+      border-color: rgba(124,196,255,.8);
+      box-shadow: 0 0 0 3px rgba(124,196,255,.10);
+    }
+    .pill{
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(39,52,74,.85);
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .hint{ color: var(--muted); font-size:12px; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .swatch{ width:18px; height:18px; border-radius:8px; border:1px solid rgba(255,255,255,.12); }
 
-    @media (max-width: 1200px){
-      body{ overflow:auto; }
-      .layout{
-        width: calc(var(--sideW) + 1000px + var(--sideW2));
-        min-width: calc(var(--sideW) + 1000px + var(--sideW2));
-      }
-      .center{ min-width: 1000px; }
+    a.link{
+      color: var(--accent);
+      text-decoration:none;
     }
-    @media (max-width: 560px){
-      .slot.fixed{ width:160px; }
-      .slot.logo{ width:160px; }
-      .logoBox{ width:160px; }
-      .topCatPill{ width:160px; }
-      .topCatLabel{ max-width: 106px; }
+    a.link:hover{ text-decoration:underline; }
+
+    @media (max-width: 980px){
+      :root{ --sideW: 280px; --sideW2: 300px; }
+    }
+    @media (max-width: 860px){
+      :root{ --sideW: 250px; --sideW2: 280px; }
+      .brand{ min-width: 180px; }
     }
   </style>
 </head>
-
 <body>
-
-  <!-- LOGIN LOCK -->
-  <div class="lock" id="lock">
-    <div class="lockBox">
-      <h3>관리자 인증</h3>
-      <p>비밀번호를 입력하면 <b>24시간</b> 인증이 유지됩니다.</p>
-      <div class="lockRow">
-        <input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password" />
-        <button class="pill ok" id="btnLogin">로그인</button>
+<div class="app">
+  <div class="top">
+    <div class="brand">
+      <div class="logo"><img id="logoImg" alt="logo" /></div>
+      <div class="brandTitle">
+        <b class="mono">MAPMODE · INDEX</b>
+        <span id="locLabel">Loading…</span>
       </div>
-      <div class="subtle" id="lockMsg" style="margin-top:10px;"></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="btnFit">Fit View</button>
+      <button class="btn" id="btnReload">Reload</button>
     </div>
   </div>
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="top-left">
-      <!-- Slot 1: Logo (클릭해서 URL 입력) -->
-      <div class="slot fixed logo">
-        <div class="logoBox" id="logoBox" title="로고 클릭 → URL 입력">
-          <div class="brand"><div class="word">MAPM<span class="o"></span>DE</div></div>
-        </div>
-      </div>
-
-      <!-- Slot 2: Top Categories (4개 고정) -->
-      <div class="topCats" id="topCats"></div>
-
-      <!-- Slot 3: Admin label -->
-      <div class="slot fixed">
-        <div style="font-weight:900; color:rgba(57,217,138,.95);">ADMIN</div>
-      </div>
-
-      <!-- Slot 4: Controls -->
-      <div class="slot fixed" style="justify-content:center; gap:8px;">
-        <label class="pill small ghost" style="cursor:pointer;">
-          지도 업로드
-          <input id="fileMap" type="file" accept="image/*" style="display:none;" />
-        </label>
-        <button class="pill small ghost" id="btnExport">state 내보내기</button>
-        <button class="pill small danger" id="btnResetAll">전체 초기화</button>
+  <aside class="left">
+    <div class="card">
+      <h3>Pages</h3>
+      <div class="hint">Select a page to view its map and markers.</div>
+      <div style="height:10px"></div>
+      <div class="list" id="pageList"></div>
+    </div>
+    <div class="card">
+      <h3>How to Use</h3>
+      <div class="col">
+        <div class="row"><span class="pill">Drag</span><span class="hint">pan</span></div>
+        <div class="row"><span class="pill">Wheel</span><span class="hint">zoom</span></div>
+        <div class="row"><span class="pill">Click marker</span><span class="hint">toggle 30% opacity</span></div>
       </div>
     </div>
+  </aside>
 
-    <div class="top-right">
-      <span class="pill small ghost" title="현재 카테고리/페이지">
-        관리자
-        <span style="opacity:.7;">/</span>
-        <span id="pathTopCat">카테고리1</span>
-        <span style="opacity:.7;">/</span>
-        <span id="pathPageTop">전체지도</span>
-      </span>
+  <main class="center">
+    <div class="canvasWrap" id="canvasWrap">
+      <canvas id="c"></canvas>
     </div>
-  </div>
+  </main>
 
-  <div class="layout">
-    <!-- LEFT -->
-    <aside class="side left">
-      <div class="sideInner">
-        <div class="card">
-          <div class="sectionTitle">
-            <span>페이지</span>
-            <span class="subtle"><b id="pathCat">카테고리1</b> / <b id="pathPage">전체지도</b></span>
-          </div>
+  <aside class="right">
+    <div class="card">
+      <h3>Marker Categories</h3>
+      <div class="list" id="markerCatList"></div>
+      <div style="height:10px"></div>
+      <div class="hint">Toggles are view-only. Admin controls are disabled.</div>
+    </div>
 
-          <button class="btnAddPage" id="btnAddPage">+ 페이지 추가</button>
-
-          <div class="subtle" style="margin-top:10px;">
-            • 페이지 버튼 클릭 → 같은 카테고리 안에서 지도 페이지 이동<br/>
-            • 다른 기기에서도 지도 보이게 하려면: 페이지 URL 버튼으로 지도 이미지 URL 설정
-          </div>
-
-          <div class="pageList" id="pageList"></div>
+    <div class="card">
+      <h3>Selected Marker</h3>
+      <div class="item">
+        <div class="grow">
+          <div class="hint">Name</div>
+          <div id="selName" class="mono" style="margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">(none)</div>
         </div>
       </div>
-    </aside>
-
-    <!-- CENTER -->
-    <main class="center">
-      <div class="hintToast" id="toast"></div>
-      <div class="canvasWrap">
-        <canvas id="cv" width="1200" height="900"></canvas>
-      </div>
-    </main>
-
-    <!-- RIGHT -->
-    <aside class="side right">
-      <div class="sideInner">
-
-        <!-- 카테고리 -->
-        <div class="card">
-          <div class="sectionTitle">
-            <span>카테고리</span>
-            <span class="subtle">필터</span>
-          </div>
-
-          <div class="chipRow" id="catChips"></div>
-
-          <div class="toggleRow">
-            <div class="toggle" id="tgShowChainSameCat">
-              <div class="dot"></div>
-              <div>같은 카테고리 필터 시 선도 같이 표시/숨김</div>
-            </div>
-
-            <div class="subtle" id="kpi" style="margin-top:2px;">표시 중 마커: 0 / 페이지 전체: 0</div>
-
-            <button class="pill btnFull ghost" id="btnEditCats">카테고리/색상 편집</button>
+      <div class="col" style="margin-top:10px;">
+        <div class="hint">YouTube</div>
+        <div id="ytBlock" class="item" style="align-items:flex-start; display:none;">
+          <div class="grow">
+            <div id="ytTitle" class="mono" style="font-size:13px;"></div>
+            <div id="ytDesc" class="hint" style="margin-top:6px; white-space:pre-wrap;"></div>
+            <div style="height:8px"></div>
+            <a id="ytLink" class="link" href="#" target="_blank" rel="noopener">Open link</a>
           </div>
         </div>
-
-        <!-- 관리자 툴 -->
-        <div class="card">
-          <div class="sectionTitle">
-            <span>관리자 툴</span>
-            <span class="subtle">• 색상 팔레트(체인 1번 기준 전파)<br/>• 선은 "같은 카테고리 필터" 시 같이 표시/숨김</span>
-          </div>
-
-          <div class="subtle" style="margin-top:8px;">빠른 색상 (원 색상 오버라이드)</div>
-          <div class="palette" id="palette"></div>
-
-          <div class="row2">
-            <button class="pill btnFull ghost" id="btnApplyQuick" disabled>선택 마커에 적용</button>
-            <button class="pill btnFull ghost" id="btnUseCatColor" disabled>선택 마커 색상(카테고리로)</button>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="row2">
-            <button class="pill btnFull danger" id="btnClearLines">모든 선 제거</button>
-            <button class="pill btnFull ghost" id="btnRechain">선 다시 체인(전체)</button>
-          </div>
-
-          <div class="hr"></div>
-
-          <button class="pill btnFull danger" id="btnResetMarkers" style="border-color:rgba(255,93,93,.65);">마커 초기화</button>
-
-          <div class="hr"></div>
-
-          <div class="selectedBox" style="margin-top:6px;">
-            <div class="label">선택한 마커: <span id="selName">(이름 없음)</span></div>
-            <div class="sub">유튜브 링크</div>
-            <input class="field" id="selLink" placeholder="유튜브" />
-            <div class="sub">유튜브 표시명</div>
-            <input class="field" id="selYtTitle" placeholder="유튜브 표시명" />
-            <div style="margin-top:10px;">
-              <button class="pill btnFull ghost" id="btnOpenMarkerEdit" disabled>마커 편집 열기</button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </aside>
-  </div>
-
-  <!-- MARKER EDIT MODAL -->
-  <div class="modalBack" id="mMarker">
-    <div class="modal">
-      <div class="modalHead">
-        <div>
-          <div class="title">마커 편집</div>
-          <div class="subtle" style="margin-top:6px;">관리자 모드에서만 편집/삭제 가능합니다. (Enter = 저장)</div>
-        </div>
-        <button class="modalClose" id="btnCloseMarker">닫기</button>
-      </div>
-
-      <div class="modalBody">
-        <div class="grid2">
-          <div>
-            <div class="labelRow">이름(마커 이름)</div>
-            <input class="field" id="mfName" placeholder="예: 기텔 위치" />
-          </div>
-          <div>
-            <div class="labelRow">카테고리</div>
-            <select class="field" id="mfCat"></select>
-          </div>
-        </div>
-
-        <div class="labelRow" style="margin-top:12px;">마커 원 색상</div>
-        <div style="display:flex; align-items:center; gap:12px; justify-content:space-between;">
-          <input class="field" id="mfColor" placeholder="개별 오버라이드 색상 (예: #ff0000)" />
-          <div style="display:flex; align-items:center; gap:10px;">
-            <div class="colorChip" id="mfColorChip" style="--c:#2b8cff;"></div>
-            <div class="checkRow">
-              <input type="checkbox" id="mfUseCatColor" />
-              <label for="mfUseCatColor" class="subtle" style="cursor:pointer;">카테고리 색상 사용</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="grid2">
-          <div>
-            <div class="labelRow">유튜브 링크(URL)</div>
-            <input class="field" id="mfYt" placeholder="https://www.youtube.com/..." />
-          </div>
-          <div>
-            <div class="labelRow">유튜브 표시명(유저모드 제목)</div>
-            <input class="field" id="mfYtTitle" placeholder="예: 기텔 1번위치" />
-          </div>
-        </div>
-
-        <div class="labelRow" style="margin-top:12px;">메모 (관리자 등록)</div>
-        <textarea class="field" id="mfMemo" placeholder="관리자 메모를 입력하세요. 유저 모드에서는 읽기 전용입니다."></textarea>
-
-        <div class="hr"></div>
-
-        <div class="labelRow">마커 스타일</div>
-        <div class="styleGrid">
-          <div class="styleCard">
-            <h4>원 크기 <span class="subtle" style="float:right;">px</span></h4>
-            <div class="rangeRow">
-              <input type="range" id="mfR" min="4" max="40" step="1" />
-              <div class="numBox" id="mfRVal">10</div>
-            </div>
-            <div class="subtle" style="margin-top:10px;">* 원 크기 변경 시 글씨 크기가 같은 비율로 자동 변경됩니다.</div>
-          </div>
-
-          <div class="styleCard">
-            <h4>글씨 크기 <span class="subtle" style="float:right;">라벨</span></h4>
-            <div class="rangeRow">
-              <input type="range" id="mfFs" min="8" max="40" step="1" />
-              <div class="numBox" id="mfFsVal">15</div>
-            </div>
-            <div class="subtle" style="margin-top:10px;">* 현재는 자동 동기화 우선</div>
-          </div>
-
-          <div class="styleCard">
-            <h4>굵기/색상 <span class="subtle" style="float:right;">라벨</span></h4>
-            <select class="field fwSelect" id="mfFw">
-              <option value="900">900 (Black)</option>
-              <option value="800">800 (ExtraBold)</option>
-              <option value="700">700 (Bold)</option>
-              <option value="600">600 (SemiBold)</option>
-            </select>
-
-            <div class="labelRow" style="margin-top:10px;">글씨 색상 (라벨)</div>
-            <div style="display:flex; gap:10px; align-items:center;">
-              <input class="field" style="flex:1;" id="mfLabelColor" placeholder="#e7eef8" />
-              <button class="btnBig" id="mfLabelDefault" type="button">기본값</button>
-            </div>
-
-            <div class="labelRow" style="margin-top:10px;">빠른 글씨색</div>
-            <div class="quickTextColors" id="textColors"></div>
-          </div>
-        </div>
-
-        <div class="subtle" id="mfPos" style="margin-top:12px;">좌표(비율): -</div>
-        <div class="subtle" style="margin-top:8px;">
-          • 새로운 번호로 시작: 이 마커부터 새 체인(새 1번) 시작<br/>
-          • 해당 마커를 이어서 시작: 이 마커 뒤로 "중간 삽입" 모드 활성화
-        </div>
-      </div>
-
-      <div class="modalFoot">
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btnBig" id="btnNewChain">새로운 번호로 시작</button>
-          <button class="btnBig" id="btnInsertAfter">해당 마커를 이어서 시작</button>
-        </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-left:auto;">
-          <button class="btnBig danger" id="btnDeleteMarker">삭제</button>
-          <button class="btnBig ok" id="btnSaveMarker">저장</button>
-        </div>
+        <div class="hint" id="ytNone">Select a marker to see its link panel.</div>
       </div>
     </div>
-  </div>
-
-  <!-- CATEGORY EDIT MODAL -->
-  <div class="modalBack" id="mCats">
-    <div class="modal">
-      <div class="modalHead">
-        <div class="title">카테고리/색상 편집</div>
-        <button class="modalClose" id="btnCloseCats">닫기</button>
-      </div>
-
-      <div class="modalBody">
-        <div class="subtle">저장하면 현재 카테고리의 카테고리 목록이 완전히 교체됩니다.</div>
-
-        <div class="labelRow" style="margin-top:14px;">빠른 색상 (선택한 카테고리 행에 적용)</div>
-        <div class="palette" id="catQuickPalette" style="margin-top:10px;"></div>
-        <div class="subtle" style="margin-top:8px;">카테고리 행을 먼저 클릭해서 선택하세요.</div>
-
-        <div class="hr"></div>
-
-        <div class="row2">
-          <button class="pill btnFull ghost" id="btnAddCat">+ 카테고리 추가</button>
-          <button class="pill btnFull ghost" id="btnCatsDefault">기본값으로</button>
-        </div>
-
-        <div class="hr"></div>
-
-        <div id="catRows"></div>
-      </div>
-
-      <div class="modalFoot" style="justify-content:flex-end;">
-        <button class="btnBig ok" id="btnSaveCats">저장</button>
-      </div>
-    </div>
-  </div>
+  </aside>
+</div>
 
 <script>
 (() => {
-  /************************************************************
-   * ADMIN99 저장 규칙
-   ************************************************************/
-  const LS_AUTH_KEY = "mapmode_admin_auth_v99";
-  const LS_KEY = "mapmode_state_v99";
-  const REMOTE_STATE_URL = new URL("./data/state.json", location.href).toString();
-  const PASSWORD = "0000000001";
-  const AUTH_MS = 24 * 60 * 60 * 1000;
+  "use strict";
 
-  const defaultCats = [
-    { id:"전체", name:"전체", color:"#7cc4ff", on:true },
-    { id:"보스", name:"보스", color:"#ff5d5d", on:true },
-    { id:"기텔", name:"기텔", color:"#ffd60a", on:true },
-    { id:"큐브", name:"큐브", color:"#2b8cff", on:true },
-  ];
+  // Fixed shared remote URL
+  const REMOTE_STATE_URL = new URL("./data/state.json", location.href);
 
-  const makeDefaultCatState = () => ({
-    pages: [
-      { id:"p_all", name:"전체지도", url:"" },
-      { id:"p_2", name:"2번마을", url:"" },
-      { id:"p_3", name:"3번마을", url:"" },
-      { id:"p_4", name:"4번마을", url:"" },
-      { id:"p_5", name:"5번마을", url:"" },
-      { id:"p_6", name:"6번마을", url:"" },
-      { id:"p_7", name:"7번마을", url:"" },
-    ],
-    currentPageId:"p_all",
-    categories: structuredClone(defaultCats),
-    showLinesWithCatFilter:true,
-    map:{ imgDataUrl:"", naturalW:1, naturalH:1, scale:0, tx:0, ty:0 },
-    markers:[],
-    chains:[], // (legacy placeholder)
-    curves:{}  // key "aId|bId" => { cx, cy }  (world coords)
-  });
+  const $ = (sel, el=document) => el.querySelector(sel);
+  const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  const safeParse = (json,fallback)=>{ try{ return JSON.parse(json);}catch{ return fallback; } };
 
-  const defaultState = {
-    version:99,
-    logoUrl:"",
-    topCats: [
-      { id:"cat1", label:"카테고리1", enabled:true },
-      { id:"cat2", label:"카테고리2", enabled:true },
-      { id:"cat3", label:"카테고리3", enabled:true },
-      { id:"cat4", label:"카테고리4", enabled:true },
-    ],
-    activeTopCatId:"cat1",
-    cats: {
-      cat1: makeDefaultCatState(),
-      cat2: makeDefaultCatState(),
-      cat3: makeDefaultCatState(),
-      cat4: makeDefaultCatState(),
-    }
-  };
+  let state = null;
 
-  const $ = (id)=>document.getElementById(id);
-  const cv = $("cv");
-  const ctx = cv.getContext("2d");
+  const canvas = $("#c");
+  const wrap = $("#canvasWrap");
+  const ctx = canvas.getContext("2d");
 
-  const toastEl = $("toast");
-  const lock = $("lock");
-  const pw = $("pw");
-  const btnLogin = $("btnLogin");
-  const lockMsg = $("lockMsg");
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  let imgReady = false;
 
-  const pageList = $("pageList");
-  const catChips = $("catChips");
-  const palette = $("palette");
-  const textColors = $("textColors");
+  const view = { scale:1, ox:0, oy:0, minScale:0.1, maxScale:10 };
 
-  const mMarker = $("mMarker");
-  const mCats = $("mCats");
+  function resize(){
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const r = wrap.getBoundingClientRect();
+    canvas.width = Math.round(r.width * dpr);
+    canvas.height = Math.round(r.height * dpr);
+    canvas.style.width = r.width + "px";
+    canvas.style.height = r.height + "px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    requestDraw();
+  }
+  window.addEventListener("resize", resize, {passive:true});
 
-  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
-  const safeParse = (json, fallback) => { try{ return JSON.parse(json); }catch(e){ return fallback; } };
-  const uid = () => Math.random().toString(36).slice(2,10);
-
-  function toast(msg, ms=1200){
-    toastEl.textContent = msg;
-    toastEl.classList.add("show");
-    clearTimeout(toast._t);
-    toast._t = setTimeout(()=>toastEl.classList.remove("show"), ms);
+  function worldToScreen(wx, wy){
+    return { x: wx * view.scale + view.ox, y: wy * view.scale + view.oy };
+  }
+  function screenToWorld(sx, sy){
+    return { x: (sx - view.ox) / view.scale, y: (sy - view.oy) / view.scale };
   }
 
-  function isAuthed(){
-    const t = Number(localStorage.getItem(LS_AUTH_KEY) || "0");
-    return (Date.now() - t) < AUTH_MS;
-  }
-  function setAuthed(){
-    localStorage.setItem(LS_AUTH_KEY, String(Date.now()));
-  }
-
-  function requireAuth(){
-    if(isAuthed()){
-      lock.classList.remove("show");
-      return;
-    }
-    lock.classList.add("show");
-    pw.value = "";
-    lockMsg.textContent = "";
-    setTimeout(()=>pw.focus(), 0);
+  function fitView(){
+    if(!imgReady) return;
+    const r = wrap.getBoundingClientRect();
+    const w = img.naturalWidth || 1;
+    const h = img.naturalHeight || 1;
+    const pad = 20;
+    const sx = (r.width - pad*2) / w;
+    const sy = (r.height - pad*2) / h;
+    view.scale = clamp(Math.min(sx, sy), view.minScale, view.maxScale);
+    view.ox = (r.width - w * view.scale) * 0.5;
+    view.oy = (r.height - h * view.scale) * 0.5;
+    requestDraw();
   }
 
-  btnLogin.addEventListener("click", ()=>{
-    if(pw.value === PASSWORD){
-      setAuthed();
-      lock.classList.remove("show");
-      toast("인증 완료");
-    }else{
-      lockMsg.textContent = "비밀번호가 올바르지 않습니다.";
-      toast("비밀번호 오류");
-    }
-  });
-  pw.addEventListener("keydown", (e)=>{
-    if(e.key==="Enter") btnLogin.click();
-  });
+  const getActivePage = () => state.pages.find(p => p.id === state.activePageId) || state.pages[0] || null;
+  const getMarkersForPage = (pid) => state.markers.filter(m => m.pageId === pid);
+  const getLinksForPage = (pid) => state.links.filter(l => l.pageId === pid);
+  const getMarkerCat = (id) => state.markerCategories.find(c => c.id === id) || state.markerCategories[0];
 
-  // ---------- state ----------
-  let S = structuredClone(defaultState);
-  let mapImg = new Image();
-  mapImg.crossOrigin = "anonymous";
-
-  function currentTopCat(){
-    const id = S.activeTopCatId || "cat1";
-    const tc = (S.topCats||[]).find(x=>x.id===id) || (S.topCats?.[0] || {id:"cat1", label:"카테고리1", enabled:true});
-    return tc;
-  }
-  function currentCatState(){
-    const id = S.activeTopCatId || "cat1";
-    if(!S.cats) S.cats = {};
-    if(!S.cats[id]) S.cats[id] = makeDefaultCatState();
-    return S.cats[id];
+  function isMarkerVisible(m){
+    const cat = getMarkerCat(m.mcatId);
+    return !!(cat && cat.enabled);
   }
 
-  function ensureCatSlotIntegrity(){
-    if(!Array.isArray(S.topCats) || !S.topCats.length){
-      S.topCats = structuredClone(defaultState.topCats);
-    }
-    const needed = ["cat1","cat2","cat3","cat4"];
-    for(const id of needed){
-      if(!S.topCats.some(x=>x.id===id)){
-        const base = defaultState.topCats.find(x=>x.id===id);
-        S.topCats.push(structuredClone(base));
-      }
-      if(!S.cats) S.cats = {};
-      if(!S.cats[id]) S.cats[id] = makeDefaultCatState();
-    }
-    // keep exactly 4 in order
-    S.topCats = needed.map(id=>{
-      const found = S.topCats.find(x=>x.id===id);
-      return {
-        id,
-        label: (found?.label ?? defaultState.topCats.find(x=>x.id===id).label),
-        enabled: (typeof found?.enabled==="boolean") ? found.enabled : true
-      };
-    });
-    if(!needed.includes(S.activeTopCatId)) S.activeTopCatId = "cat1";
+  let drawReq = 0;
+  function requestDraw(){
+    if(drawReq) return;
+    drawReq = requestAnimationFrame(()=>{ drawReq=0; draw(); });
   }
-
-  function migrateLegacyStateToCat1(st){
-    // If prior schema existed (game/pages/markers/categories/map), fold into cats.cat1
-    const legacyHas = st && typeof st==="object" && (
-      Array.isArray(st.pages) || Array.isArray(st.markers) || Array.isArray(st.categories) || st.map
-    );
-    if(!legacyHas) return st;
-
-    const merged = structuredClone(defaultState);
-    merged.logoUrl = (typeof st.logoUrl==="string") ? st.logoUrl : "";
-    merged.topCats = structuredClone(defaultState.topCats);
-    merged.activeTopCatId = "cat1";
-    merged.cats = structuredClone(defaultState.cats);
-
-    const c1 = merged.cats.cat1;
-    if(Array.isArray(st.pages) && st.pages.length) c1.pages = st.pages;
-    if(typeof st.currentPageId==="string") c1.currentPageId = st.currentPageId;
-    if(Array.isArray(st.categories) && st.categories.length) c1.categories = st.categories;
-    if(typeof st.showLinesWithCatFilter==="boolean") c1.showLinesWithCatFilter = st.showLinesWithCatFilter;
-    if(st.map && typeof st.map==="object") c1.map = Object.assign(structuredClone(c1.map), st.map);
-    if(Array.isArray(st.markers)) c1.markers = st.markers;
-    if(Array.isArray(st.chains)) c1.chains = st.chains;
-    if(st.curves && typeof st.curves==="object") c1.curves = st.curves;
-
-    return merged;
-  }
-
-  function mergeState(st){
-    // Accept new schema, else migrate legacy schema
-    let base = st;
-    if(st && typeof st==="object"){
-      const isNew = st.topCats && st.cats;
-      base = isNew ? st : migrateLegacyStateToCat1(st);
-    }else{
-      base = structuredClone(defaultState);
-    }
-
-    const merged = structuredClone(defaultState);
-    if(base && typeof base==="object"){
-      merged.version = 99;
-      merged.logoUrl = typeof base.logoUrl==="string" ? base.logoUrl : "";
-      merged.topCats = Array.isArray(base.topCats) ? base.topCats : structuredClone(defaultState.topCats);
-      merged.activeTopCatId = typeof base.activeTopCatId==="string" ? base.activeTopCatId : "cat1";
-      merged.cats = (base.cats && typeof base.cats==="object") ? base.cats : structuredClone(defaultState.cats);
-    }
-    ensureCatSlotIntegrity();
-
-    // normalize each cat state
-    for(const tc of merged.topCats){
-      const cs = merged.cats[tc.id] || makeDefaultCatState();
-      const norm = makeDefaultCatState();
-      norm.pages = Array.isArray(cs.pages) && cs.pages.length ? cs.pages : norm.pages;
-      norm.currentPageId = (typeof cs.currentPageId==="string" && norm.pages.some(p=>p.id===cs.currentPageId)) ? cs.currentPageId : norm.pages[0].id;
-      norm.categories = Array.isArray(cs.categories) && cs.categories.length ? cs.categories : structuredClone(defaultCats);
-      norm.showLinesWithCatFilter = (typeof cs.showLinesWithCatFilter==="boolean") ? cs.showLinesWithCatFilter : true;
-      norm.map = Object.assign(structuredClone(norm.map), (cs.map && typeof cs.map==="object") ? cs.map : {});
-      norm.markers = Array.isArray(cs.markers) ? cs.markers : [];
-      norm.chains = Array.isArray(cs.chains) ? cs.chains : [];
-      norm.curves = (cs.curves && typeof cs.curves==="object") ? cs.curves : {};
-      merged.cats[tc.id] = norm;
-    }
-    S = merged;
-    return merged;
-  }
-
-  function saveLocal(){
-    localStorage.setItem(LS_KEY, JSON.stringify(S));
-  }
-
-  async function loadStateRemoteFirst(){
-    try{
-      const r = await fetch(REMOTE_STATE_URL, { cache:"no-store" });
-      if(r.ok){
-        const st = await r.json();
-        localStorage.setItem(LS_KEY, JSON.stringify(st));
-        return st;
-      }
-    }catch(e){}
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? safeParse(raw, structuredClone(defaultState)) : structuredClone(defaultState);
-  }
-
-  // ---------- logo ----------
-  const logoBox = $("logoBox");
-  function renderLogo(){
-    logoBox.innerHTML = "";
-    if(S.logoUrl){
-      const img = document.createElement("img");
-      img.src = S.logoUrl;
-      img.alt = "logo";
-      img.onerror = () => {
-        logoBox.innerHTML = `<div class="brand"><div class="word">MAPM<span class="o"></span>DE</div></div>`;
-      };
-      logoBox.appendChild(img);
-    }else{
-      logoBox.innerHTML = `<div class="brand"><div class="word">MAPM<span class="o"></span>DE</div></div>`;
-    }
-  }
-  logoBox.addEventListener("click", ()=>{
-    requireAuth();
-    if(!isAuthed()) return;
-
-    const cur = S.logoUrl || "";
-    const next = prompt("로고 이미지 URL을 입력하세요 (비우면 기본 로고)", cur);
-    if(next === null) return;
-    S.logoUrl = (next || "").trim();
-    saveLocal();
-    renderLogo();
-    toast("로고 설정 저장");
-  });
-
-  // ---------- top categories ----------
-  const topCatsEl = $("topCats");
-  function renderTopCats(){
-    topCatsEl.innerHTML = "";
-    ensureCatSlotIntegrity();
-    for(const tc of S.topCats){
-      const pill = document.createElement("div");
-      const isActive = (tc.id === S.activeTopCatId);
-      pill.className = "topCatPill" + (isActive ? " active" : "") + (!tc.enabled ? " disabled" : "");
-      pill.innerHTML = `
-        <div class="topCatLabel">${tc.id==="cat1" ? "아이온2" : tc.label}</div>
-        <div class="topCatToggle ${tc.enabled ? "on" : ""}" title="활성/비활성"></div>
-      `;
-
-      const toggle = pill.querySelector(".topCatToggle");
-
-      toggle.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        requireAuth(); if(!isAuthed()) return;
-        tc.enabled = !tc.enabled;
-        saveLocal();
-        renderTopCats();
-        toast(tc.enabled ? "카테고리 활성화" : "카테고리 비활성화");
-      });
-
-      pill.addEventListener("click", ()=>{
-        requireAuth(); if(!isAuthed()) return;
-        S.activeTopCatId = tc.id;
-        saveLocal();
-        selectedMarker = null;
-        insertAfterMarkerId = null;
-        syncSelectedPanel();
-        renderAll();
-        loadMap();
-        toast("카테고리 전환");
-      });
-
-      topCatsEl.appendChild(pill);
-    }
-
-    $("pathTopCat").textContent = (S.activeTopCatId==="cat1") ? "아이온2" : currentTopCat().label;
-    $("pathCat").textContent = (S.activeTopCatId==="cat1") ? "아이온2" : currentTopCat().label;
-  }
-
-  // ---------- pages ----------
-  function renderPages(){
-    const C = currentCatState();
-    pageList.innerHTML = "";
-    const cur = C.pages.find(p=>p.id===C.currentPageId) || C.pages[0];
-    $("pathPage").textContent = cur ? cur.name : "전체지도";
-    $("pathPageTop").textContent = cur ? cur.name : "전체지도";
-
-    for(const p of C.pages){
-      const item = document.createElement("div");
-      item.className = "pageItem" + (p.id===C.currentPageId ? " active" : "");
-      item.innerHTML = `
-        <div class="pageName">${p.name}</div>
-        <div class="pageActions">
-          <button class="miniBtn url" title="지도 이미지 URL 설정">URL</button>
-          <button class="miniBtn icon edit" title="이름 편집">✎</button>
-          <button class="miniBtn icon del" title="삭제">🗑</button>
-        </div>
-      `;
-      item.addEventListener("click", (e)=>{
-        const btn = e.target.closest("button");
-        if(btn) return;
-        C.currentPageId = p.id;
-        saveLocal();
-        renderPages();
-        renderKpi();
-        loadMap();
-      });
-
-      const [bUrl, bEdit, bDel] = item.querySelectorAll("button");
-
-      bUrl.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        requireAuth();
-        if(!isAuthed()) return;
-        const next = prompt("이 페이지 지도 이미지 URL(또는 Raw/GitHub Pages URL)을 입력하세요", p.url || "");
-        if(next === null) return;
-        p.url = (next || "").trim();
-        saveLocal();
-        toast("페이지 URL 저장");
-        if(p.id === C.currentPageId) loadMap();
-      });
-
-      bEdit.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        requireAuth();
-        if(!isAuthed()) return;
-        const next = prompt("페이지 이름을 수정하세요", p.name);
-        if(!next) return;
-        p.name = next.trim();
-        saveLocal();
-        renderPages();
-        toast("페이지 이름 수정");
-      });
-
-      bDel.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        requireAuth();
-        if(!isAuthed()) return;
-        if(C.pages.length <= 1){ toast("최소 1개 페이지는 필요합니다"); return; }
-        if(!confirm(`"${p.name}" 페이지를 삭제할까요? (해당 페이지 마커도 같이 삭제됩니다)`)) return;
-
-        const pid = p.id;
-        C.markers = C.markers.filter(m=>m.pageId !== pid);
-        C.pages = C.pages.filter(x=>x.id !== pid);
-        if(C.currentPageId === pid) C.currentPageId = C.pages[0].id;
-
-        // curves cleanup
-        const validIds = new Set(C.markers.map(m=>m.id));
-        const newCurves = {};
-        for(const k of Object.keys(C.curves||{})){
-          const [a,b] = k.split("|");
-          if(validIds.has(a) && validIds.has(b)) newCurves[k]=C.curves[k];
-        }
-        C.curves = newCurves;
-
-        saveLocal();
-        renderPages();
-        renderKpi();
-        loadMap();
-        toast("페이지 삭제");
-      });
-
-      pageList.appendChild(item);
-    }
-  }
-
-  $("btnAddPage").addEventListener("click", ()=>{
-    requireAuth();
-    if(!isAuthed()) return;
-    const C = currentCatState();
-    const name = prompt("추가할 페이지 이름을 입력하세요 (예: 8번마을)");
-    if(!name) return;
-    const p = { id:"p_"+uid(), name:name.trim(), url:"" };
-    C.pages.push(p);
-    C.currentPageId = p.id;
-    saveLocal();
-    renderPages();
-    renderKpi();
-    loadMap();
-    toast("페이지 추가");
-  });
-
-  // ---------- categories (filter chips) ----------
-  function getCat(id){
-    const C = currentCatState();
-    return C.categories.find(c=>c.id===id);
-  }
-  function markerColor(m){
-    if(!m) return "#7cc4ff";
-    if(m.useCatColor){
-      const c = getCat(m.cat);
-      return (c && c.color) ? c.color : "#7cc4ff";
-    }
-    if(m.colorOverride && m.colorOverride.trim()) return m.colorOverride.trim();
-    const c = getCat(m.cat);
-    return (c && c.color) ? c.color : "#7cc4ff";
-  }
-
-  function ensureCat(name, color){
-    const C = currentCatState();
-    if(C.categories.some(c=>c.id===name)) return;
-    C.categories.push({ id:name, name, color:color||"#ffffff", on:true });
-    renderCats();
-  }
-
-  function setToggle(el, on){
-    el.classList.toggle("on", !!on);
-    el.dataset.on = on ? "1" : "0";
-  }
-
-  function renderCats(){
-    const C = currentCatState();
-    catChips.innerHTML = "";
-
-    for(const c of C.categories){
-      const chip = document.createElement("div");
-      chip.className = "chip" + (c.on ? " on" : " off");
-      chip.innerHTML = `<div class="dotc" style="background:${c.color};"></div><div>${c.name}</div>`;
-
-      chip.addEventListener("click", ()=>{
-        requireAuth();
-        if(!isAuthed()) return;
-
-        if(c.id === "전체"){
-          // 전체 클릭: 모든 마커 ON/OFF (카테고리 토글 전체 반영)
-          const anyOn = C.categories.some(x=>x.id!=="전체" && x.on);
-          const toOn = !anyOn;
-          for(const x of C.categories){
-            if(x.id==="전체"){ x.on = true; continue; }
-            x.on = toOn;
-          }
-          saveLocal();
-          renderCats();
-          renderKpi();
-          draw();
-          toast(toOn ? "전체 ON" : "전체 OFF");
-          return;
-        }
-
-        c.on = !c.on;
-        saveLocal();
-        renderCats();
-        renderKpi();
-        draw();
-      });
-
-      catChips.appendChild(chip);
-    }
-  }
-
-  const tgShowLinesWithCatFilter = $("tgShowChainSameCat");
-  tgShowLinesWithCatFilter.addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    const C = currentCatState();
-    C.showLinesWithCatFilter = !C.showLinesWithCatFilter;
-    setToggle(tgShowLinesWithCatFilter, C.showLinesWithCatFilter);
-    saveLocal();
-    draw();
-  });
-
-  // ---------- map upload ----------
-  $("fileMap").addEventListener("change", async (e)=>{
-    requireAuth();
-    if(!isAuthed()) return;
-    const C = currentCatState();
-    const f = e.target.files && e.target.files[0];
-    if(!f) return;
-    const dataUrl = await fileToDataURL(f);
-    C.map.imgDataUrl = dataUrl;
-    saveLocal();
-    loadMap();
-    toast("지도 업로드 완료");
-    e.target.value = "";
-  });
-
-  function fileToDataURL(file){
-    return new Promise((res, rej)=>{
-      const fr = new FileReader();
-      fr.onload = ()=>res(fr.result);
-      fr.onerror = rej;
-      fr.readAsDataURL(file);
-    });
-  }
-
-  function loadMap(){
-    const C = currentCatState();
-    const curPage = C.pages.find(p => p.id === C.currentPageId);
-    const pageUrl = (curPage?.url || "").trim();
-
-    if(pageUrl){
-      mapImg = new Image();
-      mapImg.crossOrigin = "anonymous";
-      mapImg.onload = ()=>{
-        C.map.naturalW = mapImg.naturalWidth || 1;
-        C.map.naturalH = mapImg.naturalHeight || 1;
-        fitToScreen();
-        saveLocal();
-        draw();
-        renderKpi();
-      };
-      mapImg.onerror = ()=>{
-        toast("지도 URL 로드 실패");
-        draw();
-      };
-      mapImg.src = pageUrl;
-      return;
-    }
-
-    if(C.map.imgDataUrl){
-      mapImg = new Image();
-      mapImg.crossOrigin = "anonymous";
-      mapImg.onload = ()=>{
-        C.map.naturalW = mapImg.naturalWidth || 1;
-        C.map.naturalH = mapImg.naturalHeight || 1;
-        if(!C.map.scale || C.map.scale<=0) fitToScreen();
-        draw();
-      };
-      mapImg.src = C.map.imgDataUrl;
-      return;
-    }
-
-    mapImg = new Image();
-    mapImg.onload = ()=>draw();
-    mapImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000">
-        <defs>
-          <radialGradient id="g" cx="50%" cy="40%" r="70%">
-            <stop offset="0%" stop-color="#ffffff"/>
-            <stop offset="100%" stop-color="#e8edf7"/>
-          </radialGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#g)"/>
-        <text x="50%" y="50%" text-anchor="middle" font-family="Arial" font-size="28" fill="#7a889e">페이지 URL 또는 지도 업로드가 필요</text>
-      </svg>`
-    );
-  }
-
-  // ---------- export ----------
-  $("btnExport").addEventListener("click", ()=>{
-    requireAuth();
-    if(!isAuthed()) return;
-
-    const blob = new Blob([JSON.stringify(S, null, 2)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "state.json";
-    a.click();
-    URL.revokeObjectURL(a.href);
-    toast("state.json 다운로드");
-  });
-
-  $("btnResetAll").addEventListener("click", ()=>{
-    requireAuth();
-    if(!isAuthed()) return;
-    if(!confirm("전체 초기화할까요? (카테고리/페이지/마커/지도 포함)")) return;
-    S = structuredClone(defaultState);
-    saveLocal();
-    selectedMarker = null;
-    insertAfterMarkerId = null;
-    renderAll();
-    loadMap();
-    toast("전체 초기화 완료");
-  });
-
-  // ---------- canvas sizing ----------
-  function resizeCanvas(){
-    const wrap = cv.parentElement;
-    const w = wrap.clientWidth - 32;
-    const h = wrap.clientHeight - 32;
-    cv.width = Math.max(900, Math.floor(w));
-    cv.height = Math.max(650, Math.floor(h));
-  }
-  window.addEventListener("resize", ()=>{ resizeCanvas(); draw(); });
-
-  function fitToScreen(){
-    const C = currentCatState();
-    const pad = 40;
-    const iw = C.map.naturalW || (mapImg.naturalWidth||1);
-    const ih = C.map.naturalH || (mapImg.naturalHeight||1);
-    const cw = cv.width, ch = cv.height;
-    const scale = Math.min((cw - pad)/iw, (ch - pad)/ih);
-    C.map.scale = clamp(scale, 0.05, 10);
-    C.map.tx = (cw - iw*C.map.scale)/2;
-    C.map.ty = (ch - ih*C.map.scale)/2;
-  }
-
-  // ---------- marker data ----------
-  function getVisibleMarkers(){
-    const C = currentCatState();
-    const curPage = C.currentPageId;
-    const onCats = new Set(C.categories.filter(c=>c.on).map(c=>c.id));
-    const allOn = onCats.has("전체");
-    const anyNonAllOn = C.categories.some(c=>c.id!=="전체" && c.on);
-
-    return (C.markers||[]).filter(m=>{
-      if(m.pageId !== curPage) return false;
-      if(allOn) return true;
-      if(!anyNonAllOn) return false; // 전체 OFF 상태
-      return onCats.has(m.cat);
-    });
-  }
-
-  function renderKpi(){
-    const C = currentCatState();
-    const curPage = C.currentPageId;
-    const total = (C.markers||[]).filter(m=>m.pageId===curPage).length;
-    const shown = getVisibleMarkers().length;
-    $("kpi").textContent = `표시 중 마커: ${shown} / 페이지 전체: ${total}`;
-  }
-
-  // ---------- drawing helpers ----------
-  function worldFromNorm(nx, ny){
-    const C = currentCatState();
-    const iw = C.map.naturalW || (mapImg.naturalWidth||1);
-    const ih = C.map.naturalH || (mapImg.naturalHeight||1);
-    return { x:nx*iw, y:ny*ih };
-  }
-  function normFromWorld(wx, wy){
-    const C = currentCatState();
-    const iw = C.map.naturalW || (mapImg.naturalWidth||1);
-    const ih = C.map.naturalH || (mapImg.naturalHeight||1);
-    return { nx: iw ? wx/iw : 0, ny: ih ? wy/ih : 0 };
-  }
-  function screenFromWorld(wx, wy){
-    const C = currentCatState();
-    return { sx: wx*C.map.scale + C.map.tx, sy: wy*C.map.scale + C.map.ty };
-  }
-  function worldFromScreen(sx, sy){
-    const C = currentCatState();
-    return { wx: (sx - C.map.tx)/C.map.scale, wy: (sy - C.map.ty)/C.map.scale };
-  }
-
-  function drawArrowAt(p, v, sizeWorld){
-    // p: {x,y} in world coords; v: direction vector in world coords (normalized)
-    const C = currentCatState();
-    const s = sizeWorld;
-    const nx = v.x, ny = v.y;
-    const px = -ny, py = nx;
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-    ctx.lineTo(p.x - nx*s + px*(s*0.55), p.y - ny*s + py*(s*0.55));
-    ctx.lineTo(p.x - nx*s - px*(s*0.55), p.y - ny*s - py*(s*0.55));
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  function quadPoint(a, c, b, t){
-    const u = 1-t;
-    return {
-      x: u*u*a.x + 2*u*t*c.x + t*t*b.x,
-      y: u*u*a.y + 2*u*t*c.y + t*t*b.y
-    };
-  }
-  function quadDeriv(a, c, b, t){
-    return {
-      x: 2*(1-t)*(c.x-a.x) + 2*t*(b.x-c.x),
-      y: 2*(1-t)*(c.y-a.y) + 2*t*(b.y-c.y)
-    };
-  }
-  function normVec(v){
-    const d = Math.hypot(v.x, v.y) || 1;
-    return { x:v.x/d, y:v.y/d };
-  }
-
-  function segmentKey(aId,bId){ return `${aId}|${bId}`; }
-
-  let circleHitboxes = []; // {id,sx,sy,rPx}
-  let segHitboxes = [];    // {key,aId,bId, distFn(sx,sy)->d, midW:{x,y}, aW, bW}
 
   function draw(){
-    const C = currentCatState();
-    ctx.clearRect(0,0,cv.width,cv.height);
-    circleHitboxes = [];
-    segHitboxes = [];
+    if(!state) return;
+    const r = wrap.getBoundingClientRect();
+    const w = r.width, h = r.height;
+    ctx.clearRect(0,0,w,h);
 
-    ctx.save();
-    ctx.fillStyle = "rgba(0,0,0,.22)";
-    ctx.fillRect(0,0,cv.width,cv.height);
-    ctx.restore();
-
-    ctx.save();
-    ctx.translate(C.map.tx, C.map.ty);
-    ctx.scale(C.map.scale, C.map.scale);
-
-    // map
-    if(mapImg && mapImg.complete){
-      const iw = C.map.naturalW || (mapImg.naturalWidth||1);
-      const ih = C.map.naturalH || (mapImg.naturalHeight||1);
-      ctx.drawImage(mapImg, 0,0, iw, ih);
+    // image
+    if(imgReady){
+      ctx.save();
+      ctx.setTransform(view.scale,0,0,view.scale,view.ox,view.oy);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, 0, 0);
+      ctx.restore();
     }
 
-    const ms = getVisibleMarkers();
+    const page = getActivePage();
+    if(!page) return;
 
-    // chain lines + arrows + curve support
-    const showLines = !!C.showLinesWithCatFilter;
-    if(showLines){
-      const byChain = new Map();
-      for(const m of ms){
-        if(!m.chainId || !m.chainIndex) continue;
-        if(!byChain.has(m.chainId)) byChain.set(m.chainId, []);
-        byChain.get(m.chainId).push(m);
-      }
-
-      ctx.lineWidth = 2 / C.map.scale;
-      ctx.strokeStyle = "rgba(255,255,255,.78)";
-      ctx.fillStyle = "rgba(255,255,255,.86)";
-      ctx.globalAlpha = 0.9;
-
-      for(const arr of byChain.values()){
-        arr.sort((a,b)=>(a.chainIndex||0)-(b.chainIndex||0));
-        if(arr.length<2) continue;
-
-        for(let i=0;i<arr.length-1;i++){
-          const A = arr[i], B = arr[i+1];
-          const aW = worldFromNorm(A.x, A.y);
-          const bW = worldFromNorm(B.x, B.y);
-          const key = segmentKey(A.id,B.id);
-
-          const cc = (C.curves && C.curves[key]) ? C.curves[key] : null;
-          const hasCurve = !!cc && typeof cc.cx==="number" && typeof cc.cy==="number";
-          const cW = hasCurve ? { x: cc.cx, y: cc.cy } : { x: (aW.x+bW.x)/2, y: (aW.y+bW.y)/2 };
-
-          ctx.beginPath();
-          if(hasCurve){
-            ctx.moveTo(aW.x, aW.y);
-            ctx.quadraticCurveTo(cW.x, cW.y, bW.x, bW.y);
-          }else{
-            ctx.moveTo(aW.x, aW.y);
-            ctx.lineTo(bW.x, bW.y);
-          }
-          ctx.stroke();
-
-          // arrow at t=0.5 (straight or curve)
-          const t = 0.5;
-          const mid = hasCurve ? quadPoint(aW, cW, bW, t) : { x:(aW.x+bW.x)/2, y:(aW.y+bW.y)/2 };
-          const dv = hasCurve ? quadDeriv(aW, cW, bW, t) : { x:(bW.x-aW.x), y:(bW.y-aW.y) };
-          const dir = normVec(dv);
-
-          ctx.save();
-          ctx.globalAlpha = 0.95;
-          const arrowSize = 10 / C.map.scale; // world-size so looks consistent
-          drawArrowAt(mid, dir, arrowSize);
-          ctx.restore();
-
-          // segment hitbox (screen distance approximation)
-          const distFn = (sx,sy)=>{
-            const local = worldFromScreen(sx,sy);
-            const px = local.wx, py = local.wy;
-            // sample along curve/line
-            const samples = 18;
-            let best = Infinity;
-            let prev = aW;
-            for(let k=1;k<=samples;k++){
-              const tt = k/samples;
-              const cur = hasCurve ? quadPoint(aW,cW,bW,tt) : { x:aW.x + (bW.x-aW.x)*tt, y:aW.y + (bW.y-aW.y)*tt };
-              // distance from point to segment prev-cur
-              const vx = cur.x - prev.x, vy = cur.y - prev.y;
-              const wx = px - prev.x, wy = py - prev.y;
-              const vv = vx*vx + vy*vy || 1e-9;
-              const tproj = clamp((wx*vx + wy*vy)/vv, 0, 1);
-              const cxp = prev.x + vx*tproj;
-              const cyp = prev.y + vy*tproj;
-              const d = Math.hypot(px-cxp, py-cyp);
-              if(d<best) best=d;
-              prev = cur;
-            }
-            return best;
-          };
-
-          segHitboxes.push({
-            key, aId:A.id, bId:B.id,
-            aW, bW,
-            midW: mid,
-            hasCurve,
-            distFn
-          });
-        }
+    // lines
+    if(state.view?.showLines !== false){
+      for(const l of getLinksForPage(page.id)){
+        const a = state.markers.find(m=>m.id===l.from);
+        const b = state.markers.find(m=>m.id===l.to);
+        if(!a || !b) continue;
+        if(!isMarkerVisible(a) || !isMarkerVisible(b)) continue;
+        drawLink(a,b,l.ctrl);
       }
     }
 
     // markers
-    for(const m of ms){
-      const p = worldFromNorm(m.x, m.y);
-      const r = (m.r ?? 10);
-      const col = markerColor(m);
+    const markers = getMarkersForPage(page.id).slice().sort((a,b)=>(a.num||0)-(b.num||0));
+    for(const m of markers){
+      if(!isMarkerVisible(m)) continue;
+      drawMarker(m);
+    }
+  }
+
+  function roundRect(ctx,x,y,w,h,r){
+    const rr = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr, y);
+    ctx.arcTo(x+w, y, x+w, y+h, rr);
+    ctx.arcTo(x+w, y+h, x, y+h, rr);
+    ctx.arcTo(x, y+h, x, y, rr);
+    ctx.arcTo(x, y, x+w, y, rr);
+    ctx.closePath();
+  }
+
+  function drawMarker(m){
+    const cat = getMarkerCat(m.mcatId);
+    const fill = cat?.color || "#4da3ff";
+    const hideNum = !!cat?.hideNumbers;
+
+    const s = worldToScreen(m.x, m.y);
+    const baseR = m.size * 0.5 * view.scale;
+
+    ctx.save();
+    ctx.globalAlpha = m.selected ? 0.3 : 1;
+
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, baseR, 0, Math.PI*2);
+    ctx.fillStyle = fill;
+    ctx.fill();
+
+    ctx.globalAlpha = m.selected ? 0.35 : 0.9;
+    ctx.lineWidth = Math.max(1, 2 * view.scale);
+    ctx.strokeStyle = "rgba(231,238,248,.85)";
+    ctx.stroke();
+
+    if(!hideNum){
+      ctx.globalAlpha = m.selected ? 0.7 : 1;
+      const textSize = Math.max(8, (m.size * 0.45 * (m.textScale||1)) * view.scale);
+      ctx.fillStyle = m.textColor || "#fff";
+      ctx.font = `${m.textWeight||700} ${textSize}px system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, "Noto Sans KR", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(m.num||""), s.x, s.y);
+    }
+
+    const labelSize = Math.max(10, (m.size * 0.38 * (m.textScale||1)) * view.scale);
+    ctx.globalAlpha = m.selected ? 0.7 : 0.95;
+    ctx.font = `${m.textWeight||600} ${labelSize}px system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, "Noto Sans KR", sans-serif`;
+    ctx.fillStyle = m.textColor || "#ffffff";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    const pad = Math.max(8, 10 * view.scale);
+    const name = (m.name || "").trim();
+    if(name){
+      const tx = s.x + baseR + pad;
+      const ty = s.y;
+      const metrics = ctx.measureText(name);
+      const bw = metrics.width + 10 * view.scale;
+      const bh = labelSize + 8 * view.scale;
 
       ctx.save();
-      ctx.globalAlpha = 1;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-      ctx.fillStyle = col;
+      ctx.globalAlpha = m.selected ? 0.25 : 0.22;
+      ctx.fillStyle = "rgba(7,11,18,.85)";
+      roundRect(ctx, tx - 6*view.scale, ty - bh/2, bw, bh, 10*view.scale);
       ctx.fill();
-      ctx.lineWidth = 2 / C.map.scale;
-      ctx.strokeStyle = "rgba(0,0,0,.35)";
-      ctx.stroke();
       ctx.restore();
 
-      // number
-      const num = (m.chainIndex != null) ? String(m.chainIndex) : "";
-      if(num){
-        ctx.save();
-        ctx.globalAlpha = 0.98;
-        ctx.fillStyle = "rgba(0,0,0,.75)";
-        ctx.font = `${m.fw ?? 900} ${Math.max(10, Math.round((m.fs ?? 15) * 0.95))}px ui-sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(num, p.x, p.y + 0.5);
-        ctx.restore();
-      }
-
-      // label: offset reduced by 50% vs old (r + 8 -> r + 4)
-      if(m.name){
-        ctx.save();
-        ctx.globalAlpha = 0.98;
-        ctx.fillStyle = m.labelColor || "#e7eef8";
-        ctx.font = `${m.fw ?? 900} ${m.fs ?? 15}px ui-sans-serif`;
-        ctx.textAlign = "left";
-        ctx.textBaseline = "middle";
-        const off = r + 4;
-        ctx.fillText(m.name, p.x + off, p.y);
-        ctx.restore();
-      }
-
-      const sp = screenFromWorld(p.x, p.y);
-      circleHitboxes.push({ id:m.id, sx:sp.sx, sy:sp.sy, rPx: r*C.map.scale });
+      ctx.fillText(name, tx, ty);
     }
 
     ctx.restore();
   }
 
-  function pickCircleAt(sx, sy){
-    let best=null, bestD=Infinity;
-    for(const c of circleHitboxes){
-      const d = Math.hypot(c.sx - sx, c.sy - sy);
-      if(d <= c.rPx*1.25 && d < bestD){
-        best = c;
-        bestD = d;
-      }
-    }
-    return best;
+  function quadAt(A,C,B,t){
+    const u=1-t;
+    return { x:u*u*A.x+2*u*t*C.x+t*t*B.x, y:u*u*A.y+2*u*t*C.y+t*t*B.y };
+  }
+  function quadDeriv(A,C,B,t){
+    return { x:2*(1-t)*(C.x-A.x)+2*t*(B.x-C.x), y:2*(1-t)*(C.y-A.y)+2*t*(B.y-C.y) };
+  }
+  function drawArrow(x,y,ang,color){
+    const len = Math.max(10, 14 * view.scale);
+    const w = Math.max(6, 9 * view.scale);
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(ang);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.95;
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.lineTo(-len, -w/2);
+    ctx.lineTo(-len,  w/2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+  function drawLink(a,b,ctrl){
+    const catA = getMarkerCat(a.mcatId);
+    const col = catA?.color || "#4da3ff";
+
+    const A = worldToScreen(a.x,a.y);
+    const B = worldToScreen(b.x,b.y);
+    const Cw = ctrl || {x:(a.x+b.x)/2, y:(a.y+b.y)/2};
+    const C = worldToScreen(Cw.x, Cw.y);
+
+    ctx.save();
+    ctx.globalAlpha = 0.85;
+    ctx.strokeStyle = col;
+    ctx.lineWidth = Math.max(1.5, 2.2 * view.scale);
+    ctx.beginPath();
+    ctx.moveTo(A.x,A.y);
+    ctx.quadraticCurveTo(C.x,C.y,B.x,B.y);
+    ctx.stroke();
+
+    const t = 0.82;
+    const p = quadAt(A,C,B,t);
+    const d = quadDeriv(A,C,B,t);
+    drawArrow(p.x,p.y,Math.atan2(d.y,d.x),col);
+    ctx.restore();
   }
 
-  function pickSegmentAt(sx,sy){
-    const C = currentCatState();
-    const tol = 10 / C.map.scale; // in world
-    let best=null, bestD=Infinity;
-    for(const s of segHitboxes){
-      const d = s.distFn(sx,sy);
-      if(d <= tol && d < bestD){
-        best = s;
-        bestD = d;
-      }
+  // ===== Interaction (view-only) =====
+  let pointerDown=false;
+  let dragMode=null;
+  let dragStart={x:0,y:0};
+  let dragViewStart={ox:0,oy:0,scale:1};
+  let selectedMarkerId=null;
+
+  function hitTestMarker(sx,sy){
+    const page = getActivePage();
+    if(!page) return null;
+    const w = screenToWorld(sx,sy);
+    const list = getMarkersForPage(page.id).filter(isMarkerVisible).slice().reverse();
+    for(const m of list){
+      const dx = w.x - m.x, dy = w.y - m.y;
+      const r = (m.size*0.5);
+      if(dx*dx+dy*dy <= r*r) return m;
     }
-    return best;
+    return null;
   }
 
-  // ---------- pan/zoom + curve-drag ----------
-  let isPanning=false, lastX=0,lastY=0;
-  let isDraggingCurve=false;
-  let draggingSegKey=null;
+  function setSelectedMarker(id){
+    selectedMarkerId = id;
+    const m = state.markers.find(x=>x.id===id) || null;
+    $("#selName").textContent = m ? `${m.name || "(unnamed)"}  ·  #${m.num || "?"}` : "(none)";
 
-  cv.addEventListener("pointerdown", (e)=>{
-    requireAuth(); if(!isAuthed()) return;
-    cv.setPointerCapture(e.pointerId);
-    lastX=e.clientX; lastY=e.clientY;
-
-    const rect = cv.getBoundingClientRect();
-    const sx = e.clientX - rect.left;
-    const sy = e.clientY - rect.top;
-
-    // if near line segment -> start curve drag
-    const seg = pickSegmentAt(sx,sy);
-    if(seg){
-      isDraggingCurve = true;
-      draggingSegKey = seg.key;
-      toast("선 드래그: 곡선 조정");
-      return;
+    if(m && (m.ytUrl || m.ytTitle || m.ytDesc)){
+      $("#ytNone").style.display = "none";
+      $("#ytBlock").style.display = "flex";
+      $("#ytTitle").textContent = (m.ytTitle || m.name || "");
+      $("#ytDesc").textContent = m.ytDesc || "";
+      const link = $("#ytLink");
+      link.href = m.ytUrl || "#";
+      link.style.pointerEvents = m.ytUrl ? "auto" : "none";
+      link.style.opacity = m.ytUrl ? "1" : "0.5";
+    }else{
+      $("#ytBlock").style.display = "none";
+      $("#ytNone").style.display = "";
     }
+    requestDraw();
+  }
 
-    isPanning=true;
-  });
+  function toggleMarkerSelected(m){
+    if(!m) return;
+    m.selected = !m.selected;
+    setSelectedMarker(m.id);
+    requestDraw();
+  }
 
-  cv.addEventListener("pointermove", (e)=>{
-    const C = currentCatState();
-    if(isDraggingCurve && draggingSegKey){
-      const rect = cv.getBoundingClientRect();
-      const sx = e.clientX - rect.left;
-      const sy = e.clientY - rect.top;
-      const w = worldFromScreen(sx,sy);
-      if(!C.curves) C.curves = {};
-      // set control point world coords
-      C.curves[draggingSegKey] = { cx: w.wx, cy: w.wy };
-      saveLocal();
-      draw();
-      return;
+  wrap.addEventListener("contextmenu",(e)=>e.preventDefault());
+
+  wrap.addEventListener("pointerdown",(e)=>{
+    if(e.button !== 0) return;
+    pointerDown = true;
+
+    const r = wrap.getBoundingClientRect();
+    const sx = e.clientX - r.left;
+    const sy = e.clientY - r.top;
+
+    const m = hitTestMarker(sx,sy);
+    if(m){
+      toggleMarkerSelected(m);
+      dragMode = null;
+    }else{
+      dragMode="pan";
+      dragStart={x:sx,y:sy};
+      dragViewStart={ox:view.ox, oy:view.oy, scale:view.scale};
     }
-
-    if(!isPanning) return;
-    const dx=e.clientX-lastX, dy=e.clientY-lastY;
-    lastX=e.clientX; lastY=e.clientY;
-    C.map.tx += dx;
-    C.map.ty += dy;
-    draw();
-  });
-
-  cv.addEventListener("pointerup", ()=>{
-    isPanning=false;
-    isDraggingCurve=false;
-    draggingSegKey=null;
-  });
-  cv.addEventListener("pointercancel", ()=>{
-    isPanning=false;
-    isDraggingCurve=false;
-    draggingSegKey=null;
-  });
-
-  cv.addEventListener("wheel", (e)=>{
-    e.preventDefault();
-    const C = currentCatState();
-    const rect = cv.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
-
-    const old = C.map.scale || 1;
-    const zoom = Math.exp(-e.deltaY * 0.0012);
-    const next = clamp(old * zoom, 0.05, 10);
-
-    const wx = (mx - C.map.tx) / old;
-    const wy = (my - C.map.ty) / old;
-
-    C.map.scale = next;
-    C.map.tx = mx - wx * next;
-    C.map.ty = my - wy * next;
-
-    draw();
   }, {passive:false});
 
-  // ---------- marker create / select ----------
-  let selectedMarker = null;
-  let insertAfterMarkerId = null;
+  wrap.addEventListener("pointermove",(e)=>{
+    if(!pointerDown) return;
+    if(dragMode!=="pan") return;
+    const r = wrap.getBoundingClientRect();
+    const sx = e.clientX - r.left;
+    const sy = e.clientY - r.top;
+    view.ox = dragViewStart.ox + (sx - dragStart.x);
+    view.oy = dragViewStart.oy + (sy - dragStart.y);
+    requestDraw();
+  }, {passive:false});
 
-  function newMarkerAt(normX, normY){
-    const C = currentCatState();
-    const m = {
-      id:"m_"+uid(),
-      pageId:C.currentPageId,
-      x:normX, y:normY,
-      name:"",
-      cat: (C.categories.find(c=>c.on && c.id!=="전체")?.id) || "기텔",
-      colorOverride:"",
-      useCatColor:true,
-      yt:"",
-      ytTitle:"",
-      memo:"",
-      r:10,
-      fs:15,
-      fw:900,
-      labelColor:"#e7eef8",
-      chainId:null,
-      chainIndex:null,
-    };
+  wrap.addEventListener("pointerup",()=>{
+    pointerDown=false;
+    dragMode=null;
+  }, {passive:true});
 
-    if(insertAfterMarkerId){
-      const base = C.markers.find(x=>x.id===insertAfterMarkerId);
-      if(base && base.chainId){
-        m.chainId = base.chainId;
-        m.chainIndex = (base.chainIndex||0) + 1;
-        for(const mm of C.markers){
-          if(mm.chainId===m.chainId && (mm.chainIndex||0) >= m.chainIndex){
-            mm.chainIndex = (mm.chainIndex||0) + 1;
-          }
-        }
-      }
-    }else{
-      m.chainId = "c_"+uid();
-      m.chainIndex = 1;
+  wrap.addEventListener("wheel",(e)=>{
+    e.preventDefault();
+    const r = wrap.getBoundingClientRect();
+    const sx = e.clientX - r.left;
+    const sy = e.clientY - r.top;
+
+    const before = screenToWorld(sx,sy);
+    const delta = -e.deltaY;
+    const zoomFactor = Math.exp(delta * 0.0012);
+    const newScale = clamp(view.scale * zoomFactor, view.minScale, view.maxScale);
+    view.scale = newScale;
+
+    const after = screenToWorld(sx,sy);
+    view.ox += (after.x - before.x) * view.scale;
+    view.oy += (after.y - before.y) * view.scale;
+    requestDraw();
+  }, {passive:false});
+
+  // ===== UI rendering =====
+  function escapeHtml(s){
+    return String(s ?? "").replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[m]));
+  }
+
+  function renderPages(){
+    const list = $("#pageList");
+    list.innerHTML = "";
+    for(const p of state.pages){
+      const cat = state.categories.find(c=>c.id===p.categoryId);
+      const g = cat?.games?.find(x=>x.id===p.gameId);
+
+      const it = document.createElement("div");
+      it.className = "item" + (p.id===state.activePageId ? " active" : "");
+      it.style.cursor="pointer";
+      it.innerHTML = `
+        <div class="grow">
+          <div class="row" style="gap:6px;">
+            <span class="pill mono">${escapeHtml(g?.name || "Game")}</span>
+            <span class="pill">${escapeHtml(cat?.name || "Category")}</span>
+          </div>
+          <div class="mono" style="margin-top:6px; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.name)}</div>
+          <div class="hint mono" style="margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.url || "")}</div>
+        </div>
+        <button class="btn small">Open</button>
+      `;
+      it.addEventListener("click", ()=>{
+        state.activePageId = p.id;
+        updateActivePage();
+        renderPages();
+      });
+      list.appendChild(it);
     }
-
-    C.markers.push(m);
-    saveLocal();
-    selectMarker(m.id);
-    renderKpi();
-    draw();
   }
 
-  function selectMarker(id){
-    const C = currentCatState();
-    selectedMarker = C.markers.find(m=>m.id===id) || null;
-    syncSelectedPanel();
+  function renderMarkerCats(){
+    const list = $("#markerCatList");
+    list.innerHTML = "";
+    for(const c of state.markerCategories){
+      const it = document.createElement("div");
+      it.className = "item";
+      it.innerHTML = `
+        <div class="swatch" style="background:${c.color};"></div>
+        <div class="grow">
+          <div class="mono">${escapeHtml(c.name)}</div>
+          <div class="hint">Enabled: ${c.enabled ? "YES":"NO"} · Hide numbers: ${c.hideNumbers ? "YES":"NO"}</div>
+        </div>
+      `;
+      list.appendChild(it);
+    }
   }
 
-  function syncSelectedPanel(){
-    $("selName").textContent = selectedMarker ? (selectedMarker.name || "(이름 없음)") : "(이름 없음)";
-    $("selLink").value = selectedMarker ? (selectedMarker.yt || "") : "";
-    $("selYtTitle").value = selectedMarker ? (selectedMarker.ytTitle || "") : "";
-    $("btnOpenMarkerEdit").disabled = !selectedMarker;
-    $("btnApplyQuick").disabled = !selectedMarker;
-    $("btnUseCatColor").disabled = !selectedMarker;
+  function getGamePathLabel(p){
+    const cat = state.categories.find(c => c.id === p.categoryId);
+    const g = cat?.games?.find(x => x.id === p.gameId);
+    return `${g?.name || "Game"} / ${p.name || "Page"}`;
   }
 
-  cv.addEventListener("click", (e)=>{
-    requireAuth(); if(!isAuthed()) return;
-    if(isDraggingCurve) return;
+  function applyLogo(){
+    $("#logoImg").src = (state.logoUrl || "/assets/logo/MAPMODELOGO2.png");
+  }
 
-    const rect = cv.getBoundingClientRect();
-    const sx = e.clientX - rect.left;
-    const sy = e.clientY - rect.top;
+  function updateActivePage(){
+    const p = getActivePage();
+    $("#locLabel").textContent = p ? getGamePathLabel(p) : "No page selected";
+    loadPageImage();
+  }
 
-    const hit = pickCircleAt(sx, sy);
-    if(hit){
-      selectMarker(hit.id);
-      toast("마커 선택");
+  function loadPageImage(){
+    const p = getActivePage();
+    if(!p || !p.url){
+      imgReady=false;
+      requestDraw();
       return;
     }
-    selectedMarker = null;
-    insertAfterMarkerId = null;
-    syncSelectedPanel();
-  });
-
-  cv.addEventListener("contextmenu", (e)=>{
-    e.preventDefault();
-    requireAuth(); if(!isAuthed()) return;
-
-    const C = currentCatState();
-    const rect = cv.getBoundingClientRect();
-    const sx = e.clientX - rect.left;
-    const sy = e.clientY - rect.top;
-
-    const wx = (sx - C.map.tx) / C.map.scale;
-    const wy = (sy - C.map.ty) / C.map.scale;
-
-    const iw = C.map.naturalW || (mapImg.naturalWidth||1);
-    const ih = C.map.naturalH || (mapImg.naturalHeight||1);
-
-    const nx = clamp(wx / iw, 0, 1);
-    const ny = clamp(wy / ih, 0, 1);
-
-    newMarkerAt(nx, ny);
-    toast("마커 추가");
-  });
-
-  $("selLink").addEventListener("input", ()=>{
-    if(!selectedMarker) return;
-    selectedMarker.yt = $("selLink").value.trim();
-    saveLocal();
-  });
-  $("selYtTitle").addEventListener("input", ()=>{
-    if(!selectedMarker) return;
-    selectedMarker.ytTitle = $("selYtTitle").value;
-    saveLocal();
-  });
-
-  $("btnOpenMarkerEdit").addEventListener("click", ()=>{
-    if(!selectedMarker) return;
-    openMarkerModal(selectedMarker.id);
-  });
-
-  // ---------- quick palette ----------
-  const QUICK = [
-    {name:"빨", c:"#ff3b30"},
-    {name:"주", c:"#ff9500"},
-    {name:"노", c:"#ffd60a"},
-    {name:"초", c:"#34c759"},
-    {name:"파", c:"#0a84ff"},
-    {name:"흰", c:"#ffffff"},
-    {name:"검", c:"#0b0b0f"},
-  ];
-  let pickedQuick = null;
-
-  function renderPalette(){
-    palette.innerHTML = "";
-    for(const q of QUICK){
-      const wrap = document.createElement("div");
-      wrap.className = "swWrap";
-      wrap.innerHTML = `
-        <div class="sw" style="--c:${q.c}" title="${q.name}"></div>
-        <div class="swLabel">${q.name}</div>
-      `;
-      wrap.querySelector(".sw").addEventListener("click", ()=>{
-        pickedQuick = q.c;
-        toast("색상 선택");
-      });
-      palette.appendChild(wrap);
-    }
+    imgReady=false;
+    img.onload = () => { imgReady=true; fitView(); requestDraw(); };
+    img.onerror = () => { imgReady=false; requestDraw(); alert("Failed to load image URL:\n"+p.url); };
+    img.src = p.url + (p.url.includes("?") ? "&" : "?") + "t=" + Date.now();
   }
 
-  function propagateChainFromOne(m){
-    const C = currentCatState();
-    if(!m || !m.chainId || m.chainIndex !== 1) return;
-    const cid = m.chainId;
-    const base = m;
-    for(const mm of C.markers){
-      if(mm.chainId !== cid) continue;
-      // size + label style sync
-      mm.r = base.r;
-      mm.fs = base.fs;
-      mm.fw = base.fw;
-      mm.labelColor = base.labelColor;
-      // color sync per requirement
-      mm.useCatColor = base.useCatColor;
-      mm.colorOverride = base.useCatColor ? "" : (base.colorOverride || "");
-    }
+  // ===== Load state.json =====
+  async function loadState(){
+    const res = await fetch(REMOTE_STATE_URL.toString(), {cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const data = await res.json();
+    // minimal normalize
+    data.view = data.view || {showLines:true};
+    data.markerCategories = Array.isArray(data.markerCategories) ? data.markerCategories : [];
+    data.pages = Array.isArray(data.pages) ? data.pages : [];
+    data.categories = Array.isArray(data.categories) ? data.categories : [];
+    data.markers = Array.isArray(data.markers) ? data.markers : [];
+    data.links = Array.isArray(data.links) ? data.links : [];
+    if(!data.activePageId && data.pages[0]) data.activePageId = data.pages[0].id;
+    return data;
   }
 
-  $("btnApplyQuick").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    if(!selectedMarker){ toast("마커를 선택하세요"); return; }
-    if(!pickedQuick){ toast("빠른 색상을 먼저 선택하세요"); return; }
-    selectedMarker.colorOverride = pickedQuick;
-    selectedMarker.useCatColor = false;
-    propagateChainFromOne(selectedMarker);
-    saveLocal();
-    draw();
-    toast("색상 적용");
-  });
-
-  $("btnUseCatColor").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    if(!selectedMarker){ toast("마커를 선택하세요"); return; }
-    selectedMarker.colorOverride = "";
-    selectedMarker.useCatColor = true;
-    propagateChainFromOne(selectedMarker);
-    saveLocal();
-    draw();
-    toast("카테고리 색상 적용");
-  });
-
-  // chain tools
-  $("btnClearLines").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    const C = currentCatState();
-    if(!confirm("모든 선(체인)을 제거할까요?")) return;
-    for(const m of C.markers){
-      if(m.pageId===C.currentPageId){
-        m.chainId = null;
-        m.chainIndex = null;
-      }
+  async function boot(){
+    resize();
+    try{
+      state = await loadState();
+    }catch(e){
+      // If state.json missing, show minimal empty state
+      state = safeParse(localStorage.getItem("mapmode_state_v99") || "null", null) || {
+        version:1, logoUrl:"/assets/logo/MAPMODELOGO2.png",
+        categories:[], pages:[], activePageId:null,
+        markerCategories:[{id:"mcat-1", name:"Default", color:"#4da3ff", enabled:true, hideNumbers:false}],
+        view:{showLines:true},
+        markers:[], links:[]
+      };
+      alert("Could not load remote state.json.\nIndex will show local fallback if available.");
     }
-    // remove curves on current page
-    C.curves = {};
-    insertAfterMarkerId = null;
-    saveLocal();
-    draw();
-    toast("모든 선 제거");
-  });
-
-  $("btnRechain").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    const C = currentCatState();
-    const pageMs = C.markers.filter(m=>m.pageId===C.currentPageId);
-    const chainId = "c_"+uid();
-    let idx=1;
-    for(const m of pageMs){
-      m.chainId = chainId;
-      m.chainIndex = idx++;
-    }
-    C.curves = {};
-    saveLocal();
-    draw();
-    toast("선 다시 체인(전체)");
-  });
-
-  $("btnResetMarkers").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    const C = currentCatState();
-    if(!confirm("현재 페이지의 마커를 모두 삭제할까요?")) return;
-    const pid = C.currentPageId;
-    C.markers = C.markers.filter(m=>m.pageId!==pid);
-    C.curves = {};
-    selectedMarker = null;
-    insertAfterMarkerId = null;
-    saveLocal();
-    syncSelectedPanel();
-    renderKpi();
-    draw();
-    toast("마커 초기화");
-  });
-
-  // ---------- marker modal ----------
-  let editingId = null;
-  let ytTouched = false, memoTouched = false;
-
-  function openMarkerModal(markerId){
-    requireAuth(); if(!isAuthed()) return;
-    const C = currentCatState();
-    const m = C.markers.find(x=>x.id===markerId);
-    if(!m) return;
-
-    editingId = markerId;
-    ytTouched = false;
-    memoTouched = false;
-
-    const sel = $("mfCat");
-    sel.innerHTML = "";
-    for(const c of C.categories){
-      if(c.id==="전체") continue;
-      const o = document.createElement("option");
-      o.value = c.id;
-      o.textContent = c.name;
-      sel.appendChild(o);
-    }
-
-    $("mfName").value = m.name || "";
-    $("mfCat").value = m.cat || "기텔";
-
-    $("mfColor").value = m.colorOverride || "";
-    $("mfUseCatColor").checked = !!m.useCatColor;
-
-    $("mfYt").value = m.yt || "";
-    $("mfYtTitle").value = m.ytTitle || "";
-    $("mfMemo").value = m.memo || "";
-
-    $("mfR").value = m.r ?? 10;
-    $("mfFs").value = m.fs ?? 15;
-    $("mfFw").value = String(m.fw ?? 900);
-    $("mfLabelColor").value = m.labelColor || "#e7eef8";
-
-    $("mfRVal").textContent = $("mfR").value;
-    $("mfFsVal").textContent = $("mfFs").value;
-
-    $("mfPos").textContent = `좌표(비율): ${m.x.toFixed(6)}, ${m.y.toFixed(6)}`;
-
-    updateColorChip();
-    mMarker.classList.add("show");
-  }
-
-  function closeMarkerModal(){
-    mMarker.classList.remove("show");
-    editingId = null;
-  }
-  $("btnCloseMarker").addEventListener("click", closeMarkerModal);
-  $("btnSaveMarker").addEventListener("click", saveMarkerModal);
-  $("btnDeleteMarker").addEventListener("click", deleteMarkerModal);
-
-  mMarker.addEventListener("keydown", (e)=>{
-    if(e.key==="Enter"){
-      if(e.target && e.target.tagName==="TEXTAREA") return;
-      e.preventDefault();
-      saveMarkerModal();
-    }
-    if(e.key==="Escape"){
-      closeMarkerModal();
-    }
-  });
-
-  function getEditing(){
-    if(!editingId) return null;
-    const C = currentCatState();
-    return C.markers.find(x=>x.id===editingId) || null;
-  }
-
-  function updateColorChip(){
-    const m = getEditing();
-    if(!m) return;
-    const chip = $("mfColorChip");
-    const col = $("mfUseCatColor").checked ? (getCat($("mfCat").value)?.color || "#7cc4ff") : ($("mfColor").value || markerColor(m));
-    chip.style.setProperty("--c", col);
-  }
-  $("mfColor").addEventListener("input", updateColorChip);
-  $("mfUseCatColor").addEventListener("change", updateColorChip);
-  $("mfCat").addEventListener("change", updateColorChip);
-
-  $("mfYtTitle").addEventListener("input", ()=>{ ytTouched = true; syncSelectedPanelLive(); });
-  $("mfMemo").addEventListener("input", ()=>{ memoTouched = true; syncSelectedPanelLive(); });
-
-  $("mfName").addEventListener("input", ()=>{
-    const v = $("mfName").value;
-    if(!ytTouched) $("mfYtTitle").value = v;
-    if(!memoTouched) $("mfMemo").value = v;
-    syncSelectedPanelLive();
-  });
-
-  function syncSelectedPanelLive(){
-    if(!editingId) return;
-    if(selectedMarker && selectedMarker.id === editingId){
-      $("selName").textContent = $("mfName").value || "(이름 없음)";
-      $("selYtTitle").value = $("mfYtTitle").value || "";
-      $("selLink").value = $("mfYt").value || "";
-    }
-  }
-
-  $("mfR").addEventListener("input", ()=>{
-    $("mfRVal").textContent = $("mfR").value;
-    const r = Number($("mfR").value);
-    const fs = clamp(Math.round(r * 1.5), 8, 40);
-    $("mfFs").value = fs;
-    $("mfFsVal").textContent = fs;
-  });
-  $("mfFs").addEventListener("input", ()=>{ $("mfFsVal").textContent = $("mfFs").value; });
-
-  $("mfLabelDefault").addEventListener("click", ()=>{ $("mfLabelColor").value = "#e7eef8"; });
-
-  function saveMarkerModal(){
-    requireAuth(); if(!isAuthed()) return;
-    const C = currentCatState();
-    const m = getEditing();
-    if(!m) return;
-
-    m.name = ($("mfName").value || "").trim();
-    m.cat = $("mfCat").value || "기텔";
-    ensureCat(m.cat, "#ffffff");
-
-    m.useCatColor = $("mfUseCatColor").checked;
-    m.colorOverride = ($("mfColor").value || "").trim();
-
-    m.yt = ($("mfYt").value || "").trim();
-    m.ytTitle = ($("mfYtTitle").value || "").trim();
-    m.memo = ($("mfMemo").value || "").trim();
-
-    m.r = Number($("mfR").value);
-    m.fs = Number($("mfFs").value);
-    m.fw = Number($("mfFw").value);
-    m.labelColor = ($("mfLabelColor").value || "#e7eef8").trim();
-
-    // chain rule: if this is 1번, sync to all in chain
-    propagateChainFromOne(m);
-
-    saveLocal();
-    selectMarker(m.id);
-    renderCats();
-    renderKpi();
-    draw();
-    toast("저장 완료");
-  }
-
-  function deleteMarkerModal(){
-    requireAuth(); if(!isAuthed()) return;
-    const C = currentCatState();
-    const m = getEditing();
-    if(!m) return;
-    if(!confirm("이 마커를 삭제할까요?")) return;
-
-    const cid = m.chainId;
-    const cidx = m.chainIndex;
-    C.markers = C.markers.filter(x=>x.id!==m.id);
-
-    if(cid && cidx){
-      for(const mm of C.markers){
-        if(mm.chainId===cid && (mm.chainIndex||0) > cidx){
-          mm.chainIndex = (mm.chainIndex||0) - 1;
-        }
-      }
-    }
-
-    // curves cleanup
-    const valid = new Set(C.markers.map(mm=>mm.id));
-    const newCurves = {};
-    for(const k of Object.keys(C.curves||{})){
-      const [a,b] = k.split("|");
-      if(valid.has(a) && valid.has(b)) newCurves[k]=C.curves[k];
-    }
-    C.curves = newCurves;
-
-    saveLocal();
-    closeMarkerModal();
-    selectedMarker = null;
-    syncSelectedPanel();
-    renderKpi();
-    draw();
-    toast("삭제 완료");
-  }
-
-  $("btnNewChain").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    const m = getEditing();
-    if(!m) return;
-    m.chainId = "c_"+uid();
-    m.chainIndex = 1;
-    insertAfterMarkerId = null;
-    propagateChainFromOne(m);
-    saveLocal();
-    draw();
-    toast("새 체인 시작");
-  });
-
-  $("btnInsertAfter").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    const m = getEditing();
-    if(!m) return;
-    insertAfterMarkerId = m.id;
-    toast("중간 삽입 모드 활성화");
-  });
-
-  cv.addEventListener("dblclick", (e)=>{
-    requireAuth(); if(!isAuthed()) return;
-    const rect = cv.getBoundingClientRect();
-    const sx = e.clientX - rect.left;
-    const sy = e.clientY - rect.top;
-    const hit = pickCircleAt(sx, sy);
-    if(hit){
-      selectMarker(hit.id);
-      openMarkerModal(hit.id);
-    }
-  });
-
-  // ---------- category modal ----------
-  let catSelectedRowId = null;
-
-  $("btnEditCats").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    openCatsModal();
-  });
-  $("btnCloseCats").addEventListener("click", ()=>mCats.classList.remove("show"));
-
-  function openCatsModal(){
-    catSelectedRowId = null;
-    renderCatRows();
-    renderCatQuickPalette();
-    mCats.classList.add("show");
-  }
-
-  function renderCatQuickPalette(){
-    const wrap = $("catQuickPalette");
-    wrap.innerHTML = "";
-    for(const q of QUICK){
-      const w = document.createElement("div");
-      w.className = "swWrap";
-      w.innerHTML = `<div class="sw" style="--c:${q.c}"></div><div class="swLabel">${q.name}</div>`;
-      w.querySelector(".sw").addEventListener("click", ()=>{
-        if(!catSelectedRowId){ toast("카테고리 행을 먼저 선택하세요"); return; }
-        const C = currentCatState();
-        const c = C.categories.find(x=>x.id===catSelectedRowId);
-        if(!c) return;
-        c.color = q.c;
-        renderCatRows();
-      });
-      wrap.appendChild(w);
-    }
-  }
-
-  function renderCatRows(){
-    const C = currentCatState();
-    const rows = $("catRows");
-    rows.innerHTML = "";
-
-    const list = C.categories.filter(c=>c.id!=="전체");
-    for(const c of list){
-      const row = document.createElement("div");
-      row.style.display = "grid";
-      row.style.gridTemplateColumns = "1fr 70px 90px";
-      row.style.gap = "10px";
-      row.style.alignItems = "center";
-      row.style.marginBottom = "10px";
-
-      row.innerHTML = `
-        <input class="field" value="${c.name}" />
-        <div class="colorChip" style="--c:${c.color};"></div>
-        <button class="pill danger" type="button">삭제</button>
-      `;
-
-      const inp = row.querySelector("input");
-      const chip = row.querySelector(".colorChip");
-      const del = row.querySelector("button");
-
-      row.addEventListener("click", ()=>{
-        catSelectedRowId = c.id;
-        toast("카테고리 선택");
-      });
-
-      inp.addEventListener("input", ()=>{
-        c.name = inp.value;
-      });
-
-      chip.addEventListener("click", ()=>{
-        catSelectedRowId = c.id;
-        const next = prompt("색상 코드 입력 (#rrggbb)", c.color);
-        if(next===null) return;
-        c.color = (next||"").trim() || c.color;
-        renderCatRows();
-      });
-
-      del.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        if(!confirm(`"${c.name}" 카테고리를 삭제할까요?`)) return;
-        const fallback = C.categories.find(x=>x.id==="기텔") || C.categories[0];
-        for(const m of C.markers){
-          if(m.cat === c.id) m.cat = fallback.id;
-        }
-        C.categories = C.categories.filter(x=>x.id!==c.id);
-        renderCatRows();
-        renderCats();
-        saveLocal();
-        draw();
-      });
-
-      rows.appendChild(row);
-    }
-  }
-
-  $("btnAddCat").addEventListener("click", ()=>{
-    const C = currentCatState();
-    const name = prompt("카테고리 이름");
-    if(!name) return;
-    const id = name.trim();
-    if(!id) return;
-    if(C.categories.some(c=>c.id===id)){ toast("이미 존재"); return; }
-    C.categories.push({ id, name:id, color:"#ffffff", on:true });
-    renderCatRows();
-  });
-
-  $("btnCatsDefault").addEventListener("click", ()=>{
-    const C = currentCatState();
-    if(!confirm("기본 카테고리로 되돌릴까요?")) return;
-    C.categories = structuredClone(defaultCats);
-    renderCatRows();
-  });
-
-  $("btnSaveCats").addEventListener("click", ()=>{
-    requireAuth(); if(!isAuthed()) return;
-    const C = currentCatState();
-
-    const cleaned = [];
-    const seen = new Set(["전체"]);
-    for(const c of C.categories){
-      const name = (c.name||c.id||"").trim();
-      if(!name) continue;
-      const finalId = name;
-      if(seen.has(finalId)) continue;
-      seen.add(finalId);
-      cleaned.push({ id:finalId, name, color:(c.color||"#ffffff"), on:!!c.on });
-    }
-    const all = { id:"전체", name:"전체", color:"#7cc4ff", on:true };
-    C.categories = [all, ...cleaned];
-
-    const valid = new Set(C.categories.map(x=>x.id));
-    const fb = valid.has("기텔") ? "기텔" : (C.categories[1]?.id || "전체");
-    for(const m of C.markers){
-      if(!valid.has(m.cat)) m.cat = fb;
-    }
-
-    saveLocal();
-    renderCats();
-    renderKpi();
-    draw();
-    mCats.classList.remove("show");
-    toast("카테고리 저장");
-  });
-
-  // ---------- marker edit: text quick colors ----------
-  function renderTextColors(){
-    textColors.innerHTML = "";
-    const colors = [
-      "#ff3b30","#ff9500","#ffd60a","#34c759","#0a84ff","#ffffff","#0b0b0f"
-    ];
-    for(const c of colors){
-      const d = document.createElement("div");
-      d.className = "tSw";
-      d.style.setProperty("--c", c);
-      d.addEventListener("click", ()=>{
-        $("mfLabelColor").value = c;
-      });
-      textColors.appendChild(d);
-    }
-  }
-
-  // ---------- helpers ----------
-  function renderAll(){
-    ensureCatSlotIntegrity();
-    renderLogo();
-    renderTopCats();
+    applyLogo();
     renderPages();
-    renderCats();
-    renderPalette();
-    renderTextColors();
+    renderMarkerCats();
+    updateActivePage();
 
-    const C = currentCatState();
-    setToggle(tgShowLinesWithCatFilter, !!C.showLinesWithCatFilter);
+    $("#btnFit").addEventListener("click", fitView);
+    $("#btnReload").addEventListener("click", async ()=>{
+      state = await loadState();
+      applyLogo();
+      renderPages();
+      renderMarkerCats();
+      updateActivePage();
+      requestDraw();
+    });
 
-    syncSelectedPanel();
-    renderKpi();
-    resizeCanvas();
-    if(!C.map.scale || C.map.scale<=0) fitToScreen();
-    draw();
+    requestDraw();
   }
 
-  // ---------- init ----------
-  async function init(){
-    requireAuth();
-    const st = await loadStateRemoteFirst();
-    mergeState(st);
-
-    ensureCatSlotIntegrity();
-    renderAll();
-    loadMap();
-
-    const C = currentCatState();
-    if(!C.map.scale || C.map.scale<=0){
-      setTimeout(()=>{
-        fitToScreen();
-        saveLocal();
-        draw();
-      }, 0);
-    }else{
-      draw();
-    }
-  }
-
-  init();
-
+  boot();
 })();
 </script>
 </body>
