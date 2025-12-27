@@ -1205,15 +1205,6 @@
           if(typeof m.dim !== "boolean") m.dim = false;
           if(m.order == null) m.order = 0;
           if(typeof m.chainId === "undefined") m.chainId = null;
-          if(typeof m.memo !== "string") m.memo = "";
-          if(typeof m.yt !== "string") m.yt = "";
-          if(typeof m.ytTitle !== "string") m.ytTitle = "";
-          if(typeof m.labelColor !== "string") m.labelColor = "#e7eef8";
-          if(typeof m.fw !== "number") m.fw = 900;
-          if(typeof m.r !== "number") m.r = 10;
-          if(typeof m.fs !== "number") m.fs = 15;
-          if(typeof m.useCatColor !== "boolean") m.useCatColor = true;
-          if(typeof m.colorOverride !== "string") m.colorOverride = "";
         }
         return merged;
       }
@@ -1512,6 +1503,7 @@
         _openSlotIndex = slotIdx ?? 0;
         _gameDropAnchorEl = anchor || gSlot1;
 
+        // ✅ slotIdx가 비었고 items도 없으면 즉시 "추가" UX 유지
         renderSlotDropList();
         placeGameDropUnderSlot(_gameDropAnchorEl);
         gameDropWrap.classList.add("show");
@@ -1704,8 +1696,6 @@
             S.markers = S.markers.filter(m=>m.pageId !== pid);
             S.pages = S.pages.filter(x=>x.id !== pid);
             if(S.currentPageId === pid) S.currentPageId = S.pages[0].id;
-            // curves clean
-            S.chains = (S.chains||[]).filter(x => x && x.pageId !== pid);
             saveLocal();
             renderPages();
             renderKpi();
@@ -1804,6 +1794,12 @@
         saveLocal();
         draw();
       });
+
+      function ensureCat(name, color){
+        if(S.categories.some(c=>c.id===name)) return;
+        S.categories.push({ id:name, name, color:color||"#ffffff", on:true });
+        renderCats();
+      }
 
       // ---------- map upload ----------
       $("fileMap").addEventListener("change", async (e)=>{
@@ -1938,7 +1934,8 @@
 
       /* ✅ [MOD#3] 카테고리 비활성화 동작 버그 수정:
          - "전체"가 OFF면 전부 숨김
-         - 각 카테고리 OFF면 해당 카테고리의 모든 마커 숨김 */
+         - 각 카테고리 OFF면 해당 카테고리의 모든 마커 숨김(1개만 사라짐 버그 방지)
+         - 관리자/유저 동일 규칙(여기서는 관리자에서도 동일 적용) */
       function getVisibleMarkers(){
         const curPage = S.currentPageId;
         const allCat = getCat("전체");
@@ -1947,7 +1944,7 @@
           .filter(m=>{
             if(m.pageId !== curPage) return false;
             const c = getCat(m.cat);
-            if(!c) return false;
+            if(!c) return false;          // 카테고리 없으면 숨김(일관성)
             if(c.on === false) return false;
             return true;
           })
@@ -2101,8 +2098,8 @@
         return { sx: wx*S.map.scale + S.map.tx, sy: wy*S.map.scale + S.map.ty };
       }
 
-      let circleHitboxes = [];
-      let curveHitboxes = [];
+      let circleHitboxes = []; // {id,sx,sy,rPx}
+      let curveHitboxes = [];  // {aId,bId, chainId, pageId, pts:[{sx,sy}]}
 
       // ========== [MOD#5] curve storage helpers ==========
       function getChainCurveStore(pageId, chainId){
@@ -2222,6 +2219,7 @@
             ctx.strokeStyle = "rgba(255,255,255,.78)";
             ctx.fillStyle = "rgba(255,255,255,.78)";
 
+            // draw each segment with its own curve (곡선)
             for(let i=0;i<ms.length-1;i++){
               const aM = ms[i];
               const bM = ms[i+1];
@@ -2237,11 +2235,12 @@
               ctx.quadraticCurveTo(CP.x, CP.y, B.x, B.y);
               ctx.stroke();
 
-              // store hitbox samples (screen space)
+              // store hitbox samples (screen space) for editing
               const pts = [];
               const steps = 14;
               for(let t=0;t<=steps;t++){
                 const tt = t/steps;
+                // quadratic point
                 const x = (1-tt)*(1-tt)*A.x + 2*(1-tt)*tt*CP.x + tt*tt*B.x;
                 const y = (1-tt)*(1-tt)*A.y + 2*(1-tt)*tt*CP.y + tt*tt*B.y;
                 const sp = screenFromWorld(x, y);
@@ -2272,6 +2271,7 @@
               const endY   = B.y - euy*(br + halfStroke);
 
               if(Math.hypot(endX-startX, endY-startY) >= 10){
+                // draw chevron at trimmed end
                 drawChevronArrowWorld(startX, startY, endX, endY, arrowSize);
               }
             }
@@ -2404,7 +2404,7 @@
 
         lastX=e.clientX; lastY=e.clientY;
 
-        // ✅ [MOD#5] 선(곡선) 히트 체크 → 곡선 편집
+        // ✅ [MOD#5] 먼저 선(곡선) 히트 체크 → 곡선 편집(관리자 모드에서만)
         const seg = pickCurveAt(sx, sy);
         if(seg){
           draggingCurve = { aId: seg.aId, bId: seg.bId, chainId: seg.chainId, pageId: seg.pageId };
@@ -2412,7 +2412,6 @@
           isPanning = false;
           draggingMarkerId = null;
           dragMoved = false;
-          dragStartSX = sx; dragStartSY = sy;
           return;
         }
 
@@ -2457,8 +2456,8 @@
 
           const { wx, wy } = screenToWorld(sx, sy);
           const vx = wx - A.x, vy = wy - A.y;
-          const along = (vx*ux + vy*uy) / len;
-          const perp  = (vx*px + vy*py) / len;
+          const along = (vx*ux + vy*uy) / len; // normalized
+          const perp  = (vx*px + vy*py) / len; // normalized
 
           const sVal = clamp(along, 0.05, 0.95);
           const oVal = clamp(perp, -1.2, 1.2);
@@ -2640,13 +2639,6 @@
         $("btnUseCatColor").disabled = !selectedMarker;
       }
 
-      function syncSelectedPanelLive(){
-        if(!selectedMarker) return;
-        $("selName").textContent = (selectedMarker.name || "(이름 없음)");
-        $("selLink").value = selectedMarker.yt || "";
-        $("selYtTitle").value = selectedMarker.ytTitle || "";
-      }
-
       cv.addEventListener("click", (e)=>{
         requireAuth();
         if(!isAuthed()) return;
@@ -2801,6 +2793,8 @@
         if(!ok) return;
         const pid = S.currentPageId;
         S.markers = S.markers.filter(m=>m.pageId!==pid);
+
+        // ✅ [MOD#5] 곡선 데이터도 페이지 기준으로 정리(선택적으로)
         S.chains = (S.chains||[]).filter(x => x && x.pageId !== pid);
 
         selectedMarker = null;
@@ -2814,8 +2808,6 @@
 
       // ---------- marker modal ----------
       let editingId = null;
-      function getEditing(){ return editingId ? (S.markers.find(x=>x.id===editingId) || null) : null; }
-
       function openMarkerModal(markerId){
         requireAuth();
         if(!isAuthed()) return;
@@ -2849,9 +2841,6 @@
         $("mfRVal").textContent = $("mfR").value;
         $("mfFsVal").textContent = $("mfFs").value;
         $("mfPos").textContent = `좌표(비율): ${m.x.toFixed(6)}, ${m.y.toFixed(6)}`;
-
-        ytTouched = false;
-        memoTouched = false;
 
         updateColorChip();
         mMarker.classList.add("show");
@@ -2889,169 +2878,72 @@
       $("mfYtTitle").addEventListener("input", ()=>{ ytTouched = true; syncSelectedPanelLive(); });
       $("mfMemo").addEventListener("input", ()=>{ memoTouched = true; syncSelectedPanelLive(); });
       $("mfName").addEventListener("input", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.name = $("mfName").value;
-        $("selName").textContent = m.name || "(이름 없음)";
+        const v = $("mfName").value;
+        if(!ytTouched) $("mfYtTitle").value = v;
+        if(!memoTouched) $("mfMemo").value = v;
+        syncSelectedPanelLive();
       });
 
-      $("mfYt").addEventListener("input", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.yt = $("mfYt").value.trim();
-      });
-      $("mfYtTitle").addEventListener("input", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.ytTitle = $("mfYtTitle").value;
-      });
-      $("mfMemo").addEventListener("input", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.memo = $("mfMemo").value;
-      });
-
-      $("mfR").addEventListener("input", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        const r = Number($("mfR").value);
-        m.r = clamp(r, 2, 40);
-        // 원 크기에 비례해서 글씨크기 기본 동기화
-        const fs = Math.round(m.r * 1.5);
-        m.fs = clamp(fs, 4, 80);
-        $("mfRVal").textContent = String(m.r);
-        $("mfFs").value = String(m.fs);
-        $("mfFsVal").textContent = String(m.fs);
-        draw();
-      });
-      $("mfFs").addEventListener("input", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.fs = clamp(Number($("mfFs").value), 4, 80);
-        $("mfFsVal").textContent = String(m.fs);
-        draw();
-      });
-      $("mfFw").addEventListener("change", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.fw = Number($("mfFw").value) || 900;
-        draw();
-      });
-      $("mfLabelColor").addEventListener("input", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.labelColor = ($("mfLabelColor").value || "").trim() || "#e7eef8";
-        draw();
-      });
-      $("mfLabelDefault").addEventListener("click", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        $("mfLabelColor").value = "#e7eef8";
-        m.labelColor = "#e7eef8";
-        draw();
-      });
-
-      const QUICK_TEXT = [
-        "#e7eef8", "#ffffff", "#000000",
-        "#ffd60a", "#ff5d5d", "#39d98a", "#7cc4ff",
-        "#a86bff", "#ff9500"
-      ];
-      function renderTextColors(){
-        textColors.innerHTML = "";
-        for(const c of QUICK_TEXT){
-          const el = document.createElement("div");
-          el.className = "tSw";
-          el.style.setProperty("--c", c);
-          el.title = c;
-          el.addEventListener("click", ()=>{
-            const m = getEditing();
-            if(!m) return;
-            $("mfLabelColor").value = c;
-            m.labelColor = c;
-            draw();
-            toast("글씨색 적용");
-          });
-          textColors.appendChild(el);
+      function syncSelectedPanelLive(){
+        if(!editingId) return;
+        if(selectedMarker && selectedMarker.id === editingId){
+          $("selName").textContent = $("mfName").value || "(이름 없음)";
+          $("selYtTitle").value = $("mfYtTitle").value || "";
+          $("selLink").value = $("mfYt").value || "";
         }
       }
 
-      $("mfUseCatColor").addEventListener("change", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.useCatColor = !!$("mfUseCatColor").checked;
-        updateColorChip();
-        draw();
+      $("mfR").addEventListener("input", ()=>{
+        $("mfRVal").textContent = $("mfR").value;
+        const r = Number($("mfR").value);
+        const fs = clamp(Math.round(r * 1.5), 4, 80);
+        $("mfFs").value = fs;
+        $("mfFsVal").textContent = fs;
       });
-      $("mfCat").addEventListener("change", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.cat = $("mfCat").value;
-        updateColorChip();
-        draw();
-      });
-      $("mfColor").addEventListener("input", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        m.colorOverride = $("mfColor").value.trim();
-        updateColorChip();
-        draw();
-      });
+      $("mfFs").addEventListener("input", ()=>{ $("mfFsVal").textContent = $("mfFs").value; });
+      $("mfLabelDefault").addEventListener("click", ()=>{ $("mfLabelColor").value = "#e7eef8"; });
 
-      $("btnNewChain").addEventListener("click", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        // 새로운 체인 생성 후, 이 마커를 새 체인의 1번으로
-        const newId = "c" + uid();
-        m.chainId = newId;
-        setActiveChainIdForPage(m.pageId, newId);
-
-        renumberPage(m.pageId);
-        recomputeChainIndices(m.pageId);
-
-        // 곡선은 체인/세그먼트 키 기반이므로 새 체인에는 기본값으로 시작
-        applyAllCatStylesOnPage(m.pageId);
-        applyAllChainStylesOnPage(m.pageId);
-        saveLocal();
-        draw();
-        toast("새 번호 시작");
-      });
-
-      $("btnInsertAfter").addEventListener("click", ()=>{
-        const m = getEditing();
-        if(!m) return;
-        insertAfterMarkerId = m.id;
-        closeMarkerModal();
-        toast("이 마커 뒤로 추가 모드");
-      });
+      function getEditing(){
+        if(!editingId) return null;
+        return S.markers.find(x=>x.id===editingId) || null;
+      }
 
       function saveMarkerModal(){
+        requireAuth();
+        if(!isAuthed()) return;
         const m = getEditing();
         if(!m) return;
 
-        m.name = ($("mfName").value || "");
-        m.cat = $("mfCat").value || m.cat;
-        m.useCatColor = !!$("mfUseCatColor").checked;
+        const prevCat = m.cat;
+
+        m.name = ($("mfName").value || "").trim();
+        m.cat = $("mfCat").value || "기텔";
+        ensureCat(m.cat, "#ffffff");
+
+        m.useCatColor = $("mfUseCatColor").checked;
         m.colorOverride = ($("mfColor").value || "").trim();
         m.yt = ($("mfYt").value || "").trim();
-        m.ytTitle = ($("mfYtTitle").value || "");
-        m.memo = ($("mfMemo").value || "");
+        m.ytTitle = ($("mfYtTitle").value || "").trim();
+        m.memo = ($("mfMemo").value || "").trim();
 
-        m.r = clamp(Number($("mfR").value) || m.r || 10, 2, 40);
-        m.fs = clamp(Number($("mfFs").value) || m.fs || 15, 4, 80);
-        m.fw = Number($("mfFw").value) || m.fw || 900;
-        m.labelColor = ($("mfLabelColor").value || "").trim() || "#e7eef8";
+        m.r = Number($("mfR").value);
+        m.fs = Number($("mfFs").value);
+        m.fw = Number($("mfFw").value);
+        m.labelColor = ($("mfLabelColor").value || "#e7eef8").trim();
 
-        // 스타일 전파 규칙 유지
         renumberPage(m.pageId);
         recomputeChainIndices(m.pageId);
 
-        applyAutoNamesForChainOnPage(m.pageId, ensureMarkerChain(m));
-        applyAllCatStylesOnPage(m.pageId);
+        applyCatLeaderStyle(m.pageId, prevCat);
+        applyCatLeaderStyle(m.pageId, m.cat);
+
         applyAllChainStylesOnPage(m.pageId);
 
-        selectedMarker = m;
-        syncSelectedPanel();
+        applyAutoNamesForChainOnPage(m.pageId, ensureMarkerChain(m));
+
         saveLocal();
+        selectMarker(m.id);
+        renderCats();
         renderKpi();
         draw();
         toast("저장 완료");
@@ -3059,256 +2951,269 @@
       }
 
       async function deleteMarkerModal(){
+        requireAuth();
+        if(!isAuthed()) return;
         const m = getEditing();
         if(!m) return;
-        const ok = await openPopConfirm({
-          anchor: $("btnDeleteMarker"),
-          title: "삭제",
-          message: `이 마커를 삭제할까요?`,
-          okText: "삭제",
-          cancelText: "취소",
-          danger: true
-        });
-        if(!ok) return;
 
         const pid = m.pageId;
-        // curves: 세그먼트 키가 마커ID를 포함하므로 해당 ID가 들어간 세그먼트 제거
-        for(const ch of (S.chains||[])){
-          if(!ch || ch.pageId !== pid || !ch.segs) continue;
-          for(const k of Object.keys(ch.segs)){
-            if(k.includes(m.id+"|") || k.includes("|"+m.id)) delete ch.segs[k];
+        const catId = m.cat;
+        const cid = ensureMarkerChain(m);
+
+        // ✅ [MOD#5] curve segments cleanup (optional, safe)
+        const chainStore = getChainCurveStore(pid, cid);
+        if(chainStore && chainStore.segs){
+          // remove segments that include this marker
+          for(const k of Object.keys(chainStore.segs)){
+            if(k.startsWith(m.id+"|") || k.endsWith("|"+m.id)) delete chainStore.segs[k];
           }
         }
 
-        S.markers = (S.markers||[]).filter(x=>x.id!==m.id);
+        S.markers = S.markers.filter(x=>x.id!==m.id);
+
         renumberPage(pid);
         recomputeChainIndices(pid);
+        applyCatLeaderStyle(pid, catId);
+        applyAllChainStylesOnPage(pid);
 
-        selectedMarker = null;
-        insertAfterMarkerId = null;
         saveLocal();
+        closeMarkerModal();
+        selectedMarker = null;
         syncSelectedPanel();
         renderKpi();
         draw();
         toast("삭제 완료");
-        closeMarkerModal();
       }
 
-      // ---------- category modal ----------
-      const catRows = $("catRows");
-      const catQuickPalette = $("catQuickPalette");
-      let catEditing = [];
-      let selectedCatRowIndex = -1;
-
-      function openCatsModal(){
+      $("btnNewChain").addEventListener("click", ()=>{
         requireAuth();
         if(!isAuthed()) return;
-        catEditing = structuredClone(S.categories || structuredClone(defaultCats));
-        selectedCatRowIndex = -1;
-        renderCatModal();
+        const m = getEditing();
+        if(!m) return;
+
+        const pid = m.pageId;
+        const newCid = "c_" + uid();
+        m.chainId = newCid;
+        ensureMarkerChain(m);
+        setActiveChainIdForPage(pid, newCid);
+
+        renumberPage(pid);
+        recomputeChainIndices(pid);
+        applyCatLeaderStyle(pid, m.cat);
+        applyAllChainStylesOnPage(pid);
+
+        insertAfterMarkerId = null;
+
+        saveLocal();
+        draw();
+        toast("새로운 번호로 시작");
+      });
+
+      $("btnInsertAfter").addEventListener("click", ()=>{
+        requireAuth();
+        if(!isAuthed()) return;
+        const m = getEditing();
+        if(!m) return;
+        insertAfterMarkerId = m.id;
+        toast("중간 삽입 모드 활성화");
+      });
+
+      cv.addEventListener("dblclick", (e)=>{
+        requireAuth();
+        if(!isAuthed()) return;
+        const rect = cv.getBoundingClientRect();
+        const sx = e.clientX - rect.left;
+        const sy = e.clientY - rect.top;
+        const hit = pickCircleAt(sx, sy);
+        if(hit){
+          selectMarker(hit.id);
+          ytTouched = false;
+          memoTouched = false;
+          openMarkerModal(hit.id);
+        }
+      });
+
+      // ---------- category modal ----------
+      let catSelectedRowId = null;
+
+      $("btnEditCats").addEventListener("click", ()=>{
+        requireAuth();
+        if(!isAuthed()) return;
+        openCatsModal();
+      });
+      $("btnCloseCats").addEventListener("click", ()=>mCats.classList.remove("show"));
+
+      function openCatsModal(){
+        catSelectedRowId = null;
         setChipToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
+        renderCatRows();
+        renderCatQuickPalette();
         mCats.classList.add("show");
       }
-      function closeCatsModal(){
-        mCats.classList.remove("show");
-      }
-
-      $("btnEditCats").addEventListener("click", openCatsModal);
-      $("btnCloseCats").addEventListener("click", closeCatsModal);
 
       function renderCatQuickPalette(){
-        catQuickPalette.innerHTML = "";
+        const wrap = $("catQuickPalette");
+        wrap.innerHTML = "";
         for(const q of QUICK){
-          const wrap = document.createElement("div");
-          wrap.className = "swWrap";
-          wrap.innerHTML = `<div class="sw" style="--c:${q.c}" title="${q.name}"></div><div class="swLabel">${q.name}</div>`;
-          wrap.querySelector(".sw").addEventListener("click", ()=>{
-            if(selectedCatRowIndex < 0){ toast("카테고리 행 선택"); return; }
-            const row = catEditing[selectedCatRowIndex];
-            if(!row || row.id==="전체") return;
-            row.color = q.c;
+          const w = document.createElement("div");
+          w.className = "swWrap";
+          w.innerHTML = `<div class="sw" style="--c:${q.c}"></div><div class="swLabel">${q.name}</div>`;
+          w.querySelector(".sw").addEventListener("click", ()=>{
+            if(!catSelectedRowId){ toast("카테고리 행을 먼저 선택하세요"); return; }
+            const c = S.categories.find(x=>x.id===catSelectedRowId);
+            if(!c) return;
+            c.color = q.c;
             renderCatRows();
-            toast("색상 적용");
           });
-          catQuickPalette.appendChild(wrap);
+          wrap.appendChild(w);
         }
       }
 
       function renderCatRows(){
-        catRows.innerHTML = "";
-        catEditing.forEach((c, idx)=>{
-          const isAll = c.id==="전체";
+        const rows = $("catRows");
+        rows.innerHTML = "";
+        const list = S.categories.filter(c=>c.id!=="전체");
+        for(const c of list){
           const row = document.createElement("div");
-          row.className = "card";
-          row.style.marginTop = "10px";
-          row.style.borderColor = (idx===selectedCatRowIndex) ? "rgba(124,196,255,.55)" : "rgba(39,52,74,.6)";
+          row.style.display = "grid";
+          row.style.gridTemplateColumns = "1fr 70px 90px";
+          row.style.gap = "10px";
+          row.style.alignItems = "center";
+          row.style.marginBottom = "10px";
           row.innerHTML = `
-            <div class="sectionTitle" style="margin:0 0 10px 0;">
-              <span>${isAll ? "전체(마스터)" : `카테고리 ${idx}`}</span>
-              <span class="subtle">${isAll ? "삭제 불가" : "클릭하여 선택"}</span>
-            </div>
-
-            <div class="grid2">
-              <div>
-                <div class="labelRow">이름</div>
-                <input class="field" data-k="name" value="${escapeHtml(c.name)}" ${isAll ? "disabled" : ""}/>
-              </div>
-              <div>
-                <div class="labelRow">색상</div>
-                <input class="field" data-k="color" value="${escapeHtml(c.color)}" ${isAll ? "disabled" : ""}/>
-              </div>
-            </div>
-
-            <div class="labelRow" style="margin-top:10px;">표시</div>
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <div class="colorChip" style="--c:${escapeHtml(c.color)};"></div>
-                <div class="subtle">${isAll ? "전체 OFF 시 전부 숨김" : "OFF 시 해당 카테고리 마커 숨김"}</div>
-              </div>
-              <div class="checkRow">
-                <input type="checkbox" data-k="on" ${c.on ? "checked" : ""}/>
-                <label class="subtle" style="cursor:pointer;">ON</label>
-              </div>
-            </div>
-
-            ${isAll ? "" : `
-              <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:12px;">
-                <button class="btnBig danger" data-act="del">삭제</button>
-              </div>
-            `}
+            <input class="field" value="${escapeHtml(c.name)}" />
+            <div class="colorChip" style="--c:${escapeHtml(c.color)}; cursor:pointer;"></div>
+            <button class="pill danger" type="button">삭제</button>
           `;
+          const inp = row.querySelector("input");
+          const chip = row.querySelector(".colorChip");
+          const del = row.querySelector("button");
 
           row.addEventListener("click", ()=>{
-            if(isAll) return;
-            selectedCatRowIndex = idx;
+            catSelectedRowId = c.id;
+            toast("카테고리 선택");
+          });
+          inp.addEventListener("input", ()=>{ c.name = inp.value; });
+          chip.addEventListener("click", async (e)=>{
+            e.stopPropagation();
+            catSelectedRowId = c.id;
+            const next = await openPopInput({
+              anchor: chip,
+              title: "카테고리 색상",
+              message: "색상 코드를 입력하세요. (예: #ff0000)",
+              placeholder: "#rrggbb",
+              value: c.color || "",
+              okText: "저장",
+              cancelText: "취소"
+            });
+            if(next === null) return;
+            const v = (next||"").trim();
+            if(v) c.color = v;
             renderCatRows();
+            renderCats();
+            applyAllChainStylesOnPage(S.currentPageId);
+            saveLocal();
+            draw();
+          });
+          del.addEventListener("click", (e)=>{
+            e.stopPropagation();
+            const fallback = S.categories.find(x=>x.id==="기텔") || S.categories[0];
+            for(const m of S.markers){
+              if(m.cat === c.id) m.cat = fallback.id;
+            }
+            S.categories = S.categories.filter(x=>x.id!==c.id);
+            applyAllCatStylesOnPage(S.currentPageId);
+            applyAllChainStylesOnPage(S.currentPageId);
+            renderCatRows();
+            renderCats();
+            saveLocal();
+            draw();
           });
 
-          row.querySelectorAll("input.field").forEach(inp=>{
-            inp.addEventListener("input", ()=>{
-              const key = inp.getAttribute("data-k");
-              if(!key) return;
-              if(isAll) return;
-              c[key] = inp.value;
-              // id는 name 기반으로 다시 만들지 않고, 기존 id 유지(안정)
-              // 단, 기본 동작상 name을 id로 쓰는 케이스가 있으므로, id도 같이 맞춤(전체 제외)
-              if(key==="name"){
-                const nm = (c.name||"").trim();
-                if(nm) c.id = nm;
-              }
-              renderCatRows();
-            });
-          });
+          rows.appendChild(row);
+        }
+      }
 
-          const chk = row.querySelector('input[type="checkbox"][data-k="on"]');
-          if(chk){
-            chk.addEventListener("change", ()=>{
-              c.on = !!chk.checked;
-              // 전체 제외 최소1 보장 로직은 저장 시 한 번 더 체크
-              renderCatRows();
-            });
-          }
-
-          const delBtn = row.querySelector('[data-act="del"]');
-          if(delBtn){
-            delBtn.addEventListener("click", async (e)=>{
-              e.stopPropagation();
-              const ok = await openPopConfirm({
-                anchor: delBtn,
-                title: "카테고리 삭제",
-                message: `"${c.name}" 카테고리를 삭제할까요?\n(해당 카테고리 마커는 숨김 처리될 수 있습니다)`,
-                okText: "삭제",
-                cancelText: "취소",
-                danger: true
-              });
-              if(!ok) return;
-              catEditing = catEditing.filter((x,i)=>i!==idx);
-              selectedCatRowIndex = -1;
-              renderCatRows();
-              toast("삭제 완료");
-            });
-          }
-
-          catRows.appendChild(row);
+      $("btnAddCat").addEventListener("click", async ()=>{
+        const name = await openPopInput({
+          anchor: $("btnAddCat"),
+          title: "카테고리 추가",
+          message: "추가할 카테고리 이름을 입력하세요.",
+          placeholder: "예: 11",
+          value: "",
+          okText: "추가",
+          cancelText: "취소"
         });
-      }
-
-      function renderCatModal(){
-        renderCatQuickPalette();
+        if(name === null) return;
+        const id = (name||"").trim();
+        if(!id) return;
+        if(S.categories.some(c=>c.id===id)){ toast("이미 존재"); return; }
+        S.categories.push({ id, name:id, color:"#ffffff", on:true });
         renderCatRows();
-      }
-
-      $("btnAddCat").addEventListener("click", ()=>{
-        requireAuth();
-        if(!isAuthed()) return;
-        catEditing.push({ id:`새카테고리${catEditing.length}`, name:`새카테고리${catEditing.length}`, color:"#7cc4ff", on:true });
-        selectedCatRowIndex = catEditing.length - 1;
-        renderCatRows();
-        toast("카테고리 추가");
       });
 
-      $("btnCatsDefault").addEventListener("click", ()=>{
-        requireAuth();
-        if(!isAuthed()) return;
-        catEditing = structuredClone(defaultCats);
-        selectedCatRowIndex = -1;
+      $("btnCatsDefault").addEventListener("click", async ()=>{
+        const ok = await openPopConfirm({
+          anchor: $("btnCatsDefault"),
+          title: "기본값으로",
+          message: "기본 카테고리로 되돌릴까요?",
+          okText: "되돌리기",
+          cancelText: "취소",
+          danger: true
+        });
+        if(!ok) return;
+        S.categories = structuredClone(defaultCats);
         renderCatRows();
-        toast("기본값 복원");
       });
 
       $("btnSaveCats").addEventListener("click", ()=>{
         requireAuth();
         if(!isAuthed()) return;
 
-        // normalize: 전체는 항상 존재/맨 앞
-        const all = catEditing.find(c=>c.id==="전체") || structuredClone(defaultCats[0]);
-        let rest = catEditing.filter(c=>c.id!=="전체");
+        const cleaned = [];
+        const seen = new Set(["전체"]);
+        for(const c of S.categories){
+          const name = (c.name||c.id||"").trim();
+          if(!name) continue;
+          const finalId = name;
+          if(seen.has(finalId)) continue;
+          seen.add(finalId);
+          cleaned.push({ id:finalId, name, color:(c.color||"#ffffff"), on:!!c.on });
+        }
+        const all = { id:"전체", name:"전체", color:"#7cc4ff", on:true };
+        S.categories = [all, ...cleaned];
 
-        // sanitize: 공백 제거 + 중복 방지 (id 기준)
-        const seen = new Set();
-        rest = rest.filter(c=>{
-          c.name = (c.name||"").trim();
-          c.id = (c.id||c.name||"").trim();
-          c.color = (c.color||"#7cc4ff").trim();
-          if(!c.name || !c.id) return false;
-          if(seen.has(c.id)) return false;
-          seen.add(c.id);
-          if(typeof c.on !== "boolean") c.on = true;
-          return true;
-        });
-
-        // 최소 1개(전체 제외) ON 보장
-        const anyOn = rest.some(c=>c.on);
-        if(!anyOn && rest.length){
-          rest[0].on = true;
+        const valid = new Set(S.categories.map(x=>x.id));
+        const fb = valid.has("기텔") ? "기텔" : (S.categories[1]?.id || "전체");
+        for(const m of S.markers){
+          if(!valid.has(m.cat)) m.cat = fb;
         }
 
-        all.on = (typeof all.on==="boolean") ? all.on : true;
-        all.color = (all.color||"#7cc4ff").trim();
-        all.name = "전체";
-        all.id = "전체";
-
-        S.categories = [all, ...rest];
-
-        // marker cat 존재 보정: 없는 카테고리는 첫 카테고리(전체 제외)로 이동
-        const fallbackCat = (S.categories.find(c=>c.id!=="전체")?.id) || "기텔";
-        for(const m of (S.markers||[])){
-          if(!S.categories.some(c=>c.id===m.cat)){
-            m.cat = fallbackCat;
-          }
-        }
+        applyAllCatStylesOnPage(S.currentPageId);
+        applyAllChainStylesOnPage(S.currentPageId);
 
         saveLocal();
         renderCats();
-        applyAllCatStylesOnPage(S.currentPageId);
-        applyAllChainStylesOnPage(S.currentPageId);
         renderKpi();
         draw();
-        closeCatsModal();
+        mCats.classList.remove("show");
         toast("카테고리 저장");
       });
 
-      // ---------- init ----------
+      // ---------- marker edit: text quick colors ----------
+      function renderTextColors(){
+        textColors.innerHTML = "";
+        const colors = [ "#ff3b30","#ff9500","#ffd60a","#34c759","#0a84ff","#ffffff","#0b0b0f" ];
+        for(const c of colors){
+          const d = document.createElement("div");
+          d.className = "tSw";
+          d.style.setProperty("--c", c);
+          d.addEventListener("click", ()=>{ $("mfLabelColor").value = c; });
+          textColors.appendChild(d);
+        }
+      }
+
+      // ---------- helpers ----------
       function renderAll(){
         renderLogo();
         renderSlotsTop();
@@ -3316,23 +3221,42 @@
         renderCats();
         renderPalette();
         renderTextColors();
-        setChipToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
         syncSelectedPanel();
+        renderKpi();
+        resizeCanvas();
+
+        if(!S.map.scale || S.map.scale<=0) fitToScreen();
+        renumberPage(S.currentPageId);
+        recomputeChainIndices(S.currentPageId);
+        applyAllCatStylesOnPage(S.currentPageId);
+        applyAllChainStylesOnPage(S.currentPageId);
+        draw();
       }
 
-      (async function init(){
-        resizeCanvas();
+      // ---------- init ----------
+      async function init(){
+        requireAuth();
         const st = await loadStateRemoteFirst();
         S = mergeState(st);
+
+        // ensure slot1 legacy mirror
+        if(!Array.isArray(S.slotGroups) || S.slotGroups.length !== 4){
+          S.slotGroups = normalizeSlotGroups(S);
+        }
         ensureSlot1FromLegacy();
-        saveLocal();
+
+        if(typeof S.showLinesWithCatFilter !== "boolean") S.showLinesWithCatFilter = true;
+
         renderAll();
         loadMap();
-        renderKpi();
-        draw();
-        // 첫 진입 시 인증 필요 (기존 동작 유지)
-        requireAuth();
-      })();
+
+        if(!S.map.scale || S.map.scale<=0){
+          setTimeout(()=>{ fitToScreen(); saveLocal(); draw(); }, 0);
+        }else{
+          draw();
+        }
+      }
+      init();
     })();
   </script>
 </body>
