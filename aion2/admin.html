@@ -3,15 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>MAPMODE · ADMIN99</title>
+  <title>MAPMODE · ADMIN</title>
 
   <style>
     :root{
       color-scheme: dark;
 
       --bg:#070b12;
+      --bg2:#0a0f18;
+
       --panel:#0b1220cc;
       --card:#0e1626cc;
+
       --stroke:#1f2a3a;
       --stroke2:#27344a;
 
@@ -23,2438 +26,2934 @@
       --ok:#39d98a;
       --warn:#ffd60a;
 
+      --r10:10px;
       --r12:12px;
       --r14:14px;
       --r16:16px;
-      --r18:18px;
 
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --shadow2: 0 8px 24px rgba(0,0,0,.35);
       --blur: 14px;
 
-      --topH: 58px;
-      --leftW: 300px;
-      --rightW: 330px;
+      --topH:58px;
+      --leftW:320px;
+      --rightW:360px;
+      --gap:12px;
 
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
     }
-
-    html,body{ height:100%; margin:0; background:radial-gradient(1200px 700px at 20% 0%, #0d1630 0%, rgba(13,22,48,0) 60%) , var(--bg); color:var(--text); font-family:var(--font); }
     *{ box-sizing:border-box; }
-    a{ color:var(--accent); text-decoration:none; }
-    button, input, select, textarea{ font-family:inherit; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(124,196,255,.12), transparent 60%),
+        radial-gradient(900px 700px at 110% 30%, rgba(57,217,138,.08), transparent 55%),
+        linear-gradient(180deg, var(--bg2), var(--bg));
+      color:var(--text);
+      font-family:var(--font);
+      overflow:hidden;
+    }
 
+    /* ====== Layout ====== */
     .app{
-      position:fixed; inset:0;
-      display:grid;
-      grid-template-rows: var(--topH) 1fr;
-      grid-template-columns: var(--leftW) 1fr var(--rightW);
-      gap:12px;
-      padding:12px;
-      padding-top: calc(12px + env(safe-area-inset-top));
-      padding-bottom: calc(12px + env(safe-area-inset-bottom));
-      padding-left: calc(12px + env(safe-area-inset-left));
-      padding-right: calc(12px + env(safe-area-inset-right));
+      position:relative;
+      height:100%;
+      width:100%;
     }
 
     .topbar{
-      grid-column: 1 / 4;
+      position:absolute;
+      inset:0 0 auto 0;
       height:var(--topH);
-      border:1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(11,18,32,.85), rgba(11,18,32,.65));
-      backdrop-filter: blur(var(--blur));
-      border-radius: var(--r18);
-      box-shadow: var(--shadow2);
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:10px;
       padding:10px 12px;
-      overflow:hidden;
-      min-width:0;
+      background: linear-gradient(180deg, rgba(11,18,32,.92), rgba(11,18,32,.62));
+      border-bottom:1px solid rgba(39,52,74,.65);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      z-index:30;
     }
 
     .brand{
-      display:flex; align-items:center; gap:10px; min-width: 230px;
-      border-right: 1px solid rgba(255,255,255,.06);
-      padding-right: 12px;
-    }
-    .logoBox{
-      width:38px; height:38px; border-radius: 12px;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.04);
-      display:grid; place-items:center;
-      overflow:hidden;
-      cursor:pointer;
-      flex: 0 0 auto;
-    }
-    .logoBox img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .brandMeta{ display:flex; flex-direction:column; line-height:1.1; min-width:0; }
-    .brandTitle{ font-weight:800; letter-spacing:.2px; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .brandSub{ font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-    .topGroup{
-      display:flex; align-items:center; gap:10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
       min-width:0;
-      flex: 1 1 auto;
-    }
-
-    .pill{
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      border-radius: 999px;
-      padding: 6px 10px;
-      display:flex; align-items:center; gap:8px;
-      min-width:0;
-    }
-    .pill label{ font-size:12px; color:var(--muted); white-space:nowrap; }
-    .pill .mini{
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.25);
-      color:var(--text);
-      border-radius: 10px;
-      padding: 6px 8px;
-      font-size:12px;
-      outline:none;
-      width: 260px;
-      max-width: 38vw;
-    }
-
-    .btn{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 8px 10px;
-      font-size:12px;
-      cursor:pointer;
-      transition: transform .06s ease, background .12s ease, border-color .12s ease;
+      padding:6px 10px;
+      border-radius:12px;
+      background: rgba(14,22,38,.55);
+      border:1px solid rgba(39,52,74,.65);
+      box-shadow: var(--shadow2);
       user-select:none;
+    }
+    .brand .logoBtn{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border:0;
+      background:transparent;
+      color:var(--text);
+      padding:0;
+      cursor:pointer;
+      min-width:0;
+    }
+    .brand .logoImg{
+      height:28px;
+      width:auto;
+      display:block;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,.35));
+    }
+    .brand .logoFallback{
+      height:28px;
+      display:flex;
+      align-items:center;
+      font-weight:800;
+      letter-spacing:.2px;
       white-space:nowrap;
     }
-    .btn:hover{ background: rgba(255,255,255,.10); }
-    .btn:active{ transform: translateY(1px); }
-    .btn.primary{ border-color: rgba(124,196,255,.35); background: rgba(124,196,255,.10); }
-    .btn.ok{ border-color: rgba(57,217,138,.35); background: rgba(57,217,138,.10); }
-    .btn.warn{ border-color: rgba(255,214,10,.35); background: rgba(255,214,10,.10); }
-    .btn.danger{ border-color: rgba(255,93,93,.55); background: rgba(255,93,93,.10); }
-    .btn.small{ padding:6px 8px; border-radius: 10px; }
-    .btn.tiny{ padding:4px 7px; border-radius: 9px; font-size:11px; }
-
-    .authBox{
-      display:flex; align-items:center; gap:8px;
-      margin-left:auto;
-      padding-left:12px;
-      border-left:1px solid rgba(255,255,255,.06);
+    .brand .logoUrlBtn{
+      margin-left:6px;
+      padding:6px 10px;
+      border-radius:10px;
+      border:1px solid rgba(39,52,74,.75);
+      background: rgba(7,11,18,.25);
+      color:var(--muted);
+      cursor:pointer;
+      font-size:12px;
     }
-    .authState{
-      font-size:12px; color:var(--muted);
-      display:flex; align-items:center; gap:6px;
+    .brand .logoUrlBtn:hover{ color:var(--text); border-color: rgba(124,196,255,.7); }
+
+    .catsRow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+      flex:1;
+      overflow:hidden;
+    }
+    .catTabs{
+      display:flex;
+      gap:8px;
+      min-width:0;
+      overflow:auto;
+      padding-bottom:2px;
+      scrollbar-width:none;
+    }
+    .catTabs::-webkit-scrollbar{ height:0; }
+    .tab{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(14,22,38,.45);
+      color:var(--muted);
+      padding:8px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      white-space:nowrap;
+      user-select:none;
+      transition: .12s ease;
+      box-shadow: 0 6px 18px rgba(0,0,0,.18);
+    }
+    .tab:hover{ color:var(--text); border-color: rgba(124,196,255,.55); }
+    .tab.active{
+      color:var(--text);
+      border-color: rgba(124,196,255,.75);
+      background: rgba(124,196,255,.10);
+    }
+    .tab .pill{
+      font-size:11px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(39,52,74,.75);
+      color:var(--muted);
+      background: rgba(7,11,18,.22);
+    }
+
+    .topActions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+    }
+    .btn{
+      border:1px solid rgba(39,52,74,.75);
+      background: rgba(14,22,38,.55);
+      color:var(--text);
+      padding:9px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      user-select:none;
+      font-weight:650;
+      letter-spacing:.1px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.22);
+    }
+    .btn:hover{ border-color: rgba(124,196,255,.65); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.ghost{
+      background: rgba(7,11,18,.22);
+      color: var(--muted);
+      font-weight:600;
+    }
+    .btn.danger{
+      border-color: rgba(255,93,93,.65);
+      background: rgba(255,93,93,.10);
+    }
+    .btn.danger:hover{ border-color: rgba(255,93,93,.95); }
+    .btn.ok{
+      border-color: rgba(57,217,138,.55);
+      background: rgba(57,217,138,.10);
+    }
+
+    .toggle{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(39,52,74,.75);
+      background: rgba(14,22,38,.45);
+      color:var(--muted);
+      user-select:none;
+      box-shadow: 0 6px 18px rgba(0,0,0,.18);
+    }
+    .toggle input{ accent-color: var(--accent); }
+
+    .authBadge{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(39,52,74,.75);
+      background: rgba(14,22,38,.45);
+      box-shadow: 0 6px 18px rgba(0,0,0,.18);
+      color:var(--muted);
       white-space:nowrap;
     }
     .dot{
-      width:8px; height:8px; border-radius:99px; background: rgba(255,93,93,.9);
-      box-shadow: 0 0 0 3px rgba(255,93,93,.12);
+      width:8px; height:8px; border-radius:50%;
+      background: rgba(255,93,93,.95);
+      box-shadow: 0 0 0 4px rgba(255,93,93,.15);
     }
     .dot.ok{
       background: rgba(57,217,138,.95);
-      box-shadow: 0 0 0 3px rgba(57,217,138,.14);
+      box-shadow: 0 0 0 4px rgba(57,217,138,.15);
+    }
+
+    .main{
+      position:absolute;
+      inset: var(--topH) 0 0 0;
+      display:grid;
+      grid-template-columns: var(--leftW) 1fr var(--rightW);
+      gap: var(--gap);
+      padding: var(--gap);
+      z-index:10;
     }
 
     .panel{
-      border:1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(11,18,32,.82), rgba(11,18,32,.62));
+      background: rgba(11,18,32,.55);
+      border:1px solid rgba(39,52,74,.65);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
       backdrop-filter: blur(var(--blur));
-      border-radius: var(--r18);
-      box-shadow: var(--shadow2);
+      -webkit-backdrop-filter: blur(var(--blur));
       overflow:hidden;
       min-height:0;
+    }
+    .panelHeader{
       display:flex;
-      flex-direction:column;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 12px;
+      border-bottom:1px solid rgba(39,52,74,.6);
+      background: rgba(14,22,38,.42);
     }
-
-    .panelHead{
-      padding:10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      display:flex; align-items:center; justify-content:space-between;
+    .panelHeader .title{
+      display:flex;
+      align-items:center;
       gap:10px;
+      font-weight:800;
+      letter-spacing:.2px;
     }
-    .panelHead .title{
-      font-weight:800; letter-spacing:.2px; font-size:13px;
-      display:flex; align-items:center; gap:8px;
-      min-width:0;
-    }
-    .panelHead .subtitle{
-      font-size:12px; color:var(--muted);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    .panelHeader .sub{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:650;
     }
     .panelBody{
       padding:12px;
       overflow:auto;
-      min-height:0;
+      height:calc(100% - 52px);
+      scrollbar-width:thin;
+      scrollbar-color: rgba(124,196,255,.35) rgba(7,11,18,.2);
     }
+    .panelBody::-webkit-scrollbar{ width:10px; }
+    .panelBody::-webkit-scrollbar-thumb{ background: rgba(124,196,255,.25); border-radius:999px; border:3px solid rgba(7,11,18,.25); }
+    .panelBody::-webkit-scrollbar-track{ background: rgba(7,11,18,.12); }
 
-    .left{ grid-row: 2; grid-column: 1; }
-    .right{ grid-row: 2; grid-column: 3; }
-    .center{
-      grid-row: 2; grid-column: 2;
-      position:relative;
-      border-radius: var(--r18);
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.06);
-      box-shadow: var(--shadow2);
-      background:
-        radial-gradient(1000px 600px at 30% 10%, rgba(124,196,255,.10), rgba(124,196,255,0) 60%),
-        radial-gradient(900px 600px at 80% 0%, rgba(255,214,10,.07), rgba(255,214,10,0) 60%),
-        rgba(0,0,0,.18);
-      min-width:0;
-      min-height:0;
-    }
-
-    canvas{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      display:block;
-      touch-action: none;
-      user-select:none;
-      -webkit-user-select:none;
-    }
-
-    .hintBar{
-      position:absolute; left:12px; bottom:12px;
-      display:flex; gap:10px; align-items:center;
-      padding:10px 12px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(10,15,24,.55);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      box-shadow: var(--shadow2);
-      color: var(--muted);
-      font-size:12px;
-      pointer-events:none;
-    }
-
-    .list{
-      display:flex; flex-direction:column; gap:10px;
-    }
     .card{
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      border-radius: 16px;
-      padding:10px;
-      box-shadow: 0 10px 28px rgba(0,0,0,.20);
-    }
-    .row{
-      display:flex; gap:8px; align-items:center;
-      flex-wrap:wrap;
-    }
-    .row.nowrap{ flex-wrap:nowrap; }
-    .row > *{ min-width:0; }
-    .grow{ flex:1 1 auto; min-width:0; }
-    .muted{ color:var(--muted); font-size:12px; }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-
-    .inp, .sel, .ta{
-      width:100%;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.26);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 8px 10px;
-      font-size:12px;
-      outline:none;
-    }
-    .ta{ min-height:72px; resize: vertical; }
-    .inp:focus, .sel:focus, .ta:focus{ border-color: rgba(124,196,255,.35); box-shadow: 0 0 0 4px rgba(124,196,255,.10); }
-
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      padding:6px 10px;
-      border-radius: 999px;
-      font-size:12px;
-      cursor:pointer;
-      user-select:none;
-      white-space:nowrap;
-    }
-    .chip.on{
-      border-color: rgba(124,196,255,.35);
-      background: rgba(124,196,255,.10);
-    }
-    .swatch{
-      width:12px; height:12px; border-radius: 4px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.22);
-    }
-
-    .divider{ height:1px; background: rgba(255,255,255,.06); margin:10px 0; }
-
-    .pageBtn{
-      display:flex; align-items:center; gap:8px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
+      background: rgba(14,22,38,.55);
+      border:1px solid rgba(39,52,74,.65);
       border-radius: 14px;
       padding:10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+    .stack{ display:flex; flex-direction:column; gap:10px; }
+
+    .row{ display:flex; gap:8px; align-items:center; }
+    .row.wrap{ flex-wrap:wrap; }
+    .col{ display:flex; flex-direction:column; gap:8px; }
+    .muted{ color:var(--muted); }
+    .small{ font-size:12px; }
+    .sep{ height:1px; background: rgba(39,52,74,.55); margin:10px 0; }
+    .hint{ font-size:12px; color: rgba(159,176,198,.95); line-height:1.35; }
+
+    input[type="text"], input[type="url"], input[type="number"], textarea, select{
+      width:100%;
+      border:1px solid rgba(39,52,74,.75);
+      background: rgba(7,11,18,.25);
+      color:var(--text);
+      padding:10px 10px;
+      border-radius: 12px;
+      outline:none;
+    }
+    textarea{ min-height:76px; resize:vertical; }
+    input::placeholder, textarea::placeholder{ color: rgba(159,176,198,.55); }
+    input:focus, textarea:focus, select:focus{ border-color: rgba(124,196,255,.75); box-shadow: 0 0 0 4px rgba(124,196,255,.12); }
+
+    .miniBtn{
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(39,52,74,.75);
+      background: rgba(7,11,18,.22);
+      color:var(--muted);
       cursor:pointer;
-      transition: background .12s ease, border-color .12s ease;
+      font-weight:700;
+      white-space:nowrap;
     }
-    .pageBtn:hover{ background: rgba(255,255,255,.08); }
-    .pageBtn.active{
-      border-color: rgba(124,196,255,.40);
-      background: rgba(124,196,255,.12);
-    }
-    .pageBtn .name{ font-weight:800; font-size:12px; }
-    .pageBtn .url{ font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .miniBtn:hover{ color:var(--text); border-color: rgba(124,196,255,.65); }
+    .miniBtn.danger{ border-color: rgba(255,93,93,.6); background: rgba(255,93,93,.08); color: rgba(255,165,165,.95); }
+    .miniBtn.ok{ border-color: rgba(57,217,138,.55); background: rgba(57,217,138,.08); color: rgba(175,255,220,.95); }
 
-    .miniTools{
-      display:flex; gap:6px; align-items:center;
+    .listBtn{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 10px;
+      border-radius: 14px;
+      border:1px solid rgba(39,52,74,.65);
+      background: rgba(14,22,38,.45);
+      color: var(--text);
+      cursor:pointer;
+      user-select:none;
+    }
+    .listBtn:hover{ border-color: rgba(124,196,255,.55); background: rgba(124,196,255,.08); }
+    .listBtn.active{ border-color: rgba(124,196,255,.85); background: rgba(124,196,255,.12); }
+    .listBtn .name{ font-weight:800; }
+    .listBtn .meta{ font-size:12px; color: var(--muted); }
+
+    .pillBadge{
+      font-size:11px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(39,52,74,.75);
+      color:var(--muted);
+      background: rgba(7,11,18,.2);
+      white-space:nowrap;
     }
 
+    /* ====== Canvas area ====== */
+    .canvasWrap{
+      position:relative;
+      min-height:0;
+      overflow:hidden;
+    }
+    canvas{
+      width:100%;
+      height:100%;
+      display:block;
+      background: rgba(7,11,18,.35);
+      cursor: default;
+      touch-action: none;
+    }
+    .canvasHud{
+      position:absolute;
+      left:12px;
+      top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      z-index:5;
+      pointer-events:none;
+    }
+    .hudLine{
+      pointer-events:none;
+      background: rgba(14,22,38,.52);
+      border:1px solid rgba(39,52,74,.65);
+      padding:8px 10px;
+      border-radius:12px;
+      color: rgba(231,238,248,.92);
+      font-size:12px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+      max-width: 520px;
+    }
+
+    /* ====== Modal ====== */
     .modalBack{
-      position:fixed; inset:0;
+      position:absolute;
+      inset:0;
       background: rgba(0,0,0,.55);
-      backdrop-filter: blur(10px);
       display:none;
       align-items:center;
       justify-content:center;
+      z-index:100;
       padding:18px;
-      z-index: 50;
     }
+    .modalBack.show{ display:flex; }
     .modal{
-      width:min(860px, 96vw);
-      max-height: min(86vh, 820px);
-      overflow:hidden;
+      width:min(820px, 100%);
+      background: rgba(11,18,32,.82);
+      border:1px solid rgba(39,52,74,.75);
       border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(14,22,38,.92), rgba(14,22,38,.78));
-      box-shadow: 0 24px 90px rgba(0,0,0,.55);
-      display:flex;
-      flex-direction:column;
+      box-shadow: 0 30px 120px rgba(0,0,0,.55);
+      overflow:hidden;
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
     }
     .modalHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       padding:12px 14px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
+      border-bottom:1px solid rgba(39,52,74,.6);
+      background: rgba(14,22,38,.45);
     }
-    .modalHead .t{ font-weight:900; font-size:13px; letter-spacing:.2px; }
+    .modalHead .h{
+      font-weight:900;
+      letter-spacing:.2px;
+    }
     .modalBody{
       padding:14px;
-      overflow:auto;
-      min-height:0;
-    }
-
-    .grid2{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:12px;
     }
-    .grid3{
-      display:grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap:12px;
+    .modalBody.one{ grid-template-columns: 1fr; }
+    .modalFoot{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      padding:12px 14px;
+      border-top:1px solid rgba(39,52,74,.6);
+      background: rgba(14,22,38,.42);
+    }
+    .k{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:800;
+      letter-spacing:.1px;
     }
 
+    /* ====== Color palette ====== */
     .palette{
-      display:flex; gap:6px; flex-wrap:wrap;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
     }
-    .pbtn{
-      width:26px; height:26px; border-radius: 10px;
-      border:1px solid rgba(255,255,255,.12);
+    .swatch{
+      width:26px; height:26px;
+      border-radius:10px;
+      border:1px solid rgba(39,52,74,.75);
       cursor:pointer;
-      background: rgba(255,255,255,.10);
-      display:inline-block;
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+    }
+    .swatch:hover{ outline: 2px solid rgba(124,196,255,.35); }
+
+    /* ====== Non-responsive "same screen" safety ====== */
+    @media (max-width: 1060px){
+      :root{
+        --leftW:300px;
+        --rightW:340px;
+      }
+      .topbar{ overflow:auto; }
+      .topActions{ flex-wrap:wrap; }
+    }
+    @media (max-width: 900px){
+      :root{
+        --leftW:280px;
+        --rightW:320px;
+      }
     }
 
-    @media (max-width: 1180px){
-      :root{ --leftW: 280px; --rightW: 320px; }
-      .pill .mini{ width: 220px; }
-    }
-    @media (max-width: 1040px){
-      :root{ --leftW: 270px; --rightW: 310px; }
-    }
-    @media (max-width: 920px){
-      :root{ --leftW: 260px; --rightW: 300px; }
-      .pill .mini{ width: 180px; }
-    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logoBox" id="logoBox" title="로고 클릭 → 로고 URL 등록">
-          <img id="logoImg" alt="logo" />
-        </div>
-        <div class="brandMeta">
-          <div class="brandTitle">MAPMODE · ADMIN99</div>
-          <div class="brandSub" id="pathHint" class="mono">/aion2/admin.html → ./data/state.json</div>
-        </div>
-      </div>
+<div class="app">
 
-      <div class="topGroup">
-        <div class="pill">
-          <label>로고 URL</label>
-          <input id="logoUrlInput" class="mini" placeholder="https://.../assets/logo/MAPMODELOGO2.png" />
-          <button class="btn small" id="logoApplyBtn">적용</button>
-        </div>
-
-        <button class="btn primary" id="exportBtn">state.json 내보내기</button>
-        <button class="btn danger" id="resetAllBtn">전체 초기화</button>
-
-        <div class="authBox">
-          <div class="authState" id="authState">
-            <span class="dot" id="authDot"></span>
-            <span id="authText">관리자 잠김</span>
-          </div>
-          <button class="btn ok" id="loginBtn">관리자 로그인</button>
-          <button class="btn" id="logoutBtn" style="display:none;">로그아웃</button>
-        </div>
-      </div>
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand" title="로고 클릭(프리뷰) · URL 변경">
+      <button class="logoBtn" id="btnLogo">
+        <img id="logoImg" class="logoImg" alt="MAPMODE Logo" style="display:none;" />
+        <div id="logoFallback" class="logoFallback">MAPMODE · ADMIN</div>
+      </button>
+      <button class="logoUrlBtn" id="btnLogoUrl">로고 URL</button>
     </div>
 
-    <div class="panel left">
-      <div class="panelHead">
+    <div class="catsRow">
+      <div class="catTabs" id="catTabs"></div>
+    </div>
+
+    <div class="topActions">
+      <div class="toggle" title="구글 로그인(사전 구조) — 현재 비활성">
+        <input type="checkbox" id="toggleGoogle" />
+        <label for="toggleGoogle">Google 로그인</label>
+      </div>
+      <div class="toggle" title="결제(사전 구조) — 현재 비활성">
+        <input type="checkbox" id="togglePay" />
+        <label for="togglePay">결제</label>
+      </div>
+
+      <button class="btn ghost" id="btnExport">state.json 내보내기</button>
+      <button class="btn danger" id="btnResetAll">전체 초기화</button>
+
+      <div class="authBadge" id="authBadge" title="관리자 인증(24시간)">
+        <span class="dot" id="authDot"></span>
+        <span id="authText">관리자: 미인증</span>
+      </div>
+      <button class="btn ok" id="btnLogin">관리자 로그인</button>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main">
+
+    <!-- LEFT: Pages -->
+    <div class="panel">
+      <div class="panelHeader">
         <div class="title">
-          <span>좌측 메뉴바</span>
-          <span class="subtitle" id="whereAmI">현재: -</span>
+          <span>페이지</span>
+          <span class="pillBadge" id="leftTitleBadge">카테고리 1</span>
         </div>
-        <button class="btn small" id="addPageBtn">페이지 추가</button>
+        <div class="sub" id="pageCountSub">0개</div>
       </div>
       <div class="panelBody">
-        <div class="card" style="margin-bottom:10px;">
-          <div class="row" style="justify-content:space-between;">
-            <div class="muted">페이지 목록 (버튼 UI)</div>
-            <div class="muted mono" id="pageCount">0</div>
-          </div>
-          <div class="divider"></div>
-          <div id="pageList" class="list"></div>
-        </div>
+        <div class="stack">
+          <div class="card" id="pageAddCard">
+            <div class="row" style="justify-content:space-between;">
+              <div class="col" style="flex:1; min-width:0;">
+                <div class="k">페이지 추가</div>
+                <div class="hint">버튼 형태로 생성됩니다. URL(지도 이미지)과 이름을 등록하세요.</div>
+              </div>
+              <button class="miniBtn ok" id="btnPageAdd">+ 페이지 추가</button>
+            </div>
 
-        <div class="card">
-          <div class="row" style="justify-content:space-between;">
-            <div class="muted">상단 카테고리 1~4 (게임/항목)</div>
-            <button class="btn tiny" id="openTopCatsBtn">편집</button>
-          </div>
-          <div class="divider"></div>
-          <div id="topCatsPreview" class="list"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="center">
-      <canvas id="cv"></canvas>
-      <div class="hintBar" id="hintBar">
-        <span>좌클릭 드래그: 지도 이동</span>
-        <span>·</span>
-        <span>좌클릭 마커: 불투명 30% 토글</span>
-        <span>·</span>
-        <span>마커 더블클릭: 편집</span>
-        <span>·</span>
-        <span>우클릭: 마커 추가(번호/선/화살표)</span>
-        <span>·</span>
-        <span>선/마커 드래그: 곡선/위치 조정</span>
-      </div>
-    </div>
-
-    <div class="panel right">
-      <div class="panelHead">
-        <div class="title">
-          <span>우측 메뉴바</span>
-          <span class="subtitle" id="selInfo">선택 마커: -</span>
-        </div>
-        <button class="btn tiny" id="openCatEditorBtn">카테고리/색상 편집</button>
-      </div>
-      <div class="panelBody">
-        <div class="card">
-          <div class="row" style="justify-content:space-between;">
-            <div class="muted">마커 카테고리 (전체/추가/활성)</div>
-            <button class="btn tiny" id="addMarkerCatBtn">카테고리 추가</button>
-          </div>
-          <div class="divider"></div>
-          <div id="markerCatList" class="list"></div>
-        </div>
-
-        <div class="card" style="margin-top:10px;">
-          <div class="row" style="justify-content:space-between;">
-            <div class="muted">관리자 툴</div>
-            <div class="miniTools">
-              <button class="btn tiny" id="showAllLinesBtn">모든 선 표시</button>
-              <button class="btn tiny" id="hideAllLinesBtn">모든 선 제거</button>
+            <div id="pageAddInline" style="display:none; margin-top:10px;">
+              <div class="row">
+                <div class="col" style="flex:1;">
+                  <div class="k">페이지 이름</div>
+                  <input type="text" id="newPageName" placeholder="예: 1번마을" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col" style="flex:1;">
+                  <div class="k">지도 이미지 URL</div>
+                  <input type="url" id="newPageUrl" placeholder="예: /assets/aion2/maps/map1.png" />
+                </div>
+              </div>
+              <div class="row" style="justify-content:flex-end;">
+                <button class="miniBtn" id="btnPageAddCancel">취소</button>
+                <button class="miniBtn ok" id="btnPageAddConfirm">추가</button>
+              </div>
             </div>
           </div>
-          <div class="divider"></div>
 
-          <div class="row" style="gap:8px;">
-            <div class="muted" style="min-width:92px;">빠른 색상</div>
+          <div class="stack" id="pageList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Canvas -->
+    <div class="panel canvasWrap">
+      <canvas id="c"></canvas>
+      <div class="canvasHud">
+        <div class="hudLine" id="hudLine1">우클릭: 마커 생성 · 좌클릭 드래그: 마커 이동(마커 위) / 맵 이동(빈 공간) · 휠: 확대/축소</div>
+        <div class="hudLine" id="hudLine2">더블클릭: 마커 편집 · 선을 클릭 후 드래그: 곡선 조절</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Markers/tools -->
+    <div class="panel">
+      <div class="panelHeader">
+        <div class="title">
+          <span>마커 / 관리자 툴</span>
+        </div>
+        <div class="sub" id="rightSub">준비</div>
+      </div>
+      <div class="panelBody">
+        <div class="stack">
+
+          <!-- Marker Categories -->
+          <div class="card">
+            <div class="row" style="justify-content:space-between;">
+              <div class="col" style="flex:1;">
+                <div class="k">마커 카테고리</div>
+                <div class="hint">카테고리 단위로 마커를 함께 활성/비활성합니다. “전체”는 모든 마커를 제어합니다.</div>
+              </div>
+              <button class="miniBtn ok" id="btnMkCatAdd">+ 추가</button>
+            </div>
+            <div class="sep"></div>
+            <div class="stack" id="mkCatList"></div>
+            <div class="sep"></div>
+            <div class="row" style="justify-content:space-between;">
+              <button class="miniBtn" id="btnOpenCatColor">카테고리/색상 편집</button>
+              <div class="pillBadge" id="mkCatInfo">0개</div>
+            </div>
+          </div>
+
+          <!-- Quick palette -->
+          <div class="card">
+            <div class="k">빠른 색상표</div>
             <div class="palette" id="quickPalette"></div>
+            <div class="hint" style="margin-top:8px;">마커 편집 창에서 색상 지정 시 빠르게 선택 가능합니다.</div>
           </div>
 
-          <div class="divider"></div>
-
-          <div class="row" style="gap:8px;">
-            <button class="btn danger" id="resetMarkersBtn" style="flex:1;">마커 초기화</button>
-            <button class="btn" id="toggleNumbersBtn" style="flex:1;">마커 숫자 가리기</button>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="row" style="gap:8px;">
-            <button class="btn primary" id="openMarkerEditorBtn" style="flex:1;">마커 편집</button>
-            <button class="btn" id="focusSelectedBtn" style="flex:1;">선택 마커로 이동</button>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:10px;">
-          <div class="row" style="justify-content:space-between;">
-            <div class="muted">유튜브 링크</div>
-            <button class="btn tiny" id="applyYoutubePanelBtn">적용</button>
-          </div>
-          <div class="divider"></div>
-          <div class="row">
-            <div class="muted" style="min-width:110px;">유튜브 표시명</div>
-            <input id="ytDisplayInput" class="inp" placeholder="인덱스에서 보이는 이름" />
-          </div>
-          <div class="row" style="margin-top:8px;">
-            <div class="muted" style="min-width:110px;">설명</div>
-            <input id="ytDescInput" class="inp" placeholder="설명 텍스트" />
-          </div>
-          <div class="row" style="margin-top:8px;">
-            <div class="muted" style="min-width:110px;">링크 URL</div>
-            <input id="ytUrlInput" class="inp" placeholder="https://youtube.com/..." />
-          </div>
-          <div class="divider"></div>
-          <div class="muted">선택 마커에만 적용됩니다.</div>
-        </div>
-
-        <div class="card" style="margin-top:10px;">
-          <div class="row" style="justify-content:space-between;">
-            <div class="muted">상태</div>
-            <button class="btn tiny" id="saveLocalBtn">로컬 저장</button>
-          </div>
-          <div class="divider"></div>
-          <div class="row">
-            <div class="muted" style="min-width:90px;">저장소</div>
-            <div class="grow muted mono" id="saveInfo">-</div>
-          </div>
-          <div class="row" style="margin-top:8px;">
-            <button class="btn tiny" id="reloadRemoteBtn" style="flex:1;">remote(state.json) 재로드</button>
-            <button class="btn tiny" id="reloadLocalBtn" style="flex:1;">localStorage 재로드</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Login Modal -->
-  <div class="modalBack" id="loginBack">
-    <div class="modal" style="width:min(520px, 96vw);">
-      <div class="modalHead">
-        <div class="t">관리자 로그인</div>
-        <button class="btn small" id="loginCloseBtn">닫기</button>
-      </div>
-      <div class="modalBody">
-        <div class="card">
-          <div class="muted">비밀번호를 입력하세요 (24시간 인증 유지)</div>
-          <div class="divider"></div>
-          <div class="row">
-            <input id="pwInput" type="password" class="inp" placeholder="0000000001" />
-          </div>
-          <div class="row" style="margin-top:10px;">
-            <button class="btn ok" id="loginSubmitBtn" style="flex:1;">로그인</button>
-          </div>
-          <div class="row" style="margin-top:10px;">
-            <div class="muted" id="loginMsg"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Top Categories Modal -->
-  <div class="modalBack" id="topCatsBack">
-    <div class="modal">
-      <div class="modalHead">
-        <div class="t">상단 카테고리 1~4 편집 (게임/항목)</div>
-        <div class="row">
-          <button class="btn small" id="topCatsSaveBtn">저장</button>
-          <button class="btn small" id="topCatsCloseBtn">닫기</button>
-        </div>
-      </div>
-      <div class="modalBody">
-        <div class="muted">각 카테고리는 독립 관리이며, 항목(게임)을 추가/삭제할 수 있습니다.</div>
-        <div class="divider"></div>
-        <div id="topCatsEditor" class="list"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Marker Category/Color Editor Modal -->
-  <div class="modalBack" id="catEditorBack">
-    <div class="modal">
-      <div class="modalHead">
-        <div class="t">카테고리/색상 편집</div>
-        <div class="row">
-          <button class="btn small" id="catEditorSaveBtn">저장</button>
-          <button class="btn small" id="catEditorCloseBtn">닫기</button>
-        </div>
-      </div>
-      <div class="modalBody">
-        <div class="card">
-          <div class="row" style="justify-content:space-between;">
-            <div class="muted">빠른 색상표 (빨/주/노/초/파/흰/검)</div>
-          </div>
-          <div class="divider"></div>
-          <div class="palette" id="catEditorPalette"></div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="card">
-          <div class="row" style="justify-content:space-between;">
-            <div class="muted">마커 카테고리 목록</div>
-            <button class="btn tiny" id="catEditorAddBtn">카테고리 추가</button>
-          </div>
-          <div class="divider"></div>
-          <div id="catEditorList" class="list"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Marker Editor Modal -->
-  <div class="modalBack" id="markerEditorBack">
-    <div class="modal">
-      <div class="modalHead">
-        <div class="t">마커 편집</div>
-        <div class="row">
-          <button class="btn small" id="markerEditorSaveBtn">저장</button>
-          <button class="btn small" id="markerEditorCloseBtn">닫기</button>
-        </div>
-      </div>
-      <div class="modalBody">
-        <div class="muted">더블클릭한 마커(또는 선택 마커)를 편집합니다.</div>
-        <div class="divider"></div>
-
-        <div class="grid2">
+          <!-- Line controls -->
           <div class="card">
-            <div class="muted">기본 정보</div>
-            <div class="divider"></div>
-
-            <div class="row">
-              <div class="muted" style="min-width:110px;">마커 이름</div>
-              <input id="meName" class="inp" placeholder="마커 이름" />
+            <div class="k">선(마커 연결)</div>
+            <div class="row wrap">
+              <button class="miniBtn" id="btnHideAllLines">모든 선 제거</button>
+              <button class="miniBtn" id="btnShowAllLines">모든 선 표시</button>
             </div>
-
-            <div class="row" style="margin-top:8px;">
-              <div class="muted" style="min-width:110px;">카테고리</div>
-              <select id="meCat" class="sel"></select>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="row">
-              <div class="muted" style="min-width:110px;">유튜브 표시명</div>
-              <input id="meYtDisplay" class="inp" placeholder="인덱스 표시명" />
-            </div>
-            <div class="row" style="margin-top:8px;">
-              <div class="muted" style="min-width:110px;">유튜브 링크</div>
-              <input id="meYtUrl" class="inp" placeholder="https://youtube.com/..." />
-            </div>
-            <div class="row" style="margin-top:8px;">
-              <div class="muted" style="min-width:110px;">설명</div>
-              <input id="meYtDesc" class="inp" placeholder="설명 텍스트" />
+            <div class="sep"></div>
+            <div class="row wrap">
+              <button class="miniBtn danger" id="btnClearMarkers">마커 초기화</button>
+              <div class="hint">“초기화를 하시겠습니까?” 확인 후 현재 페이지의 모든 마커/선을 삭제합니다.</div>
             </div>
           </div>
 
+          <!-- Number hide per marker category -->
           <div class="card">
-            <div class="muted">스타일</div>
-            <div class="divider"></div>
-
-            <div class="grid3">
-              <div>
-                <div class="muted">원 크기(px 1~100)</div>
-                <input id="meSize" type="number" class="inp" min="1" max="100" />
-              </div>
-              <div>
-                <div class="muted">텍스트 크기</div>
-                <input id="meTextSize" type="number" class="inp" min="6" max="80" />
-              </div>
-              <div>
-                <div class="muted">텍스트 굵기</div>
-                <select id="meWeight" class="sel">
-                  <option value="400">400</option>
-                  <option value="500">500</option>
-                  <option value="600">600</option>
-                  <option value="700">700</option>
-                  <option value="800">800</option>
-                  <option value="900">900</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="row" style="gap:10px;">
-              <div class="muted" style="min-width:110px;">글씨 색상</div>
-              <input id="meTextColor" class="inp" placeholder="#ffffff 또는 rgb()" />
-            </div>
-
-            <div class="row" style="margin-top:10px;">
-              <div class="muted" style="min-width:110px;">빠른 색상</div>
-              <div class="palette" id="mePalette"></div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="muted">카테고리별 마커는 “카테고리 1번 마커 기준”으로 동일 색/크기를 유지합니다.<br/>이 편집에서 크기/색을 바꾸면 해당 카테고리 전체에 적용됩니다.</div>
+            <div class="k">마커 숫자 가리기</div>
+            <div class="hint">원은 유지, 숫자만 숨깁니다. (카테고리별 적용)</div>
+            <div class="sep"></div>
+            <div class="stack" id="numHideList"></div>
           </div>
+
+          <!-- Edit & selected marker -->
+          <div class="card">
+            <div class="k">마커 편집</div>
+            <div class="row wrap">
+              <button class="miniBtn" id="btnOpenEdit">마커 편집 창 열기</button>
+            </div>
+            <div class="sep"></div>
+            <div class="k">선택한 마커</div>
+            <div class="listBtn" style="cursor:default;">
+              <div style="min-width:0;">
+                <div class="name" id="selName">선택 없음</div>
+                <div class="meta" id="selMeta">—</div>
+              </div>
+              <span class="pillBadge" id="selBadge">0</span>
+            </div>
+          </div>
+
+          <!-- YouTube -->
+          <div class="card">
+            <div class="k">유튜브 링크</div>
+            <div class="hint">유저(index)에서 표시용 구조 포함. (admin에서는 등록/편집)</div>
+            <div class="sep"></div>
+            <div class="k">표시명</div>
+            <input type="text" id="ytTitle" placeholder="예: 공략 영상" />
+            <div class="k" style="margin-top:10px;">설명</div>
+            <textarea id="ytDesc" placeholder="예: 2분 압축 핵심 요약"></textarea>
+            <div class="k" style="margin-top:10px;">링크 URL</div>
+            <input type="url" id="ytUrl" placeholder="https://www.youtube.com/watch?v=..." />
+            <div class="row" style="justify-content:flex-end; margin-top:10px;">
+              <button class="miniBtn ok" id="btnApplyYT">선택 마커에 적용</button>
+            </div>
+          </div>
+
         </div>
+      </div>
+    </div>
 
-        <div class="divider"></div>
+  </div>
 
+  <!-- MODALS -->
+  <div class="modalBack" id="modalLoginBack">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modalHead">
+        <div class="h">관리자 로그인</div>
+        <button class="miniBtn" id="btnLoginClose">닫기</button>
+      </div>
+      <div class="modalBody one">
         <div class="card">
-          <div class="row" style="justify-content:space-between;">
-            <div class="muted">번호 제어</div>
-            <div class="muted mono" id="meChainInfo">-</div>
-          </div>
-          <div class="divider"></div>
-          <div class="row">
-            <button class="btn warn" id="meStartNewChainBtn" style="flex:1;">새로운 번호로 시작</button>
-            <button class="btn" id="meContinueFromThisBtn" style="flex:1;">해당 마커를 이어서 시작</button>
-          </div>
-          <div class="divider"></div>
-          <div class="muted">우클릭으로 마커를 추가할 때, “현재 체인”에 번호 순서대로 연결됩니다.</div>
+          <div class="k">비밀번호</div>
+          <input type="password" id="loginPw" placeholder="0000000001" />
+          <div class="hint" style="margin-top:8px;">인증 유지: 24시간 (localStorage)</div>
         </div>
-
+      </div>
+      <div class="modalFoot">
+        <button class="miniBtn" id="btnLoginCancel">취소</button>
+        <button class="miniBtn ok" id="btnLoginOk">로그인</button>
       </div>
     </div>
   </div>
 
-  <script>
-    "use strict";
-
-    // ===== Fixed requirements =====
-    const PASSWORD = "0000000001";
-    const AUTH_MS = 24 * 60 * 60 * 1000;
-    const LS_AUTH_KEY = "mapmode_admin_auth_v99";
-    const LS_KEY = "mapmode_state_v99";
-    const REMOTE_STATE_URL = new URL("./data/state.json", location.href);
-
-    // ===== Quick palette (must include 빨/주/노/초/파/흰/검) =====
-    const QUICK_COLORS = [
-      {name:"red",   value:"#ff5d5d"},
-      {name:"orange",value:"#ff9f43"},
-      {name:"yellow",value:"#ffd60a"},
-      {name:"green", value:"#39d98a"},
-      {name:"blue",  value:"#7cc4ff"},
-      {name:"white", value:"#ffffff"},
-      {name:"black", value:"#0a0f18"},
-    ];
-
-    // ===== Utilities =====
-    const $ = (sel) => document.querySelector(sel);
-    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-    const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
-    const now = () => Date.now();
-    const deepClone = (o) => JSON.parse(JSON.stringify(o));
-
-    function safeJsonParse(s, fallback=null){
-      try{ return JSON.parse(s); } catch(e){ return fallback; }
-    }
-
-    function downloadText(filename, text){
-      const blob = new Blob([text], {type:"application/json;charset=utf-8"});
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 300);
-    }
-
-    // ===== State schema =====
-    function defaultState(){
-      return {
-        v: "admin99",
-        updatedAt: now(),
-        logoUrl: "./../assets/logo/MAPMODELOGO2.png",
-        // Top categories (1~4): each independent with items (games)
-        topCats: [
-          { id:"top1", name:"카테고리1", items:[ {id:uid(), name:"게임1"}, {id:uid(), name:"게임2"} ] },
-          { id:"top2", name:"카테고리2", items:[ {id:uid(), name:"아이온2"} ] },
-          { id:"top3", name:"카테고리3", items:[ ] },
-          { id:"top4", name:"카테고리4", items:[ ] },
-        ],
-        // Pages (left sidebar)
-        pages: [
-          { id: uid(), name:"페이지1", url:"", gamePath:"게임1/페이지1" }
-        ],
-        currentPageId: null,
-
-        // Map config
-        map: {
-          imageUrl: "",
-          imgW: 0,
-          imgH: 0,
-          // viewport transform
-          panX: 0,
-          panY: 0,
-          zoom: 1,
-        },
-
-        // Marker categories (right)
-        markerCategories: [
-          {
-            id: uid(),
-            name: "기본",
-            color: "#7cc4ff",
-            visible: true,
-            hideNumber: false,
-            // defaults that apply to all markers in this category
-            defaults: {
-              size: 18,
-              textSize: 14,
-              weight: 800,
-              textColor: "#e7eef8",
-            }
-          }
-        ],
-        // Markers data in map coordinate space
-        markers: [
-          // {
-          //  id, pageId, catId, chainId, seq,
-          //  x,y (map coords),
-          //  name, ytDisplay, ytDesc, ytUrl,
-          // }
-        ],
-        // Per-chain control points for edges: edgeKey = `${pageId}:${chainId}:${fromId}->${toId}`
-        edges: {
-          // edgeKey: { cx, cy }  (map coords control point for quadratic curve)
-        },
-
-        // chain control: per page current chain id
-        chainByPage: {
-          // pageId: { currentChainId, continueFromMarkerId }
-        },
-
-        // UI toggles
-        ui: {
-          showAllLines: true,
-          dimOpacity: 0.3
-        }
-      };
-    }
-
-    // ===== Runtime =====
-    let state = defaultState();
-
-    // Auth
-    function isAuthed(){
-      const t = safeJsonParse(localStorage.getItem(LS_AUTH_KEY), null);
-      if(!t || !t.exp) return false;
-      return now() < t.exp;
-    }
-    function setAuth(on){
-      if(on){
-        localStorage.setItem(LS_AUTH_KEY, JSON.stringify({exp: now() + AUTH_MS}));
-      }else{
-        localStorage.removeItem(LS_AUTH_KEY);
-      }
-      renderAuth();
-      renderLockOverlay();
-    }
-    function renderAuth(){
-      const ok = isAuthed();
-      const dot = $("#authDot");
-      const text = $("#authText");
-      const loginBtn = $("#loginBtn");
-      const logoutBtn = $("#logoutBtn");
-      if(ok){
-        dot.classList.add("ok");
-        text.textContent = "관리자 인증됨";
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "";
-      }else{
-        dot.classList.remove("ok");
-        text.textContent = "관리자 잠김";
-        loginBtn.style.display = "";
-        logoutBtn.style.display = "none";
-      }
-    }
-
-    // Lock overlay behavior: still show UI but block edits
-    function requireAuthOrWarn(){
-      if(isAuthed()) return true;
-      openLoginModal();
-      return false;
-    }
-
-    // ===== Storage =====
-    function saveLocal(){
-      state.updatedAt = now();
-      localStorage.setItem(LS_KEY, JSON.stringify(state));
-      renderSaveInfo();
-    }
-    function loadLocal(){
-      const s = safeJsonParse(localStorage.getItem(LS_KEY), null);
-      if(s && typeof s === "object"){
-        state = s;
-        normalizeState();
-        onStateLoaded();
-        renderAll();
-        return true;
-      }
-      return false;
-    }
-    async function loadRemote(){
-      try{
-        const res = await fetch(REMOTE_STATE_URL.toString(), {cache:"no-store"});
-        if(!res.ok) throw new Error("HTTP " + res.status);
-        const json = await res.json();
-        if(!json || typeof json !== "object") throw new Error("Invalid JSON");
-        state = json;
-        normalizeState();
-        onStateLoaded();
-        renderAll();
-        renderSaveInfo("remote");
-        return true;
-      }catch(e){
-        renderSaveInfo("remote-fail");
-        return false;
-      }
-    }
-
-    function normalizeState(){
-      // Ensure required fields exist
-      if(!state) state = defaultState();
-      if(!state.v) state.v = "admin99";
-      if(!state.ui) state.ui = {showAllLines:true, dimOpacity:0.3};
-      if(!Array.isArray(state.topCats)) state.topCats = defaultState().topCats;
-      if(!Array.isArray(state.pages)) state.pages = [];
-      if(!state.currentPageId) state.currentPageId = (state.pages[0]?.id) || null;
-      if(!state.map) state.map = defaultState().map;
-      if(!Array.isArray(state.markerCategories) || state.markerCategories.length===0){
-        state.markerCategories = defaultState().markerCategories;
-      }
-      for(const c of state.markerCategories){
-        if(!c.defaults) c.defaults = deepClone(defaultState().markerCategories[0].defaults);
-        if(typeof c.visible !== "boolean") c.visible = true;
-        if(typeof c.hideNumber !== "boolean") c.hideNumber = false;
-        if(!c.color) c.color = "#7cc4ff";
-        if(!c.name) c.name = "카테고리";
-      }
-      if(!Array.isArray(state.markers)) state.markers = [];
-      if(!state.edges || typeof state.edges !== "object") state.edges = {};
-      if(!state.chainByPage || typeof state.chainByPage !== "object") state.chainByPage = {};
-      if(!state.logoUrl) state.logoUrl = "./../assets/logo/MAPMODELOGO2.png";
-
-      // Ensure chain tracking exists for pages
-      for(const p of state.pages){
-        if(!state.chainByPage[p.id]){
-          state.chainByPage[p.id] = { currentChainId: uid(), continueFromMarkerId: null };
-        }else{
-          if(!state.chainByPage[p.id].currentChainId) state.chainByPage[p.id].currentChainId = uid();
-        }
-      }
-      // Remove chainByPage entries for deleted pages
-      for(const k of Object.keys(state.chainByPage)){
-        if(!state.pages.some(p=>p.id===k)) delete state.chainByPage[k];
-      }
-
-      // Ensure marker pageId/catId valid
-      const catIds = new Set(state.markerCategories.map(c=>c.id));
-      const pageIds = new Set(state.pages.map(p=>p.id));
-      state.markers = state.markers.filter(m => pageIds.has(m.pageId));
-      for(const m of state.markers){
-        if(!catIds.has(m.catId)){
-          m.catId = state.markerCategories[0].id;
-        }
-        if(!m.id) m.id = uid();
-        if(!m.chainId) m.chainId = uid();
-        if(typeof m.seq !== "number") m.seq = 1;
-        if(typeof m.x !== "number") m.x = 0;
-        if(typeof m.y !== "number") m.y = 0;
-        if(!m.name) m.name = "";
-        if(m.ytDisplay==null) m.ytDisplay = "";
-        if(m.ytDesc==null) m.ytDesc = "";
-        if(m.ytUrl==null) m.ytUrl = "";
-      }
-    }
-
-    function onStateLoaded(){
-      // initialize current page
-      if(!state.currentPageId){
-        state.currentPageId = state.pages[0]?.id || null;
-      }
-      if(state.currentPageId && !state.pages.some(p=>p.id===state.currentPageId)){
-        state.currentPageId = state.pages[0]?.id || null;
-      }
-      // map image load if exists
-      if(state.pages.length && !state.currentPageId){
-        state.currentPageId = state.pages[0].id;
-      }
-      // ensure logo display
-      $("#logoUrlInput").value = state.logoUrl || "";
-      renderLogo();
-      // ensure map image based on current page url if set
-      syncMapUrlFromCurrentPage();
-    }
-
-    function renderSaveInfo(source){
-      const el = $("#saveInfo");
-      const ts = state?.updatedAt ? new Date(state.updatedAt).toLocaleString() : "-";
-      const local = !!localStorage.getItem(LS_KEY);
-      let s = `updatedAt: ${ts} · local: ${local ? "OK" : "없음"} · remote: ${REMOTE_STATE_URL.pathname}`;
-      if(source==="remote") s += " · (remote 로드됨)";
-      if(source==="remote-fail") s += " · (remote 로드 실패)";
-      el.textContent = s;
-    }
-
-    // ===== UI: Logo =====
-    function renderLogo(){
-      const img = $("#logoImg");
-      const url = state.logoUrl || "";
-      img.src = url || "";
-      img.onerror = () => { img.removeAttribute("src"); };
-    }
-
-    // ===== Pages =====
-    function addPage(){
-      if(!requireAuthOrWarn()) return;
-      const id = uid();
-      const n = state.pages.length + 1;
-      state.pages.push({ id, name: `페이지${n}`, url:"", gamePath:`게임1/페이지${n}` });
-      state.chainByPage[id] = { currentChainId: uid(), continueFromMarkerId: null };
-      state.currentPageId = id;
-      saveLocal();
-      renderAll();
-      syncMapUrlFromCurrentPage();
-    }
-
-    function deletePage(pageId){
-      if(!requireAuthOrWarn()) return;
-      state.pages = state.pages.filter(p => p.id !== pageId);
-      state.markers = state.markers.filter(m => m.pageId !== pageId);
-      for(const k of Object.keys(state.edges)){
-        if(k.startsWith(pageId + ":")) delete state.edges[k];
-      }
-      delete state.chainByPage[pageId];
-      if(state.currentPageId === pageId){
-        state.currentPageId = state.pages[0]?.id || null;
-      }
-      saveLocal();
-      renderAll();
-      syncMapUrlFromCurrentPage();
-    }
-
-    function updatePage(pageId, patch){
-      if(!requireAuthOrWarn()) return;
-      const p = state.pages.find(p=>p.id===pageId);
-      if(!p) return;
-      Object.assign(p, patch);
-      saveLocal();
-      renderAll();
-      syncMapUrlFromCurrentPage();
-    }
-
-    function setCurrentPage(pageId){
-      if(!pageId) return;
-      state.currentPageId = pageId;
-      // reset selection for safety
-      selectedMarkerId = null;
-      draggingMode = null;
-      saveLocal();
-      renderAll();
-      syncMapUrlFromCurrentPage();
-    }
-
-    function syncMapUrlFromCurrentPage(){
-      const p = state.pages.find(p=>p.id===state.currentPageId);
-      const url = p?.url || "";
-      if(url && state.map.imageUrl !== url){
-        state.map.imageUrl = url;
-        loadMapImage(url);
-      }else if(!url){
-        // keep current image if any, do not clear (safe)
-        if(!state.map.imageUrl){
-          mapImg = null;
-          state.map.imgW = 0; state.map.imgH = 0;
-        }
-        redraw();
-      }
-      renderWhereAmI();
-    }
-
-    function renderWhereAmI(){
-      const el = $("#whereAmI");
-      const p = state.pages.find(p=>p.id===state.currentPageId);
-      el.textContent = "현재: " + (p?.gamePath || "-");
-    }
-
-    // ===== Top categories editor =====
-    function renderTopCatsPreview(){
-      const wrap = $("#topCatsPreview");
-      wrap.innerHTML = "";
-      state.topCats.forEach((cat, idx)=>{
-        const c = document.createElement("div");
-        c.className = "card";
-        c.style.padding = "10px";
-        c.innerHTML = `
-          <div class="row" style="justify-content:space-between;">
-            <div><span class="muted">카테고리${idx+1}</span> <span style="font-weight:900;">${escapeHtml(cat.name||("카테고리"+(idx+1)))}</span></div>
-            <div class="muted mono">${cat.items?.length||0}</div>
-          </div>
-          <div class="divider"></div>
-          <div class="row" style="gap:6px;">
-            ${(cat.items||[]).slice(0,8).map(it=>`<span class="chip" style="cursor:default;"><span class="swatch" style="opacity:.0;border:none;"></span>${escapeHtml(it.name)}</span>`).join("")}
-            ${(cat.items||[]).length>8 ? `<span class="muted">+${(cat.items||[]).length-8}</span>` : ""}
-          </div>
-        `;
-        wrap.appendChild(c);
-      });
-    }
-
-    function openTopCatsModal(){
-      if(!requireAuthOrWarn()) return;
-      const back = $("#topCatsBack");
-      const editor = $("#topCatsEditor");
-      const temp = deepClone(state.topCats);
-
-      editor.innerHTML = "";
-      temp.forEach((cat, idx)=>{
-        const block = document.createElement("div");
-        block.className = "card";
-        block.innerHTML = `
-          <div class="row nowrap" style="justify-content:space-between;">
-            <div class="row grow" style="gap:10px;">
-              <div class="muted" style="min-width:92px;">카테고리${idx+1}</div>
-              <input class="inp grow" data-k="name" value="${escapeAttr(cat.name||("카테고리"+(idx+1)))}" />
-            </div>
-            <button class="btn tiny" data-act="addItem">항목 추가</button>
-          </div>
-          <div class="divider"></div>
-          <div class="list" data-list="items"></div>
-        `;
-        const list = block.querySelector('[data-list="items"]');
-
-        function renderItems(){
-          list.innerHTML = "";
-          (cat.items||[]).forEach((it)=>{
-            const r = document.createElement("div");
-            r.className = "row nowrap";
-            r.innerHTML = `
-              <input class="inp grow" value="${escapeAttr(it.name||"")}"/>
-              <button class="btn tiny danger" data-act="del">삭제</button>
-            `;
-            const inp = r.querySelector("input");
-            inp.addEventListener("input", ()=>{
-              it.name = inp.value;
-            });
-            r.querySelector('[data-act="del"]').addEventListener("click", ()=>{
-              cat.items = cat.items.filter(x=>x.id!==it.id);
-              renderItems();
-            });
-            list.appendChild(r);
-          });
-          if((cat.items||[]).length===0){
-            const empty = document.createElement("div");
-            empty.className = "muted";
-            empty.textContent = "항목이 없습니다. '항목 추가'를 눌러 추가하세요.";
-            list.appendChild(empty);
-          }
-        }
-
-        block.querySelector('input[data-k="name"]').addEventListener("input", (e)=>{
-          cat.name = e.target.value;
-        });
-        block.querySelector('[data-act="addItem"]').addEventListener("click", ()=>{
-          cat.items = cat.items || [];
-          cat.items.push({id:uid(), name:`게임${(cat.items.length+1)}`});
-          renderItems();
-        });
-
-        renderItems();
-        editor.appendChild(block);
-      });
-
-      $("#topCatsSaveBtn").onclick = ()=>{
-        state.topCats = temp;
-        saveLocal();
-        renderTopCatsPreview();
-        back.style.display = "none";
-      };
-      $("#topCatsCloseBtn").onclick = ()=> back.style.display = "none";
-      back.style.display = "flex";
-    }
-
-    // ===== Marker categories =====
-    function addMarkerCategory(){
-      if(!requireAuthOrWarn()) return;
-      const n = state.markerCategories.length + 1;
-      const base = state.markerCategories[0];
-      state.markerCategories.push({
-        id: uid(),
-        name: `카테고리${n}`,
-        color: QUICK_COLORS[(n-1)%QUICK_COLORS.length].value,
-        visible: true,
-        hideNumber: false,
-        defaults: deepClone(base.defaults)
-      });
-      saveLocal();
-      renderAll();
-    }
-
-    function removeMarkerCategory(catId){
-      if(!requireAuthOrWarn()) return;
-      if(state.markerCategories.length <= 1) return;
-      const keepId = state.markerCategories[0].id;
-      state.markerCategories = state.markerCategories.filter(c=>c.id!==catId);
-      state.markers.forEach(m=>{
-        if(m.catId===catId) m.catId = keepId;
-      });
-      saveLocal();
-      renderAll();
-    }
-
-    function updateMarkerCategory(catId, patch){
-      if(!requireAuthOrWarn()) return;
-      const c = state.markerCategories.find(c=>c.id===catId);
-      if(!c) return;
-      Object.assign(c, patch);
-      saveLocal();
-      renderAll();
-    }
-
-    function renderMarkerCats(){
-      const wrap = $("#markerCatList");
-      wrap.innerHTML = "";
-
-      // "전체" toggle
-      const all = document.createElement("div");
-      all.className = "row";
-      const allVisible = state.markerCategories.every(c=>c.visible);
-      all.innerHTML = `
-        <div class="chip ${allVisible?"on":""}" id="allToggle">
-          <span class="swatch" style="background:${allVisible ? "#7cc4ff" : "rgba(255,255,255,.22)"}"></span>
-          전체
+  <div class="modalBack" id="modalLogoBack">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modalHead">
+        <div class="h">로고 URL 설정</div>
+        <button class="miniBtn" id="btnLogoClose">닫기</button>
+      </div>
+      <div class="modalBody one">
+        <div class="card">
+          <div class="k">로고 이미지 URL</div>
+          <input type="url" id="logoUrlInput" placeholder="예: /assets/logo/MAPMODELOGO2.png" />
+          <div class="hint" style="margin-top:8px;">기본 로고: <span class="pillBadge">/assets/logo/MAPMODELOGO2.png</span></div>
         </div>
-        <button class="btn tiny" id="allNumbersToggle">${state.markerCategories.every(c=>c.hideNumber) ? "숫자 보이기" : "숫자 가리기"}</button>
-      `;
-      wrap.appendChild(all);
+      </div>
+      <div class="modalFoot">
+        <button class="miniBtn" id="btnLogoCancel">취소</button>
+        <button class="miniBtn ok" id="btnLogoSave">저장</button>
+      </div>
+    </div>
+  </div>
 
-      all.querySelector("#allToggle").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        const next = !allVisible;
-        state.markerCategories.forEach(c=>c.visible = next);
-        saveLocal();
-        renderAll();
-      };
-      all.querySelector("#allNumbersToggle").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        const next = !state.markerCategories.every(c=>c.hideNumber);
-        state.markerCategories.forEach(c=>c.hideNumber = next);
-        saveLocal();
-        renderAll();
-      };
-
-      const line = document.createElement("div");
-      line.className = "divider";
-      wrap.appendChild(line);
-
-      state.markerCategories.forEach((c)=>{
-        const row = document.createElement("div");
-        row.className = "card";
-        row.style.padding = "10px";
-        row.innerHTML = `
-          <div class="row" style="justify-content:space-between;">
-            <div class="row grow" style="gap:8px;">
-              <div class="chip ${c.visible?"on":""}" data-act="toggle">
-                <span class="swatch" style="background:${escapeAttr(c.color)}"></span>
-                <span style="font-weight:900;">${escapeHtml(c.name)}</span>
-              </div>
-              <div class="muted mono">${countMarkersByCat(c.id)}</div>
+  <div class="modalBack" id="modalCatSubBack">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modalHead">
+        <div class="h" id="catSubTitle">카테고리 하위 항목</div>
+        <button class="miniBtn" id="btnCatSubClose">닫기</button>
+      </div>
+      <div class="modalBody one">
+        <div class="card">
+          <div class="row" style="justify-content:space-between; align-items:flex-end;">
+            <div class="col" style="flex:1;">
+              <div class="k">하위 항목 추가</div>
+              <input type="text" id="catSubNewName" placeholder="예: 게임1" />
             </div>
-            <div class="miniTools">
-              <button class="btn tiny" data-act="num">${c.hideNumber ? "숫자 보이기" : "숫자 가리기"}</button>
-              <button class="btn tiny danger" data-act="del">삭제</button>
-            </div>
+            <button class="miniBtn ok" id="btnCatSubAdd">+ 추가</button>
           </div>
-        `;
-        row.querySelector('[data-act="toggle"]').onclick = ()=>{
-          if(!requireAuthOrWarn()) return;
-          c.visible = !c.visible;
-          saveLocal();
-          renderAll();
-        };
-        row.querySelector('[data-act="num"]').onclick = ()=>{
-          if(!requireAuthOrWarn()) return;
-          c.hideNumber = !c.hideNumber;
-          saveLocal();
-          renderAll();
-        };
-        row.querySelector('[data-act="del"]').onclick = ()=>{
-          removeMarkerCategory(c.id);
-        };
-        wrap.appendChild(row);
-      });
+          <div class="sep"></div>
+          <div class="stack" id="catSubList"></div>
+        </div>
+      </div>
+      <div class="modalFoot">
+        <button class="miniBtn" id="btnCatSubDone">완료</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modalBack" id="modalCatColorBack">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modalHead">
+        <div class="h">카테고리 / 색상 편집</div>
+        <button class="miniBtn" id="btnCatColorClose">닫기</button>
+      </div>
+      <div class="modalBody">
+        <div class="card">
+          <div class="k">카테고리 목록</div>
+          <div class="hint">추가/삭제 및 색상 지정</div>
+          <div class="sep"></div>
+          <div class="stack" id="catColorList"></div>
+          <div class="sep"></div>
+          <div class="row" style="justify-content:flex-end;">
+            <button class="miniBtn ok" id="btnCatColorAdd2">+ 카테고리 추가</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="k">빠른 색상표</div>
+          <div class="palette" id="palette2"></div>
+          <div class="sep"></div>
+          <div class="k">RGB / HEX</div>
+          <input type="text" id="colorHexInput" placeholder="#ffffff 또는 rgb(255,255,255)" />
+          <div class="hint" style="margin-top:8px;">목록에서 카테고리를 선택한 다음, 색상을 클릭하거나 직접 입력하세요.</div>
+        </div>
+      </div>
+      <div class="modalFoot">
+        <button class="miniBtn" id="btnCatColorCancel">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modalBack" id="modalMarkerEditBack">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modalHead">
+        <div class="h">마커 편집</div>
+        <button class="miniBtn" id="btnEditClose">닫기</button>
+      </div>
+      <div class="modalBody">
+        <div class="card">
+          <div class="k">마커 이름</div>
+          <input type="text" id="mName" placeholder="예: 1번 마을 입구" />
+          <div class="k" style="margin-top:10px;">카테고리</div>
+          <select id="mCat"></select>
+
+          <div class="sep"></div>
+
+          <div class="k">유튜브 표시명</div>
+          <input type="text" id="mYtTitle" placeholder="예: 공략 영상" />
+
+          <div class="k" style="margin-top:10px;">유튜브 링크 URL</div>
+          <input type="url" id="mYtUrl" placeholder="https://www.youtube.com/watch?v=..." />
+
+          <div class="k" style="margin-top:10px;">유튜브 설명</div>
+          <textarea id="mYtDesc" placeholder="설명 텍스트"></textarea>
+
+          <div class="sep"></div>
+
+          <div class="k">마커 원 크기 (px 1~100)</div>
+          <input type="number" id="mSize" min="1" max="100" step="1" />
+          <div class="k" style="margin-top:10px;">마커 텍스트 크기</div>
+          <input type="number" id="mTextSize" min="6" max="120" step="1" />
+
+          <div class="k" style="margin-top:10px;">텍스트 굵기</div>
+          <select id="mWeight">
+            <option value="500">500</option>
+            <option value="600">600</option>
+            <option value="700">700</option>
+            <option value="800">800</option>
+            <option value="900">900</option>
+          </select>
+
+          <div class="k" style="margin-top:10px;">글씨 색상</div>
+          <input type="text" id="mTextColor" placeholder="#e7eef8" />
+          <div class="palette" id="editPalette" style="margin-top:10px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="k">번호 제어</div>
+          <div class="hint">새로운 번호로 시작: 다음 우클릭 마커가 1번부터 시작합니다. · 해당 마커를 이어서 시작: 이 마커 다음 번호로 이어집니다.</div>
+          <div class="sep"></div>
+          <div class="row wrap">
+            <button class="miniBtn" id="btnChainNew">새로운 번호로 시작</button>
+            <button class="miniBtn" id="btnChainContinue">해당 마커를 이어서 시작</button>
+          </div>
+          <div class="sep"></div>
+          <div class="row wrap">
+            <button class="miniBtn danger" id="btnMarkerDelete">삭제</button>
+          </div>
+          <div class="sep"></div>
+          <div class="k">안내</div>
+          <div class="hint">
+            - 마커 이름 입력 시 유튜브 표시명 칸에도 동일하게 자동 반영됩니다.<br>
+            - 유튜브 표시명만 수정하면 마커 이름은 유지됩니다.<br>
+            - 원 크기 변경 시 텍스트 크기도 같은 비율로 자동 조절됩니다.
+          </div>
+        </div>
+      </div>
+      <div class="modalFoot">
+        <button class="miniBtn" id="btnEditCancel">닫기</button>
+        <button class="miniBtn ok" id="btnEditSave">저장</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================
+   FIXED CONSTANTS
+========================= */
+const LS_AUTH_KEY = "mapmode_admin_auth_v99";
+const LS_KEY      = "mapmode_state_v99";
+const PASSWORD    = "0000000001";
+const AUTH_MS     = 24 * 60 * 60 * 1000;
+
+const REMOTE_STATE_URL = new URL("./data/state.json", location.href); // ✅ fixed
+const DEFAULT_LOGO_URL = "/assets/logo/MAPMODELOGO2.png";
+
+/* =========================
+   UTIL
+========================= */
+const now = () => Date.now();
+const uid = (p="id") => p + "_" + Math.random().toString(16).slice(2) + "_" + Math.random().toString(16).slice(2);
+const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+
+function safeJSONParse(s, fallback){
+  try{ return JSON.parse(s); }catch(e){ return fallback; }
+}
+function downloadText(filename, text){
+  const blob = new Blob([text], {type:"application/json;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+function confirmDanger(msg){
+  return window.confirm(msg);
+}
+
+function parseColor(str, fallback="#ffffff"){
+  if(!str) return fallback;
+  str = String(str).trim();
+  if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(str)) return str;
+  const m = str.match(/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i);
+  if(m){
+    const r=clamp(+m[1],0,255), g=clamp(+m[2],0,255), b=clamp(+m[3],0,255);
+    return "#" + [r,g,b].map(v=>v.toString(16).padStart(2,"0")).join("");
+  }
+  return fallback;
+}
+function withAlpha(hex, a){
+  hex = parseColor(hex, "#ffffff");
+  const h = hex.slice(1);
+  const r = parseInt(h.length===3? h[0]+h[0] : h.slice(0,2),16);
+  const g = parseInt(h.length===3? h[1]+h[1] : h.slice(2,4),16);
+  const b = parseInt(h.length===3? h[2]+h[2] : h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+const QUICK_COLORS = [
+  {name:"빨", c:"#ff3b30"},
+  {name:"주", c:"#ff9f0a"},
+  {name:"노", c:"#ffd60a"},
+  {name:"초", c:"#34c759"},
+  {name:"파", c:"#0a84ff"},
+  {name:"흰", c:"#ffffff"},
+  {name:"검", c:"#000000"},
+];
+
+/* =========================
+   STATE SHAPE (admin/index shared)
+========================= */
+function defaultState(){
+  const cat = (i)=>({
+    id: "cat"+i,
+    name: "카테고리 " + i,
+    items: [
+      { id: uid("game"), name: "게임1" },
+    ],
+    activeItemId: null
+  });
+
+  return {
+    version: 1,
+    meta: {
+      createdAt: now(),
+      updatedAt: now(),
+      editor: "MAPMODE_ADMIN",
+      note: "state.json shared by /aion2/admin.html and /aion2/index.html"
+    },
+
+    settings: {
+      logoUrl: DEFAULT_LOGO_URL,
+      googleLoginEnabled: false,   // 구조만
+      paymentEnabled: false,       // 구조만
+      hideAllLines: false
+    },
+
+    topCategories: [cat(1), cat(2), cat(3), cat(4)],
+    activeTopCategoryId: "cat1",
+
+    // pages are scoped by top category
+    pagesByTopCategory: {
+      cat1: [],
+      cat2: [],
+      cat3: [],
+      cat4: []
+    },
+
+    // marker categories (global)
+    markerCategories: [
+      { id:"all", name:"전체", color:"#7cc4ff", enabled:true, hideNumber:false, locked:true }
+    ],
+
+    // per page graph data
+    pageData: {
+      // [pageId]: { markers:[], edges:[], chain:{ nextChainId:1, nextSeqByChain:{}, continueFromMarkerId:null } }
     }
+  };
+}
 
-    function countMarkersByCat(catId){
-      return state.markers.filter(m=>m.pageId===state.currentPageId && m.catId===catId).length;
-    }
+function ensurePageData(st, pageId){
+  if(!st.pageData[pageId]){
+    st.pageData[pageId] = {
+      markers: [],
+      edges: [],
+      chain: { nextChainId: 1, nextSeqByChain: {}, continueFromMarkerId: null }
+    };
+  }
+  return st.pageData[pageId];
+}
 
-    // ===== Category editor modal =====
-    function openCatEditor(){
-      if(!requireAuthOrWarn()) return;
-      const back = $("#catEditorBack");
-      const list = $("#catEditorList");
-      const palette = $("#catEditorPalette");
-      const tempCats = deepClone(state.markerCategories);
+function touchState(){
+  STATE.meta.updatedAt = now();
+}
 
-      palette.innerHTML = "";
-      QUICK_COLORS.forEach(c=>{
-        const b = document.createElement("span");
-        b.className = "pbtn";
-        b.style.background = c.value;
-        b.title = c.name;
-        palette.appendChild(b);
-      });
+function saveLocal(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(STATE));
+  }catch(e){}
+}
 
-      function renderList(){
-        list.innerHTML = "";
-        tempCats.forEach((c)=>{
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `
-            <div class="row nowrap" style="justify-content:space-between;">
-              <div class="row grow" style="gap:10px;">
-                <div class="swatch" style="width:14px;height:14px;border-radius:5px;background:${escapeAttr(c.color)}"></div>
-                <input class="inp grow" value="${escapeAttr(c.name)}" />
-              </div>
-              <div class="miniTools">
-                <input class="inp" style="width:120px;" value="${escapeAttr(c.color)}" />
-                <button class="btn tiny danger" data-act="del">삭제</button>
-              </div>
-            </div>
-            <div class="divider"></div>
-            <div class="row">
-              <div class="muted" style="min-width:120px;">빠른 색상</div>
-              <div class="palette" data-pal></div>
-            </div>
-          `;
-          const nameInp = card.querySelectorAll("input")[0];
-          const colInp = card.querySelectorAll("input")[1];
-          const pal = card.querySelector("[data-pal]");
+async function fetchRemoteState(){
+  try{
+    const res = await fetch(REMOTE_STATE_URL.href, {cache:"no-store"});
+    if(!res.ok) return null;
+    const txt = await res.text();
+    const j = safeJSONParse(txt, null);
+    return j;
+  }catch(e){
+    return null;
+  }
+}
 
-          nameInp.addEventListener("input", ()=> c.name = nameInp.value);
-          colInp.addEventListener("input", ()=> {
-            c.color = colInp.value.trim();
-            card.querySelector(".swatch").style.background = c.color || "rgba(255,255,255,.2)";
-          });
+function mergeStatePreferNewer(local, remote){
+  // Keep whichever has newer meta.updatedAt; if missing, prefer local.
+  const lu = local?.meta?.updatedAt || 0;
+  const ru = remote?.meta?.updatedAt || 0;
+  if(ru > lu) return remote;
+  return local;
+}
 
-          pal.innerHTML = "";
-          QUICK_COLORS.forEach(pc=>{
-            const pb = document.createElement("span");
-            pb.className = "pbtn";
-            pb.style.background = pc.value;
-            pb.title = pc.name;
-            pb.onclick = ()=>{
-              c.color = pc.value;
-              colInp.value = c.color;
-              card.querySelector(".swatch").style.background = c.color;
-            };
-            pal.appendChild(pb);
-          });
+/* =========================
+   AUTH
+========================= */
+function getAuth(){
+  const j = safeJSONParse(localStorage.getItem(LS_AUTH_KEY), null);
+  if(!j || !j.exp) return {ok:false, exp:0};
+  if(now() > j.exp) return {ok:false, exp:0};
+  return {ok:true, exp:j.exp};
+}
+function setAuth(){
+  localStorage.setItem(LS_AUTH_KEY, JSON.stringify({exp: now() + AUTH_MS}));
+}
+function clearAuth(){
+  localStorage.removeItem(LS_AUTH_KEY);
+}
 
-          card.querySelector('[data-act="del"]').onclick = ()=>{
-            if(tempCats.length<=1) return;
-            const idx = tempCats.findIndex(x=>x.id===c.id);
-            if(idx>=0) tempCats.splice(idx,1);
-            renderList();
-          };
+/* =========================
+   GLOBALS
+========================= */
+let STATE = defaultState();
 
-          list.appendChild(card);
-        });
-      }
+let ACTIVE_TOP_CAT_ID = "cat1";
+let ACTIVE_PAGE_ID = null;
 
-      $("#catEditorAddBtn").onclick = ()=>{
-        const n = tempCats.length+1;
-        tempCats.push({
-          id: uid(),
-          name: `카테고리${n}`,
-          color: QUICK_COLORS[(n-1)%QUICK_COLORS.length].value,
-          visible: true,
-          hideNumber: false,
-          defaults: deepClone(tempCats[0].defaults)
-        });
-        renderList();
-      };
+let SELECTED_MARKER_ID = null;
+let SELECTED_EDGE_ID = null;
 
-      $("#catEditorSaveBtn").onclick = ()=>{
-        // Merge back: preserve marker cat ids mapping
-        const oldCats = state.markerCategories.map(c=>c.id);
-        const newCats = tempCats.map(c=>c.id);
-        // if any old cat removed, reassign those markers to first new cat
-        const keepId = newCats[0];
-        state.markers.forEach(m=>{
-          if(!newCats.includes(m.catId)) m.catId = keepId;
-        });
-        state.markerCategories = tempCats;
-        saveLocal();
-        renderAll();
-        back.style.display = "none";
-      };
-      $("#catEditorCloseBtn").onclick = ()=> back.style.display = "none";
+let UI_SELECTED_MKCAT_FOR_COLOR = null; // in cat/color modal
+let UI_ACTIVE_CAT_SUB_ID = null; // top category manage
 
-      renderList();
-      back.style.display = "flex";
-    }
+/* =========================
+   DOM
+========================= */
+const $ = (q,el=document)=>el.querySelector(q);
+const $$ = (q,el=document)=>Array.from(el.querySelectorAll(q));
 
-    // ===== Marker editor modal =====
-    let markerEditorTargetId = null;
+const elCatTabs = $("#catTabs");
+const elLeftTitleBadge = $("#leftTitleBadge");
+const elPageCountSub = $("#pageCountSub");
+const elPageList = $("#pageList");
 
-    function openMarkerEditor(markerId){
-      if(!requireAuthOrWarn()) return;
-      const m = state.markers.find(x=>x.id===markerId && x.pageId===state.currentPageId);
-      if(!m) return;
+const elToggleGoogle = $("#toggleGoogle");
+const elTogglePay = $("#togglePay");
 
-      markerEditorTargetId = m.id;
+const elAuthDot = $("#authDot");
+const elAuthText = $("#authText");
+const elBtnLogin = $("#btnLogin");
 
-      const catSel = $("#meCat");
-      catSel.innerHTML = "";
-      state.markerCategories.forEach(c=>{
-        const opt = document.createElement("option");
-        opt.value = c.id;
-        opt.textContent = c.name;
-        catSel.appendChild(opt);
-      });
+const elLogoImg = $("#logoImg");
+const elLogoFallback = $("#logoFallback");
 
-      $("#meName").value = m.name || "";
-      $("#meCat").value = m.catId;
-      $("#meYtDisplay").value = m.ytDisplay || "";
-      $("#meYtUrl").value = m.ytUrl || "";
-      $("#meYtDesc").value = m.ytDesc || "";
+const elMkCatList = $("#mkCatList");
+const elNumHideList = $("#numHideList");
+const elMkCatInfo = $("#mkCatInfo");
 
-      const cat = state.markerCategories.find(c=>c.id===m.catId) || state.markerCategories[0];
-      $("#meSize").value = cat.defaults.size;
-      $("#meTextSize").value = cat.defaults.textSize;
-      $("#meWeight").value = String(cat.defaults.weight);
-      $("#meTextColor").value = cat.defaults.textColor;
+const elSelName = $("#selName");
+const elSelMeta = $("#selMeta");
+const elSelBadge = $("#selBadge");
 
-      $("#meChainInfo").textContent = `chainId: ${m.chainId} · seq: ${m.seq}`;
+const elYtTitle = $("#ytTitle");
+const elYtDesc = $("#ytDesc");
+const elYtUrl = $("#ytUrl");
 
-      // palette
-      const pal = $("#mePalette");
-      pal.innerHTML = "";
-      QUICK_COLORS.forEach(pc=>{
-        const b = document.createElement("span");
-        b.className = "pbtn";
-        b.style.background = pc.value;
-        b.title = pc.name;
-        b.onclick = ()=> { $("#meTextColor").value = pc.value; };
-        pal.appendChild(b);
-      });
+/* =========================
+   INIT LOAD
+========================= */
+(async function init(){
+  // 1) local
+  const local = safeJSONParse(localStorage.getItem(LS_KEY), null);
 
-      // linkage rule: name -> ytDisplay unless user changed ytDisplay separately
-      let ytTouched = false;
-      $("#meYtDisplay").addEventListener("input", ()=> ytTouched = true, {once:true});
-      $("#meName").addEventListener("input", ()=>{
-        if(!ytTouched){
-          $("#meYtDisplay").value = $("#meName").value;
-        }
-      });
+  // 2) remote
+  const remote = await fetchRemoteState();
 
-      $("#markerEditorSaveBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        const mm = state.markers.find(x=>x.id===markerEditorTargetId);
-        if(!mm) return;
+  // 3) choose
+  if(local && remote){
+    STATE = mergeStatePreferNewer(local, remote);
+  }else if(remote){
+    STATE = remote;
+  }else if(local){
+    STATE = local;
+  }else{
+    STATE = defaultState();
+  }
 
-        const newCatId = $("#meCat").value;
-        const oldCatId = mm.catId;
+  // 4) normalize
+  normalizeState();
+  ACTIVE_TOP_CAT_ID = STATE.activeTopCategoryId || "cat1";
+  ensureBuckets();
+  if(!ACTIVE_PAGE_ID){
+    const pages = pagesOfActiveTop();
+    ACTIVE_PAGE_ID = pages[0]?.id || null;
+  }
 
-        mm.name = $("#meName").value;
-        mm.catId = newCatId;
-        mm.ytDisplay = $("#meYtDisplay").value;
-        mm.ytUrl = $("#meYtUrl").value;
-        mm.ytDesc = $("#meYtDesc").value;
+  // 5) render
+  renderAll();
+  setupCanvas();
+  startTicker();
+})();
 
-        // Apply style changes to category defaults (category-based consistency requirement)
-        const c = state.markerCategories.find(c=>c.id===newCatId);
-        if(c){
-          c.defaults.size = clamp(parseInt($("#meSize").value || c.defaults.size,10), 1, 100);
-          c.defaults.textSize = clamp(parseInt($("#meTextSize").value || c.defaults.textSize,10), 6, 80);
-          c.defaults.weight = parseInt($("#meWeight").value || c.defaults.weight,10);
-          c.defaults.textColor = ($("#meTextColor").value || c.defaults.textColor).trim();
-        }
+function ensureBuckets(){
+  const keys = ["cat1","cat2","cat3","cat4"];
+  if(!STATE.pagesByTopCategory) STATE.pagesByTopCategory = {};
+  keys.forEach(k=>{
+    if(!Array.isArray(STATE.pagesByTopCategory[k])) STATE.pagesByTopCategory[k] = [];
+  });
+  if(!Array.isArray(STATE.topCategories) || STATE.topCategories.length!==4){
+    // hard reset to 4 cats while preserving pages bucket if possible
+    const prev = STATE.pagesByTopCategory;
+    STATE.topCategories = [1,2,3,4].map(i=>({id:"cat"+i, name:"카테고리 "+i, items:[{id:uid("game"), name:"게임1"}], activeItemId:null}));
+    STATE.pagesByTopCategory = prev || {cat1:[],cat2:[],cat3:[],cat4:[]};
+  }
+  if(!Array.isArray(STATE.markerCategories)) STATE.markerCategories = [{id:"all", name:"전체", color:"#7cc4ff", enabled:true, hideNumber:false, locked:true}];
+  if(!STATE.pageData) STATE.pageData = {};
+}
 
-        // If moved category, sync moved marker to new category chain numbering remains same (do not change)
-        // Category color consistency is by category itself; marker draws using category color.
+function normalizeState(){
+  if(!STATE || typeof STATE!=="object") STATE = defaultState();
+  if(!STATE.settings) STATE.settings = defaultState().settings;
+  if(!STATE.meta) STATE.meta = defaultState().meta;
+  ensureBuckets();
 
-        saveLocal();
-        renderAll();
-        $("#markerEditorBack").style.display = "none";
-      };
+  // Ensure markerCategories has "all"
+  if(!STATE.markerCategories.find(x=>x.id==="all")){
+    STATE.markerCategories.unshift({ id:"all", name:"전체", color:"#7cc4ff", enabled:true, hideNumber:false, locked:true });
+  }
+  // Ensure active top category exists
+  const active = STATE.activeTopCategoryId || "cat1";
+  const exists = STATE.topCategories.some(c=>c.id===active);
+  STATE.activeTopCategoryId = exists ? active : "cat1";
 
-      $("#meStartNewChainBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        const pageId = state.currentPageId;
-        state.chainByPage[pageId].currentChainId = uid();
-        state.chainByPage[pageId].continueFromMarkerId = null;
-        saveLocal();
-        renderAll();
-        $("#meChainInfo").textContent = `chainId: ${state.chainByPage[pageId].currentChainId} · seq: (new start)`;
-      };
+  // Default logo
+  if(!STATE.settings.logoUrl) STATE.settings.logoUrl = DEFAULT_LOGO_URL;
 
-      $("#meContinueFromThisBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        const pageId = state.currentPageId;
-        state.chainByPage[pageId].currentChainId = mm.chainId;
-        state.chainByPage[pageId].continueFromMarkerId = mm.id;
-        saveLocal();
-        renderAll();
-        $("#meChainInfo").textContent = `chainId: ${mm.chainId} · seq: (continue from seq ${mm.seq})`;
-      };
+  touchState();
+  saveLocal();
+}
 
-      $("#markerEditorCloseBtn").onclick = ()=> $("#markerEditorBack").style.display = "none";
-      $("#markerEditorBack").style.display = "flex";
-    }
+/* =========================
+   RENDER
+========================= */
+function renderAll(){
+  renderAuthBadge();
+  renderLogo();
+  renderTopCats();
+  renderToggles();
+  renderPages();
+  renderMarkerCats();
+  renderNumHideList();
+  renderSelectedInfo();
+  renderYouTubePanel();
+  draw();
+}
 
-    // ===== Selected marker + dim set =====
-    let selectedMarkerId = null;
-    const dimSet = new Set(); // runtime only (as requested: click toggles)
+function renderAuthBadge(){
+  const a = getAuth();
+  elAuthDot.classList.toggle("ok", a.ok);
+  elAuthText.textContent = a.ok ? `관리자: 인증됨` : `관리자: 미인증`;
+  elBtnLogin.textContent = a.ok ? "로그아웃" : "관리자 로그인";
+}
 
-    function selectMarker(id){
-      selectedMarkerId = id;
-      renderSelectedPanel();
+function renderLogo(){
+  const url = STATE.settings.logoUrl || DEFAULT_LOGO_URL;
+  elLogoImg.onload = ()=>{
+    elLogoImg.style.display = "block";
+    elLogoFallback.style.display = "none";
+  };
+  elLogoImg.onerror = ()=>{
+    elLogoImg.style.display = "none";
+    elLogoFallback.style.display = "flex";
+  };
+  elLogoImg.src = url;
+}
+
+function renderToggles(){
+  elToggleGoogle.checked = !!STATE.settings.googleLoginEnabled;
+  elTogglePay.checked = !!STATE.settings.paymentEnabled;
+}
+
+function renderTopCats(){
+  elCatTabs.innerHTML = "";
+  STATE.topCategories.forEach((cat, idx)=>{
+    const btn = document.createElement("button");
+    btn.className = "tab" + (cat.id===ACTIVE_TOP_CAT_ID ? " active" : "");
+    btn.innerHTML = `<span>${cat.name || ("카테고리 "+(idx+1))}</span><span class="pill">${(cat.items?.length||0)}개</span>`;
+    btn.addEventListener("click", ()=>{
+      ACTIVE_TOP_CAT_ID = cat.id;
+      STATE.activeTopCategoryId = ACTIVE_TOP_CAT_ID;
+      // switch active page
+      const pages = pagesOfActiveTop();
+      ACTIVE_PAGE_ID = pages[0]?.id || null;
+      SELECTED_MARKER_ID = null;
+      SELECTED_EDGE_ID = null;
+      touchState(); saveLocal();
       renderAll();
-    }
-
-    function toggleDim(id){
-      if(dimSet.has(id)) dimSet.delete(id);
-      else dimSet.add(id);
-      renderAll();
-    }
-
-    function renderSelectedPanel(){
-      const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
-      const el = $("#selInfo");
-      if(!m){
-        el.textContent = "선택 마커: -";
-        $("#ytDisplayInput").value = "";
-        $("#ytDescInput").value = "";
-        $("#ytUrlInput").value = "";
-        return;
-      }
-      el.textContent = `선택 마커: #${m.seq} ${m.name ? ("· "+m.name) : ""}`;
-      $("#ytDisplayInput").value = m.ytDisplay || m.name || "";
-      $("#ytDescInput").value = m.ytDesc || "";
-      $("#ytUrlInput").value = m.ytUrl || "";
-    }
-
-    // ===== Canvas / Map rendering =====
-    const cv = $("#cv");
-    const ctx = cv.getContext("2d");
-    let dpr = 1;
-
-    let mapImg = null;
-    let mapImgReady = false;
-
-    function resizeCanvas(){
-      const rect = cv.getBoundingClientRect();
-      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      cv.width = Math.floor(rect.width * dpr);
-      cv.height = Math.floor(rect.height * dpr);
-      ctx.setTransform(1,0,0,1,0,0);
-      redraw();
-    }
-    window.addEventListener("resize", resizeCanvas);
-
-    function loadMapImage(url){
-      if(!url){ mapImg=null; mapImgReady=false; redraw(); return; }
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = ()=>{
-        mapImg = img;
-        mapImgReady = true;
-        state.map.imgW = img.naturalWidth || img.width;
-        state.map.imgH = img.naturalHeight || img.height;
-        // Fit image on first load
-        fitMapToView();
-        saveLocal();
-        redraw();
-      };
-      img.onerror = ()=>{
-        mapImg = null;
-        mapImgReady = false;
-        redraw();
-      };
-      img.src = url;
-    }
-
-    function fitMapToView(){
-      const rect = cv.getBoundingClientRect();
-      const vw = rect.width;
-      const vh = rect.height;
-      const iw = state.map.imgW || 1;
-      const ih = state.map.imgH || 1;
-      const scale = Math.min(vw / iw, vh / ih);
-      state.map.zoom = clamp(scale, 0.05, 8);
-      // Center
-      state.map.panX = (vw - iw * state.map.zoom) / 2;
-      state.map.panY = (vh - ih * state.map.zoom) / 2;
-    }
-
-    function screenToMap(sx, sy){
-      const rect = cv.getBoundingClientRect();
-      const x = (sx - rect.left) * dpr;
-      const y = (sy - rect.top) * dpr;
-      const px = state.map.panX * dpr;
-      const py = state.map.panY * dpr;
-      const z = state.map.zoom;
-      return {
-        x: (x - px) / (z * dpr),
-        y: (y - py) / (z * dpr)
-      };
-    }
-
-    function mapToScreen(mx, my){
-      const rect = cv.getBoundingClientRect();
-      const px = state.map.panX * dpr;
-      const py = state.map.panY * dpr;
-      const z = state.map.zoom;
-      return {
-        x: px + mx * z * dpr,
-        y: py + my * z * dpr
-      };
-    }
-
-    function drawBackground(){
-      ctx.save();
-      ctx.setTransform(1,0,0,1,0,0);
-      ctx.clearRect(0,0,cv.width,cv.height);
-
-      // Subtle grid
-      ctx.globalAlpha = 0.08;
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 1;
-      const step = 60 * dpr;
-      for(let x=0; x<cv.width; x+=step){
-        ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,cv.height); ctx.stroke();
-      }
-      for(let y=0; y<cv.height; y+=step){
-        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(cv.width,y); ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-      ctx.restore();
-    }
-
-    function drawMapImage(){
-      if(!mapImgReady || !mapImg) return;
-      ctx.save();
-      // map transform
-      ctx.translate(state.map.panX * dpr, state.map.panY * dpr);
-      ctx.scale(state.map.zoom * dpr, state.map.zoom * dpr);
-      ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(mapImg, 0, 0);
-      ctx.restore();
-    }
-
-    function getMarkersOnCurrentPage(){
-      return state.markers
-        .filter(m=>m.pageId===state.currentPageId)
-        .slice()
-        .sort((a,b)=> (a.chainId===b.chainId ? a.seq-b.seq : a.chainId.localeCompare(b.chainId)));
-    }
-
-    function getCat(catId){
-      return state.markerCategories.find(c=>c.id===catId) || state.markerCategories[0];
-    }
-
-    function drawEdges(){
-      if(!state.ui.showAllLines) return;
-      const markers = getMarkersOnCurrentPage();
-      const byChain = new Map();
-      for(const m of markers){
-        const cat = getCat(m.catId);
-        if(!cat.visible) continue;
-        if(!byChain.has(m.chainId)) byChain.set(m.chainId, []);
-        byChain.get(m.chainId).push(m);
-      }
-
-      ctx.save();
-      ctx.translate(state.map.panX * dpr, state.map.panY * dpr);
-      ctx.scale(state.map.zoom * dpr, state.map.zoom * dpr);
-      ctx.lineWidth = 2 / state.map.zoom;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-
-      for(const [chainId, arr] of byChain.entries()){
-        arr.sort((a,b)=>a.seq-b.seq);
-        for(let i=0;i<arr.length-1;i++){
-          const a = arr[i], b = arr[i+1];
-          const edgeKey = `${state.currentPageId}:${chainId}:${a.id}->${b.id}`;
-          const cp = state.edges[edgeKey];
-          const ax=a.x, ay=a.y, bx=b.x, by=b.y;
-          const cx = (cp && typeof cp.cx==="number") ? cp.cx : (ax+bx)/2;
-          const cy = (cp && typeof cp.cy==="number") ? cp.cy : (ay+by)/2;
-
-          ctx.globalAlpha = 0.85;
-          ctx.strokeStyle = "#cfe6ff";
-          ctx.beginPath();
-          ctx.moveTo(ax, ay);
-          ctx.quadraticCurveTo(cx, cy, bx, by);
-          ctx.stroke();
-
-          // Arrow near the end toward b (tangent at t=0.92)
-          const t = 0.92;
-          const qx = quadAt(ax,cx,bx,t);
-          const qy = quadAt(ay,cy,by,t);
-          const tx = quadTangent(ax,cx,bx,t);
-          const ty = quadTangent(ay,cy,by,t);
-          const ang = Math.atan2(ty, tx);
-          const arrowLen = 14 / state.map.zoom;
-          const arrowW = 8 / state.map.zoom;
-
-          ctx.fillStyle = "#cfe6ff";
-          ctx.globalAlpha = 0.95;
-          ctx.save();
-          ctx.translate(qx, qy);
-          ctx.rotate(ang);
-          ctx.beginPath();
-          ctx.moveTo(0,0);
-          ctx.lineTo(-arrowLen, arrowW/2);
-          ctx.lineTo(-arrowLen, -arrowW/2);
-          ctx.closePath();
-          ctx.fill();
-          ctx.restore();
-
-          // Draw control point handle if selected in drag mode (handled in overlay draw)
-        }
-      }
-
-      ctx.restore();
-    }
-
-    function quadAt(a,c,b,t){
-      const mt = 1-t;
-      return mt*mt*a + 2*mt*t*c + t*t*b;
-    }
-    function quadTangent(a,c,b,t){
-      // derivative: 2(1-t)(c-a) + 2t(b-c)
-      return 2*(1-t)*(c-a) + 2*t*(b-c);
-    }
-
-    function drawMarkers(){
-      const markers = getMarkersOnCurrentPage();
-      ctx.save();
-      ctx.translate(state.map.panX * dpr, state.map.panY * dpr);
-      ctx.scale(state.map.zoom * dpr, state.map.zoom * dpr);
-
-      for(const m of markers){
-        const cat = getCat(m.catId);
-        if(!cat.visible) continue;
-
-        const size = cat.defaults.size;
-        const r = size;
-        const dim = dimSet.has(m.id);
-        const alpha = dim ? state.ui.dimOpacity : 1;
-
-        // Circle
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = cat.color;
-        ctx.beginPath();
-        ctx.arc(m.x, m.y, r, 0, Math.PI*2);
-        ctx.fill();
-
-        // Stroke
-        ctx.globalAlpha = alpha * 0.95;
-        ctx.lineWidth = 2 / state.map.zoom;
-        ctx.strokeStyle = "rgba(0,0,0,.55)";
-        ctx.stroke();
-
-        // Number (optional)
-        if(!cat.hideNumber){
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = "#0a0f18";
-          ctx.font = `${cat.defaults.weight} ${cat.defaults.textSize}px ${getComputedStyle(document.documentElement).getPropertyValue("--font")}`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(String(m.seq), m.x, m.y+0.5);
-        }
-
-        // Label text (always, as requested)
-        const label = (m.name || m.ytDisplay || "").trim();
-        if(label){
-          ctx.globalAlpha = 0.92;
-          ctx.fillStyle = cat.defaults.textColor || "#e7eef8";
-          ctx.font = `${cat.defaults.weight} ${cat.defaults.textSize}px ${getComputedStyle(document.documentElement).getPropertyValue("--font")}`;
-          ctx.textAlign = "left";
-          ctx.textBaseline = "middle";
-          const pad = r + (10 / state.map.zoom);
-          ctx.fillText(label, m.x + pad, m.y);
-        }
-
-        // Selected ring
-        if(m.id === selectedMarkerId){
-          ctx.globalAlpha = 0.95;
-          ctx.strokeStyle = "rgba(124,196,255,.95)";
-          ctx.lineWidth = 3 / state.map.zoom;
-          ctx.beginPath();
-          ctx.arc(m.x, m.y, r + (4 / state.map.zoom), 0, Math.PI*2);
-          ctx.stroke();
-        }
-      }
-
-      ctx.restore();
-    }
-
-    function drawEdgeHandles(){
-      // draw control points for edges near cursor selection (only when something is targeted)
-      if(!hoveredEdgeKey) return;
-      const cp = getEdgeControl(hoveredEdgeKey);
-      if(!cp) return;
-      ctx.save();
-      ctx.translate(state.map.panX * dpr, state.map.panY * dpr);
-      ctx.scale(state.map.zoom * dpr, state.map.zoom * dpr);
-
-      ctx.globalAlpha = 0.95;
-      ctx.fillStyle = "rgba(255,214,10,.95)";
-      ctx.strokeStyle = "rgba(0,0,0,.55)";
-      ctx.lineWidth = 2 / state.map.zoom;
-
-      ctx.beginPath();
-      ctx.arc(cp.cx, cp.cy, 7 / state.map.zoom, 0, Math.PI*2);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    function redraw(){
-      drawBackground();
-      drawMapImage();
-      drawEdges();
-      drawMarkers();
-      drawEdgeHandles();
-    }
-
-    // ===== Interaction =====
-    let draggingMode = null; // "pan" | "marker" | "edge"
-    let dragStart = {sx:0, sy:0, panX:0, panY:0, mx:0, my:0};
-    let dragMarkerId = null;
-    let hoveredEdgeKey = null;
-
-    function hitTestMarker(mapX, mapY){
-      const markers = getMarkersOnCurrentPage();
-      // iterate reverse for topmost
-      for(let i=markers.length-1;i>=0;i--){
-        const m = markers[i];
-        const cat = getCat(m.catId);
-        if(!cat.visible) continue;
-        const r = cat.defaults.size;
-        const dx = mapX - m.x, dy = mapY - m.y;
-        if(dx*dx + dy*dy <= r*r){
-          return m;
-        }
-      }
-      return null;
-    }
-
-    function findEdgeNear(mapX, mapY){
-      // find nearest quadratic curve in pixels threshold (approx with sampling)
-      const markers = getMarkersOnCurrentPage();
-      const byChain = new Map();
-      for(const m of markers){
-        const cat = getCat(m.catId);
-        if(!cat.visible) continue;
-        if(!byChain.has(m.chainId)) byChain.set(m.chainId, []);
-        byChain.get(m.chainId).push(m);
-      }
-
-      const threshold = 10 / state.map.zoom;
-      let best = {key:null, d:Infinity, cp:null};
-
-      for(const [chainId, arr] of byChain.entries()){
-        arr.sort((a,b)=>a.seq-b.seq);
-        for(let i=0;i<arr.length-1;i++){
-          const a = arr[i], b = arr[i+1];
-          const key = `${state.currentPageId}:${chainId}:${a.id}->${b.id}`;
-          const cp = getEdgeControl(key, a, b);
-          const ax=a.x, ay=a.y, bx=b.x, by=b.y, cx=cp.cx, cy=cp.cy;
-
-          // sample
-          let minD = Infinity;
-          for(let t=0;t<=1.001;t+=0.08){
-            const qx = quadAt(ax,cx,bx,t);
-            const qy = quadAt(ay,cy,by,t);
-            const dx = mapX-qx, dy=mapY-qy;
-            const d = Math.sqrt(dx*dx+dy*dy);
-            if(d<minD) minD=d;
-          }
-          if(minD < threshold && minD < best.d){
-            best = {key, d:minD, cp};
-          }
-        }
-      }
-      return best.key;
-    }
-
-    function getEdgeControl(edgeKey, a=null, b=null){
-      let cp = state.edges[edgeKey];
-      if(cp && typeof cp.cx==="number" && typeof cp.cy==="number") return cp;
-      // if not stored, create default from endpoints if provided
-      if(a && b){
-        return {cx:(a.x+b.x)/2, cy:(a.y+b.y)/2};
-      }
-      // cannot infer without endpoints
-      return cp || null;
-    }
-
-    function setEdgeControl(edgeKey, cx, cy){
-      if(!requireAuthOrWarn()) return;
-      state.edges[edgeKey] = {cx, cy};
-      saveLocal();
-    }
-
-    // Pointer handlers
-    cv.addEventListener("contextmenu", (e)=> e.preventDefault());
-
-    cv.addEventListener("pointerdown", (e)=>{
-      const rect = cv.getBoundingClientRect();
-      const sx = e.clientX, sy = e.clientY;
-      const mapPt = screenToMap(sx, sy);
-
-      const isRight = (e.button === 2);
-      const isLeft = (e.button === 0);
-
-      // On pointerdown capture for stable drag
-      cv.setPointerCapture(e.pointerId);
-
-      if(isRight){
-        // Add marker on right click
-        if(!requireAuthOrWarn()) return;
-        addMarkerAt(mapPt.x, mapPt.y);
-        return;
-      }
-
-      if(isLeft){
-        // First: marker hit
-        const m = hitTestMarker(mapPt.x, mapPt.y);
-        if(m){
-          // select
-          selectMarker(m.id);
-          // toggle dim on click (without dragging). We'll decide on pointerup if it was a click.
-          dragStart = {sx, sy, panX: state.map.panX, panY: state.map.panY, mx: mapPt.x, my: mapPt.y};
-          draggingMode = "marker";
-          dragMarkerId = m.id;
-          return;
-        }
-
-        // Second: edge near for curve drag
-        const edgeKey = findEdgeNear(mapPt.x, mapPt.y);
-        if(edgeKey){
-          hoveredEdgeKey = edgeKey;
-          dragStart = {sx, sy, panX: state.map.panX, panY: state.map.panY, mx: mapPt.x, my: mapPt.y};
-          draggingMode = "edge";
-          redraw();
-          return;
-        }
-
-        // Else: pan
-        dragStart = {sx, sy, panX: state.map.panX, panY: state.map.panY, mx: mapPt.x, my: mapPt.y};
-        draggingMode = "pan";
-        dragMarkerId = null;
-        return;
-      }
     });
-
-    cv.addEventListener("pointermove", (e)=>{
-      const sx = e.clientX, sy = e.clientY;
-      const mapPt = screenToMap(sx, sy);
-
-      if(!draggingMode){
-        // hover edge handle
-        hoveredEdgeKey = findEdgeNear(mapPt.x, mapPt.y);
-        redraw();
-        return;
-      }
-
-      if(draggingMode==="pan"){
-        const dx = sx - dragStart.sx;
-        const dy = sy - dragStart.sy;
-        state.map.panX = dragStart.panX + dx;
-        state.map.panY = dragStart.panY + dy;
-        redraw();
-        return;
-      }
-
-      if(draggingMode==="marker"){
-        const m = state.markers.find(x=>x.id===dragMarkerId);
-        if(!m) return;
-        // drag threshold included
-        if(Math.hypot(sx-dragStart.sx, sy-dragStart.sy) > 2){
-          if(!requireAuthOrWarn()) return;
-          m.x = mapPt.x;
-          m.y = mapPt.y;
-          saveLocal();
-          redraw();
-        }
-        return;
-      }
-
-      if(draggingMode==="edge"){
-        if(!hoveredEdgeKey) return;
-        if(Math.hypot(sx-dragStart.sx, sy-dragStart.sy) > 1){
-          if(!requireAuthOrWarn()) return;
-          setEdgeControl(hoveredEdgeKey, mapPt.x, mapPt.y);
-          redraw();
-        }
-        return;
-      }
-    });
-
-    cv.addEventListener("pointerup", (e)=>{
-      const sx = e.clientX, sy = e.clientY;
-      const moved = Math.hypot(sx-dragStart.sx, sy-dragStart.sy);
-
-      // If marker mode and it was a click (not drag), toggle dim
-      if(draggingMode==="marker" && moved < 4){
-        const mapPt = screenToMap(sx, sy);
-        const m = hitTestMarker(mapPt.x, mapPt.y);
-        if(m && m.id===dragMarkerId){
-          toggleDim(m.id);
-        }
-      }
-
-      draggingMode = null;
-      dragMarkerId = null;
-
-      // keep hovered edge for visual
-      const mapPt = screenToMap(sx, sy);
-      hoveredEdgeKey = findEdgeNear(mapPt.x, mapPt.y);
-      redraw();
-    });
-
-    cv.addEventListener("dblclick", (e)=>{
-      const mapPt = screenToMap(e.clientX, e.clientY);
-      const m = hitTestMarker(mapPt.x, mapPt.y);
-      if(m){
-        selectMarker(m.id);
-        openMarkerEditor(m.id);
-      }
-    });
-
-    // Wheel zoom
-    cv.addEventListener("wheel", (e)=>{
+    btn.addEventListener("contextmenu", (e)=>{
       e.preventDefault();
-      const rect = cv.getBoundingClientRect();
-      const sx = e.clientX, sy = e.clientY;
-      const before = screenToMap(sx, sy);
+      if(!requireAuth()) return;
+      UI_ACTIVE_CAT_SUB_ID = cat.id;
+      openCatSubModal(cat.id);
+    });
+    elCatTabs.appendChild(btn);
+  });
 
-      const zoomFactor = Math.exp((-e.deltaY) * 0.0012);
-      const newZoom = clamp(state.map.zoom * zoomFactor, 0.05, 8);
+  const catName = (STATE.topCategories.find(c=>c.id===ACTIVE_TOP_CAT_ID)?.name) || "카테고리";
+  elLeftTitleBadge.textContent = catName;
+}
 
-      // Adjust pan so point under cursor stays fixed
-      const px = state.map.panX;
-      const py = state.map.panY;
-      const mx = before.x, my = before.y;
+function pagesOfActiveTop(){
+  return (STATE.pagesByTopCategory[ACTIVE_TOP_CAT_ID] || []);
+}
 
-      state.map.zoom = newZoom;
+function renderPages(){
+  const pages = pagesOfActiveTop();
+  elPageCountSub.textContent = `${pages.length}개`;
+  elPageList.innerHTML = "";
 
-      const afterScreen = mapToScreen(mx, my);
-      const targetScreenX = (sx - rect.left) * dpr;
-      const targetScreenY = (sy - rect.top) * dpr;
-
-      // pan in CSS pixels
-      state.map.panX = (targetScreenX - mx * newZoom * dpr) / dpr;
-      state.map.panY = (targetScreenY - my * newZoom * dpr) / dpr;
-
-      saveLocal();
-      redraw();
-    }, {passive:false});
-
-    // ===== Marker add logic =====
-    function addMarkerAt(x, y){
-      const pageId = state.currentPageId;
-      if(!pageId) return;
-
-      const chainInfo = state.chainByPage[pageId] || (state.chainByPage[pageId] = {currentChainId: uid(), continueFromMarkerId: null});
-      const chainId = chainInfo.currentChainId;
-
-      // Determine next seq
-      const chainMarkers = state.markers
-        .filter(m=>m.pageId===pageId && m.chainId===chainId)
-        .sort((a,b)=>a.seq-b.seq);
-
-      let nextSeq = 1;
-      if(chainInfo.continueFromMarkerId){
-        const from = state.markers.find(m=>m.id===chainInfo.continueFromMarkerId);
-        if(from && from.pageId===pageId){
-          // next seq is from.seq + 1, and we keep chainId of that marker
-          chainInfo.currentChainId = from.chainId;
-          chainInfo.continueFromMarkerId = null;
-          nextSeq = from.seq + 1;
-
-          // If there are markers with seq >= nextSeq, shift them up to keep uniqueness in this chain
-          const sameChain = state.markers.filter(m=>m.pageId===pageId && m.chainId===from.chainId);
-          const seqs = new Set(sameChain.map(m=>m.seq));
-          if(seqs.has(nextSeq)){
-            // shift seqs >= nextSeq by +1 preserving order
-            const toShift = sameChain.filter(m=>m.seq>=nextSeq).sort((a,b)=>b.seq-a.seq);
-            toShift.forEach(m=>m.seq += 1);
-          }
-        }
-      }else{
-        nextSeq = chainMarkers.length ? (chainMarkers[chainMarkers.length-1].seq + 1) : 1;
-      }
-
-      const catId = state.markerCategories[0]?.id || "";
-      const m = {
-        id: uid(),
-        pageId,
-        catId,
-        chainId: state.chainByPage[pageId].currentChainId,
-        seq: nextSeq,
-        x, y,
-        name: `마커 ${nextSeq}`,
-        ytDisplay: `마커 ${nextSeq}`,
-        ytDesc: "",
-        ytUrl: ""
-      };
-      state.markers.push(m);
-
-      // auto create edge default control for previous marker -> this marker
-      const prev = state.markers
-        .filter(mm=>mm.pageId===pageId && mm.chainId===m.chainId && mm.seq===m.seq-1)
-        .sort((a,b)=>a.seq-b.seq)[0];
-      if(prev){
-        const edgeKey = `${pageId}:${m.chainId}:${prev.id}->${m.id}`;
-        if(!state.edges[edgeKey]){
-          state.edges[edgeKey] = {cx:(prev.x+m.x)/2, cy:(prev.y+m.y)/2};
-        }
-      }
-
-      saveLocal();
-      selectMarker(m.id);
+  pages.forEach(p=>{
+    const btn = document.createElement("div");
+    btn.className = "listBtn" + (p.id===ACTIVE_PAGE_ID ? " active" : "");
+    const url = p.mapUrl || "";
+    btn.innerHTML = `
+      <div style="min-width:0; flex:1;">
+        <div class="name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.name || "페이지")}</div>
+        <div class="meta" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(url)}</div>
+      </div>
+      <span class="pillBadge">${(getPageData(p.id).markers.length)}M</span>
+    `;
+    btn.addEventListener("click", ()=>{
+      ACTIVE_PAGE_ID = p.id;
+      SELECTED_MARKER_ID = null;
+      SELECTED_EDGE_ID = null;
+      touchState(); saveLocal();
       renderAll();
-    }
+    });
 
-    // ===== Rendering Pages list =====
-    function renderPages(){
-      const wrap = $("#pageList");
-      wrap.innerHTML = "";
-      $("#pageCount").textContent = String(state.pages.length);
+    // right-side small actions as inline menu
+    btn.addEventListener("dblclick", (e)=>{
+      e.preventDefault();
+      if(!requireAuth()) return;
+      openPageEditInline(p.id);
+    });
 
-      state.pages.forEach((p)=>{
-        const btn = document.createElement("div");
-        btn.className = "pageBtn" + (p.id===state.currentPageId ? " active" : "");
-        btn.innerHTML = `
-          <div class="grow" style="min-width:0;">
-            <div class="name">${escapeHtml(p.name || "페이지")}</div>
-            <div class="url mono">${escapeHtml(p.url || "(URL 없음)")}</div>
-            <div class="muted" style="margin-top:4px;">${escapeHtml(p.gamePath || "-")}</div>
-          </div>
-          <div class="miniTools">
-            <button class="btn tiny" data-act="edit">편집</button>
-            <button class="btn tiny danger" data-act="del">삭제</button>
-          </div>
-        `;
-        btn.addEventListener("click", (e)=>{
-          // ignore when clicking tool buttons
-          if(e.target && e.target.closest("button")) return;
-          setCurrentPage(p.id);
-        });
-        btn.querySelector('[data-act="edit"]').onclick = ()=>{
-          if(!requireAuthOrWarn()) return;
-          const name = prompt("페이지 이름", p.name || "");
-          if(name==null) return;
-          const url = prompt("지도 이미지 URL (GitHub 저장소 이미지 URL)", p.url || "");
-          if(url==null) return;
-          const gp = prompt("현재 위치 표시용 경로 (예: 게임1/페이지2)", p.gamePath || "");
-          if(gp==null) return;
-          updatePage(p.id, {name, url, gamePath: gp});
-        };
-        btn.querySelector('[data-act="del"]').onclick = ()=>{
-          if(!requireAuthOrWarn()) return;
-          if(confirm("이 페이지를 삭제할까요? (해당 페이지의 마커/선도 함께 삭제됩니다)")){
-            deletePage(p.id);
-          }
-        };
-        wrap.appendChild(btn);
-      });
+    elPageList.appendChild(btn);
 
-      if(state.pages.length===0){
-        const empty = document.createElement("div");
-        empty.className = "muted";
-        empty.textContent = "페이지가 없습니다. 상단 '페이지 추가'를 눌러 생성하세요.";
-        wrap.appendChild(empty);
-      }
+    // edit area under each page
+    const edit = document.createElement("div");
+    edit.style.display = "none";
+    edit.dataset.pageEdit = p.id;
+    edit.className = "card";
+    edit.style.marginTop = "8px";
+    edit.innerHTML = `
+      <div class="k">페이지 편집</div>
+      <div class="row">
+        <div class="col" style="flex:1;">
+          <div class="k">이름</div>
+          <input type="text" value="${escapeAttr(p.name||"")}" data-pname="${p.id}">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col" style="flex:1;">
+          <div class="k">지도 이미지 URL</div>
+          <input type="url" value="${escapeAttr(p.mapUrl||"")}" data-purl="${p.id}">
+        </div>
+      </div>
+      <div class="row" style="justify-content:flex-end;">
+        <button class="miniBtn" data-pclose="${p.id}">닫기</button>
+        <button class="miniBtn danger" data-pdel="${p.id}">삭제</button>
+        <button class="miniBtn ok" data-psave="${p.id}">저장</button>
+      </div>
+    `;
+    elPageList.appendChild(edit);
 
-      renderWhereAmI();
-    }
-
-    // ===== Quick palette UI =====
-    function renderQuickPalette(){
-      const pal = $("#quickPalette");
-      pal.innerHTML = "";
-      QUICK_COLORS.forEach(c=>{
-        const b = document.createElement("span");
-        b.className = "pbtn";
-        b.style.background = c.value;
-        b.title = c.name;
-        b.onclick = ()=>{
-          if(!requireAuthOrWarn()) return;
-          // Apply to selected marker category color (category/색상 편집 창과 별개로 "빠른 색상표" 제공)
-          const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
-          if(!m) return;
-          const cat = getCat(m.catId);
-          cat.color = c.value;
-          saveLocal();
-          renderAll();
-        };
-        pal.appendChild(b);
-      });
-    }
-
-    // ===== Buttons behavior =====
-    function setupButtons(){
-      $("#addPageBtn").onclick = addPage;
-      $("#openTopCatsBtn").onclick = openTopCatsModal;
-      $("#openCatEditorBtn").onclick = openCatEditor;
-      $("#addMarkerCatBtn").onclick = addMarkerCategory;
-
-      $("#showAllLinesBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        state.ui.showAllLines = true;
-        saveLocal();
-        renderAll();
-      };
-      $("#hideAllLinesBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        state.ui.showAllLines = false;
-        saveLocal();
-        renderAll();
-      };
-
-      $("#resetMarkersBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        // Reset dim + selection only (as "마커 초기화": visible state back)
-        dimSet.clear();
-        selectedMarkerId = null;
-        renderSelectedPanel();
-        renderAll();
-      };
-
-      $("#toggleNumbersBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        // Category-wise: toggle for selected marker's category; if none selected, toggle all
-        const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
-        if(m){
-          const cat = getCat(m.catId);
-          cat.hideNumber = !cat.hideNumber;
-        }else{
-          const next = !state.markerCategories.every(c=>c.hideNumber);
-          state.markerCategories.forEach(c=>c.hideNumber = next);
-        }
-        saveLocal();
-        renderAll();
-      };
-
-      $("#openMarkerEditorBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
-        if(m) openMarkerEditor(m.id);
-      };
-
-      $("#focusSelectedBtn").onclick = ()=>{
-        const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
-        if(!m) return;
-        // center view on marker
-        const rect = cv.getBoundingClientRect();
-        const vw = rect.width;
-        const vh = rect.height;
-        state.map.panX = (vw/2) - (m.x * state.map.zoom);
-        state.map.panY = (vh/2) - (m.y * state.map.zoom);
-        saveLocal();
-        redraw();
-      };
-
-      $("#applyYoutubePanelBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        const m = state.markers.find(x=>x.id===selectedMarkerId && x.pageId===state.currentPageId);
-        if(!m) return;
-        m.ytDisplay = $("#ytDisplayInput").value;
-        m.ytDesc = $("#ytDescInput").value;
-        m.ytUrl = $("#ytUrlInput").value;
-        saveLocal();
-        renderAll();
-      };
-
-      $("#saveLocalBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        saveLocal();
-        renderSaveInfo();
-      };
-      $("#reloadRemoteBtn").onclick = async ()=>{
-        if(!requireAuthOrWarn()) return;
-        await loadRemote();
-      };
-      $("#reloadLocalBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        loadLocal();
-      };
-
-      $("#exportBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        const out = JSON.stringify(state, null, 2);
-        downloadText("state.json", out);
-      };
-
-      $("#resetAllBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        if(confirm("전체 초기화할까요? (페이지/마커/카테고리/설정 포함)")){
-          state = defaultState();
-          normalizeState();
-          onStateLoaded();
-          saveLocal();
-          renderAll();
-        }
-      };
-
-      $("#logoApplyBtn").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        state.logoUrl = $("#logoUrlInput").value.trim();
-        saveLocal();
-        renderLogo();
-      };
-
-      $("#logoBox").onclick = ()=>{
-        if(!requireAuthOrWarn()) return;
-        const url = prompt("로고 이미지 URL", state.logoUrl || "");
-        if(url==null) return;
-        state.logoUrl = url.trim();
-        $("#logoUrlInput").value = state.logoUrl;
-        saveLocal();
-        renderLogo();
-      };
-
-      // Auth buttons / modal
-      $("#loginBtn").onclick = openLoginModal;
-      $("#logoutBtn").onclick = ()=>{
-        setAuth(false);
-      };
-      $("#loginCloseBtn").onclick = ()=> $("#loginBack").style.display = "none";
-      $("#loginSubmitBtn").onclick = submitLogin;
-      $("#pwInput").addEventListener("keydown", (e)=>{
-        if(e.key==="Enter") submitLogin();
-      });
-    }
-
-    function openLoginModal(){
-      $("#loginMsg").textContent = "";
-      $("#pwInput").value = "";
-      $("#loginBack").style.display = "flex";
-      setTimeout(()=>$("#pwInput").focus(), 50);
-    }
-    function submitLogin(){
-      const pw = $("#pwInput").value;
-      if(pw === PASSWORD){
-        setAuth(true);
-        $("#loginBack").style.display = "none";
-      }else{
-        $("#loginMsg").textContent = "비밀번호가 올바르지 않습니다.";
-      }
-    }
-
-    // ===== Lock overlay: disable some inputs when not authed =====
-    function renderLockOverlay(){
-      const ok = isAuthed();
-      // disable inputs/buttons that modify state (but keep view)
-      const toDisable = [
-        "#logoUrlInput", "#logoApplyBtn", "#exportBtn", "#resetAllBtn",
-        "#addPageBtn", "#openTopCatsBtn", "#openCatEditorBtn", "#addMarkerCatBtn",
-        "#showAllLinesBtn", "#hideAllLinesBtn", "#resetMarkersBtn", "#toggleNumbersBtn",
-        "#openMarkerEditorBtn", "#applyYoutubePanelBtn", "#saveLocalBtn",
-        "#reloadRemoteBtn", "#reloadLocalBtn",
-      ];
-      toDisable.forEach(sel=>{
-        const el = $(sel);
-        if(!el) return;
-        el.disabled = !ok;
-        el.style.opacity = ok ? "" : "0.55";
-        el.style.pointerEvents = ok ? "" : "";
-      });
-      // Side-effect: canvas edits are gated by requireAuthOrWarn()
-    }
-
-    // ===== Escape helpers =====
-    function escapeHtml(s){
-      return String(s??"").replace(/[&<>"']/g, (m)=>({
-        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
-      }[m]));
-    }
-    function escapeAttr(s){
-      return escapeHtml(s).replace(/"/g, "&quot;");
-    }
-
-    // ===== Render All =====
-    function renderAll(){
-      renderAuth();
-      renderLockOverlay();
+    const inpName = edit.querySelector(`[data-pname="${p.id}"]`);
+    const inpUrl  = edit.querySelector(`[data-purl="${p.id}"]`);
+    edit.querySelector(`[data-pclose="${p.id}"]`).addEventListener("click", ()=>{
+      edit.style.display = "none";
+    });
+    edit.querySelector(`[data-pdel="${p.id}"]`).addEventListener("click", ()=>{
+      if(!requireAuth()) return;
+      if(!confirmDanger("이 페이지를 삭제하시겠습니까?\n(해당 페이지의 모든 마커/선 데이터도 함께 삭제됩니다.)")) return;
+      deletePage(p.id);
+    });
+    edit.querySelector(`[data-psave="${p.id}"]`).addEventListener("click", ()=>{
+      if(!requireAuth()) return;
+      p.name = inpName.value.trim() || p.name;
+      p.mapUrl = inpUrl.value.trim();
+      touchState(); saveLocal();
+      // reload map image
+      loadMapForActivePage(true);
       renderPages();
-      renderTopCatsPreview();
+      draw();
+      edit.style.display = "none";
+    });
+  });
+
+  // ensure active page has data + map loaded
+  loadMapForActivePage(false);
+  $("#rightSub").textContent = ACTIVE_PAGE_ID ? "페이지 선택됨" : "페이지 없음";
+}
+
+function openPageEditInline(pageId){
+  // close others
+  $$('[data-page-edit]').forEach(x=>x.style.display="none");
+  const target = $$('[data-page-edit]').find(x=>x.dataset.pageEdit===pageId);
+  if(target) target.style.display = "block";
+}
+
+function deletePage(pageId){
+  const pages = pagesOfActiveTop();
+  const idx = pages.findIndex(p=>p.id===pageId);
+  if(idx>=0) pages.splice(idx,1);
+  delete STATE.pageData[pageId];
+  if(ACTIVE_PAGE_ID===pageId){
+    ACTIVE_PAGE_ID = pages[0]?.id || null;
+    SELECTED_MARKER_ID = null;
+    SELECTED_EDGE_ID = null;
+  }
+  touchState(); saveLocal();
+  renderAll();
+}
+
+function renderMarkerCats(){
+  const cats = STATE.markerCategories;
+  elMkCatList.innerHTML = "";
+
+  cats.forEach(cat=>{
+    const row = document.createElement("div");
+    row.className = "listBtn";
+    row.style.cursor = cat.locked ? "default" : "pointer";
+    row.style.background = "rgba(14,22,38,.42)";
+    row.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+        <span class="swatch" style="width:18px;height:18px;border-radius:8px;background:${cat.color};"></span>
+        <div style="min-width:0;">
+          <div class="name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(cat.name)}</div>
+          <div class="meta">ID: ${escapeHtml(cat.id)}</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="pillBadge">${cat.enabled ? "ON" : "OFF"}</span>
+        ${cat.locked ? `<span class="pillBadge">고정</span>` : `<button class="miniBtn danger" data-del="${cat.id}">삭제</button>`}
+      </div>
+    `;
+
+    row.addEventListener("click", (e)=>{
+      if(e.target && e.target.matches("button")) return;
+      if(!requireAuth()) return;
+      // toggle enabled (except locked all? allowed)
+      cat.enabled = !cat.enabled;
+      // if "all" toggled off, means hide all markers
+      if(cat.id==="all"){
+        // apply to display logic only; do not auto flip others
+      }
+      touchState(); saveLocal();
       renderMarkerCats();
-      renderSelectedPanel();
-      renderQuickPalette();
-      renderSaveInfo();
-      renderLogo();
-      redraw();
+      renderNumHideList();
+      draw();
+    });
+
+    const delBtn = row.querySelector(`[data-del="${cat.id}"]`);
+    if(delBtn){
+      delBtn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        if(!requireAuth()) return;
+        if(!confirmDanger("이 마커 카테고리를 삭제하시겠습니까?\n(카테고리에 속한 마커는 '전체'로 이동합니다.)")) return;
+        deleteMarkerCategory(cat.id);
+      });
     }
 
-    // ===== init =====
-    (async function init(){
-      setupButtons();
-      renderAuth();
-      renderLockOverlay();
+    elMkCatList.appendChild(row);
+  });
 
-      // Load remote first, fallback local, else default
-      const okRemote = await loadRemote();
-      if(!okRemote){
-        const okLocal = loadLocal();
-        if(!okLocal){
-          normalizeState();
-          onStateLoaded();
-          saveLocal();
-          renderAll();
-        }
+  elMkCatInfo.textContent = `${cats.length}개`;
+}
+
+function renderNumHideList(){
+  const cats = STATE.markerCategories.filter(c=>c.id!=="all"); // category별 필요, 전체 제외
+  elNumHideList.innerHTML = "";
+
+  if(cats.length===0){
+    const d = document.createElement("div");
+    d.className = "hint";
+    d.textContent = "추가된 마커 카테고리가 없습니다.";
+    elNumHideList.appendChild(d);
+    return;
+  }
+
+  cats.forEach(cat=>{
+    const row = document.createElement("div");
+    row.className = "row";
+    row.style.justifyContent = "space-between";
+    row.innerHTML = `
+      <div class="row" style="gap:10px; min-width:0;">
+        <span class="swatch" style="width:16px;height:16px;border-radius:6px;background:${cat.color};"></span>
+        <div style="min-width:0;">
+          <div style="font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(cat.name)}</div>
+          <div class="small muted">숫자 숨김: ${cat.hideNumber ? "ON" : "OFF"}</div>
+        </div>
+      </div>
+      <button class="miniBtn" data-togglehide="${cat.id}">${cat.hideNumber ? "표시" : "숨김"}</button>
+    `;
+    row.querySelector(`[data-togglehide="${cat.id}"]`).addEventListener("click", ()=>{
+      if(!requireAuth()) return;
+      cat.hideNumber = !cat.hideNumber;
+      touchState(); saveLocal();
+      renderNumHideList();
+      draw();
+    });
+    elNumHideList.appendChild(row);
+  });
+}
+
+function renderSelectedInfo(){
+  const pd = ACTIVE_PAGE_ID ? getPageData(ACTIVE_PAGE_ID) : null;
+  const m = pd ? pd.markers.find(x=>x.id===SELECTED_MARKER_ID) : null;
+
+  if(m){
+    elSelName.textContent = m.name || `마커 ${m.seq}`;
+    const cat = STATE.markerCategories.find(c=>c.id===m.catId) || {name:"전체"};
+    elSelMeta.textContent = `카테고리: ${cat.name} · 번호: ${m.seq} · 체인: ${m.chainId}`;
+    elSelBadge.textContent = String(m.seq);
+  }else{
+    elSelName.textContent = "선택 없음";
+    elSelMeta.textContent = "—";
+    elSelBadge.textContent = "0";
+  }
+
+  // sync youtube panel with selected marker
+  if(m){
+    elYtTitle.value = m.ytTitle || "";
+    elYtDesc.value = m.ytDesc || "";
+    elYtUrl.value  = m.ytUrl  || "";
+  }else{
+    elYtTitle.value = "";
+    elYtDesc.value = "";
+    elYtUrl.value  = "";
+  }
+}
+
+function renderYouTubePanel(){
+  // no extra
+}
+
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+function escapeAttr(s){ return escapeHtml(s).replaceAll("\n"," "); }
+
+/* =========================
+   ACTIONS: Top / Left / Right
+========================= */
+$("#btnExport").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  touchState();
+  saveLocal();
+  downloadText("state.json", JSON.stringify(STATE, null, 2));
+});
+
+$("#btnResetAll").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  if(!confirmDanger("전체 초기화를 하시겠습니까?\n(모든 카테고리/페이지/마커/선 데이터가 초기화됩니다.)")) return;
+  STATE = defaultState();
+  ACTIVE_TOP_CAT_ID = "cat1";
+  ACTIVE_PAGE_ID = null;
+  SELECTED_MARKER_ID = null;
+  SELECTED_EDGE_ID = null;
+  touchState(); saveLocal();
+  renderAll();
+});
+
+elToggleGoogle.addEventListener("change", ()=>{
+  if(!requireAuth()) { elToggleGoogle.checked = !!STATE.settings.googleLoginEnabled; return; }
+  STATE.settings.googleLoginEnabled = elToggleGoogle.checked;
+  touchState(); saveLocal();
+});
+elTogglePay.addEventListener("change", ()=>{
+  if(!requireAuth()) { elTogglePay.checked = !!STATE.settings.paymentEnabled; return; }
+  STATE.settings.paymentEnabled = elTogglePay.checked;
+  touchState(); saveLocal();
+});
+
+elBtnLogin.addEventListener("click", ()=>{
+  const a = getAuth();
+  if(a.ok){
+    if(!confirmDanger("로그아웃 하시겠습니까?")) return;
+    clearAuth();
+    renderAuthBadge();
+    return;
+  }
+  openLoginModal();
+});
+
+$("#btnLogoUrl").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  openLogoModal();
+});
+$("#btnLogo").addEventListener("click", ()=>{
+  // preview only
+  // if right click already opens; keep simple
+});
+
+/* Left: page add inline */
+$("#btnPageAdd").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  $("#pageAddInline").style.display = "block";
+  $("#newPageName").focus();
+});
+$("#btnPageAddCancel").addEventListener("click", ()=>{
+  $("#pageAddInline").style.display = "none";
+});
+$("#btnPageAddConfirm").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  const name = $("#newPageName").value.trim() || "페이지";
+  const url  = $("#newPageUrl").value.trim() || "";
+  const pages = pagesOfActiveTop();
+  const page = { id: uid("page"), name, mapUrl: url, createdAt: now() };
+  pages.push(page);
+  ensurePageData(STATE, page.id);
+  ACTIVE_PAGE_ID = page.id;
+  $("#newPageName").value = "";
+  $("#newPageUrl").value = "";
+  $("#pageAddInline").style.display = "none";
+  touchState(); saveLocal();
+  renderAll();
+});
+
+/* Right: marker category add */
+$("#btnMkCatAdd").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  const nm = prompt("새 마커 카테고리 이름을 입력하세요.", "카테고리");
+  if(!nm) return;
+  const id = uid("mkcat");
+  STATE.markerCategories.push({ id, name: nm.trim(), color:"#ffd60a", enabled:true, hideNumber:false, locked:false });
+  touchState(); saveLocal();
+  renderMarkerCats();
+  renderNumHideList();
+  draw();
+});
+function deleteMarkerCategory(catId){
+  const cats = STATE.markerCategories;
+  const idx = cats.findIndex(c=>c.id===catId);
+  if(idx<0) return;
+  // move markers to all
+  for(const pid of Object.keys(STATE.pageData)){
+    const pd = STATE.pageData[pid];
+    pd.markers.forEach(m=>{
+      if(m.catId===catId) m.catId = "all";
+    });
+  }
+  cats.splice(idx,1);
+  touchState(); saveLocal();
+  renderAll();
+}
+$("#btnOpenCatColor").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  openCatColorModal();
+});
+
+$("#btnHideAllLines").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  STATE.settings.hideAllLines = true;
+  touchState(); saveLocal();
+  draw();
+});
+$("#btnShowAllLines").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  STATE.settings.hideAllLines = false;
+  touchState(); saveLocal();
+  draw();
+});
+
+$("#btnClearMarkers").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  if(!ACTIVE_PAGE_ID) return;
+  if(!confirmDanger("초기화를 하시겠습니까?\n(현재 페이지의 모든 마커/선이 삭제됩니다.)")) return;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  pd.markers = [];
+  pd.edges = [];
+  pd.chain = { nextChainId: 1, nextSeqByChain: {}, continueFromMarkerId: null };
+  SELECTED_MARKER_ID = null;
+  SELECTED_EDGE_ID = null;
+  touchState(); saveLocal();
+  renderAll();
+});
+
+$("#btnOpenEdit").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  if(!SELECTED_MARKER_ID) return;
+  openMarkerEditModal(SELECTED_MARKER_ID);
+});
+
+$("#btnApplyYT").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  if(!ACTIVE_PAGE_ID || !SELECTED_MARKER_ID) return;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  const m = pd.markers.find(x=>x.id===SELECTED_MARKER_ID);
+  if(!m) return;
+  m.ytTitle = elYtTitle.value.trim();
+  m.ytDesc  = elYtDesc.value.trim();
+  m.ytUrl   = elYtUrl.value.trim();
+  // if empty title but name exists, keep
+  touchState(); saveLocal();
+  renderSelectedInfo();
+});
+
+/* =========================
+   MODAL: LOGIN
+========================= */
+const modalLoginBack = $("#modalLoginBack");
+function openLoginModal(){
+  $("#loginPw").value = "";
+  modalLoginBack.classList.add("show");
+  setTimeout(()=>$("#loginPw").focus(), 0);
+}
+function closeLoginModal(){
+  modalLoginBack.classList.remove("show");
+}
+$("#btnLoginClose").addEventListener("click", closeLoginModal);
+$("#btnLoginCancel").addEventListener("click", closeLoginModal);
+$("#btnLoginOk").addEventListener("click", ()=>{
+  const pw = $("#loginPw").value.trim();
+  if(pw !== PASSWORD){
+    alert("비밀번호가 올바르지 않습니다.");
+    $("#loginPw").focus();
+    return;
+  }
+  setAuth();
+  closeLoginModal();
+  renderAuthBadge();
+});
+$("#loginPw").addEventListener("keydown", (e)=>{
+  if(e.key==="Enter") $("#btnLoginOk").click();
+});
+
+/* =========================
+   MODAL: LOGO
+========================= */
+const modalLogoBack = $("#modalLogoBack");
+function openLogoModal(){
+  $("#logoUrlInput").value = STATE.settings.logoUrl || DEFAULT_LOGO_URL;
+  modalLogoBack.classList.add("show");
+  setTimeout(()=>$("#logoUrlInput").focus(), 0);
+}
+function closeLogoModal(){ modalLogoBack.classList.remove("show"); }
+$("#btnLogoClose").addEventListener("click", closeLogoModal);
+$("#btnLogoCancel").addEventListener("click", closeLogoModal);
+$("#btnLogoSave").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  const v = $("#logoUrlInput").value.trim() || DEFAULT_LOGO_URL;
+  STATE.settings.logoUrl = v;
+  touchState(); saveLocal();
+  renderLogo();
+  closeLogoModal();
+});
+
+/* =========================
+   MODAL: TOP CATEGORY SUB ITEMS
+   (open with right-click on top tab)
+========================= */
+const modalCatSubBack = $("#modalCatSubBack");
+function openCatSubModal(catId){
+  const cat = STATE.topCategories.find(c=>c.id===catId);
+  if(!cat) return;
+  $("#catSubTitle").textContent = `${cat.name} · 하위 항목`;
+  $("#catSubNewName").value = "";
+  renderCatSubList(catId);
+  modalCatSubBack.classList.add("show");
+  setTimeout(()=>$("#catSubNewName").focus(), 0);
+}
+function closeCatSubModal(){
+  modalCatSubBack.classList.remove("show");
+  UI_ACTIVE_CAT_SUB_ID = null;
+}
+function renderCatSubList(catId){
+  const cat = STATE.topCategories.find(c=>c.id===catId);
+  const list = $("#catSubList");
+  list.innerHTML = "";
+  (cat.items||[]).forEach(it=>{
+    const row = document.createElement("div");
+    row.className = "row";
+    row.style.justifyContent = "space-between";
+    row.innerHTML = `
+      <div style="font-weight:850; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(it.name)}</div>
+      <div class="row">
+        <button class="miniBtn" data-rename="${it.id}">이름</button>
+        <button class="miniBtn danger" data-del="${it.id}">삭제</button>
+      </div>
+    `;
+    row.querySelector(`[data-rename="${it.id}"]`).addEventListener("click", ()=>{
+      if(!requireAuth()) return;
+      const nn = prompt("이름 변경", it.name);
+      if(!nn) return;
+      it.name = nn.trim();
+      touchState(); saveLocal();
+      renderTopCats();
+      renderCatSubList(catId);
+    });
+    row.querySelector(`[data-del="${it.id}"]`).addEventListener("click", ()=>{
+      if(!requireAuth()) return;
+      if(!confirmDanger("삭제하시겠습니까?")) return;
+      cat.items = (cat.items||[]).filter(x=>x.id!==it.id);
+      if(cat.activeItemId===it.id) cat.activeItemId = null;
+      touchState(); saveLocal();
+      renderTopCats();
+      renderCatSubList(catId);
+    });
+    list.appendChild(row);
+  });
+}
+$("#btnCatSubClose").addEventListener("click", closeCatSubModal);
+$("#btnCatSubDone").addEventListener("click", closeCatSubModal);
+$("#btnCatSubAdd").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  const cat = STATE.topCategories.find(c=>c.id===UI_ACTIVE_CAT_SUB_ID);
+  if(!cat) return;
+  const name = $("#catSubNewName").value.trim();
+  if(!name) return;
+  cat.items = cat.items || [];
+  cat.items.push({ id: uid("game"), name });
+  $("#catSubNewName").value = "";
+  touchState(); saveLocal();
+  renderTopCats();
+  renderCatSubList(UI_ACTIVE_CAT_SUB_ID);
+});
+$("#catSubNewName").addEventListener("keydown", (e)=>{
+  if(e.key==="Enter") $("#btnCatSubAdd").click();
+});
+
+/* =========================
+   MODAL: Marker Category Color Editor
+========================= */
+const modalCatColorBack = $("#modalCatColorBack");
+function openCatColorModal(){
+  UI_SELECTED_MKCAT_FOR_COLOR = null;
+  $("#colorHexInput").value = "";
+  renderCatColorList();
+  renderPalettes();
+  modalCatColorBack.classList.add("show");
+}
+function closeCatColorModal(){
+  modalCatColorBack.classList.remove("show");
+  UI_SELECTED_MKCAT_FOR_COLOR = null;
+}
+$("#btnCatColorClose").addEventListener("click", closeCatColorModal);
+$("#btnCatColorCancel").addEventListener("click", closeCatColorModal);
+
+function renderCatColorList(){
+  const list = $("#catColorList");
+  list.innerHTML = "";
+  STATE.markerCategories.forEach(cat=>{
+    if(cat.id==="all") return; // color edit for extra cats only
+    const row = document.createElement("div");
+    row.className = "listBtn" + (UI_SELECTED_MKCAT_FOR_COLOR===cat.id ? " active" : "");
+    row.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+        <span class="swatch" style="width:18px;height:18px;border-radius:8px;background:${cat.color};"></span>
+        <div style="min-width:0;">
+          <div class="name">${escapeHtml(cat.name)}</div>
+          <div class="meta">색상: ${escapeHtml(cat.color)}</div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="miniBtn" data-pick="${cat.id}">선택</button>
+        <button class="miniBtn danger" data-del="${cat.id}">삭제</button>
+      </div>
+    `;
+    row.querySelector(`[data-pick="${cat.id}"]`).addEventListener("click", (e)=>{
+      e.stopPropagation();
+      UI_SELECTED_MKCAT_FOR_COLOR = cat.id;
+      $("#colorHexInput").value = cat.color || "";
+      renderCatColorList();
+    });
+    row.querySelector(`[data-del="${cat.id}"]`).addEventListener("click", (e)=>{
+      e.stopPropagation();
+      if(!requireAuth()) return;
+      if(!confirmDanger("삭제하시겠습니까?")) return;
+      deleteMarkerCategory(cat.id);
+      renderCatColorList();
+    });
+    row.addEventListener("click", ()=>{
+      UI_SELECTED_MKCAT_FOR_COLOR = cat.id;
+      $("#colorHexInput").value = cat.color || "";
+      renderCatColorList();
+    });
+    list.appendChild(row);
+  });
+
+  if(list.children.length===0){
+    const d = document.createElement("div");
+    d.className = "hint";
+    d.textContent = "추가된 마커 카테고리가 없습니다. (+ 추가)로 생성하세요.";
+    list.appendChild(d);
+  }
+}
+$("#btnCatColorAdd2").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  const nm = prompt("새 마커 카테고리 이름", "카테고리");
+  if(!nm) return;
+  const id = uid("mkcat");
+  STATE.markerCategories.push({ id, name:nm.trim(), color:"#0a84ff", enabled:true, hideNumber:false, locked:false });
+  UI_SELECTED_MKCAT_FOR_COLOR = id;
+  touchState(); saveLocal();
+  renderCatColorList();
+  renderMarkerCats();
+  renderNumHideList();
+  draw();
+});
+
+$("#colorHexInput").addEventListener("change", ()=>{
+  if(!requireAuth()) return;
+  if(!UI_SELECTED_MKCAT_FOR_COLOR) return;
+  const cat = STATE.markerCategories.find(c=>c.id===UI_SELECTED_MKCAT_FOR_COLOR);
+  if(!cat) return;
+  cat.color = parseColor($("#colorHexInput").value, cat.color || "#ffffff");
+  touchState(); saveLocal();
+  renderCatColorList();
+  renderMarkerCats();
+  renderNumHideList();
+  draw();
+});
+
+/* =========================
+   MODAL: Marker Edit
+========================= */
+const modalMarkerEditBack = $("#modalMarkerEditBack");
+let EDITING_MARKER_ID = null;
+
+function openMarkerEditModal(markerId){
+  if(!ACTIVE_PAGE_ID) return;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  const m = pd.markers.find(x=>x.id===markerId);
+  if(!m) return;
+
+  EDITING_MARKER_ID = markerId;
+
+  $("#mName").value = m.name || "";
+  $("#mYtTitle").value = m.ytTitle || "";
+  $("#mYtUrl").value = m.ytUrl || "";
+  $("#mYtDesc").value = m.ytDesc || "";
+
+  // category select
+  const sel = $("#mCat");
+  sel.innerHTML = "";
+  STATE.markerCategories.forEach(c=>{
+    if(c.id==="all") return; // "전체"는 display filter용, 실제 카테고리는 사용자 생성분
+  });
+  // Allow "all" selection too for safety
+  const allOpt = document.createElement("option");
+  allOpt.value = "all";
+  allOpt.textContent = "전체";
+  sel.appendChild(allOpt);
+  STATE.markerCategories.filter(c=>c.id!=="all").forEach(c=>{
+    const opt = document.createElement("option");
+    opt.value = c.id;
+    opt.textContent = c.name;
+    sel.appendChild(opt);
+  });
+  sel.value = m.catId || "all";
+
+  $("#mSize").value = clamp(Math.round(m.size||28), 1, 100);
+  $("#mTextSize").value = Math.round(m.textSize||14);
+  $("#mWeight").value = String(m.weight||800);
+  $("#mTextColor").value = m.textColor || "#e7eef8";
+
+  renderEditPalette();
+
+  modalMarkerEditBack.classList.add("show");
+  setTimeout(()=>$("#mName").focus(), 0);
+}
+
+function closeMarkerEditModal(){
+  modalMarkerEditBack.classList.remove("show");
+  EDITING_MARKER_ID = null;
+}
+
+$("#btnEditClose").addEventListener("click", closeMarkerEditModal);
+$("#btnEditCancel").addEventListener("click", closeMarkerEditModal);
+
+$("#mName").addEventListener("input", ()=>{
+  // 연동: 마커 이름 입력 → 유튜브 표시명 자동 반영
+  // 단, 사용자가 표시명을 별도로 수정한 경우를 감지해야 하지만 요구는 "이름 입력 시 표시명에도 동일 출력"
+  // => 여기서는 표시명이 비어있거나, 표시명이 이전 자동 값과 동일하면 따라가도록 처리
+  const v = $("#mName").value;
+  const yt = $("#mYtTitle");
+  if(yt.dataset.userEdited !== "1"){
+    yt.value = v;
+  }
+});
+$("#mYtTitle").addEventListener("input", ()=>{
+  // 표시명 수정 시 마커 이름 유지
+  $("#mYtTitle").dataset.userEdited = "1";
+});
+
+$("#mSize").addEventListener("input", ()=>{
+  // 크기 변경 시 텍스트 크기 동일 비율 자동 변경
+  const size = clamp(+$("#mSize").value || 1, 1, 100);
+  const txt = +$("#mTextSize").value || 14;
+  const prev = +$("#mSize").dataset.prev || size;
+  const ratio = size / (prev || size);
+  const nextTxt = Math.max(6, Math.round(txt * ratio));
+  $("#mTextSize").value = nextTxt;
+  $("#mSize").dataset.prev = String(size);
+});
+
+$("#btnEditSave").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  if(!ACTIVE_PAGE_ID || !EDITING_MARKER_ID) return;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  const m = pd.markers.find(x=>x.id===EDITING_MARKER_ID);
+  if(!m) return;
+
+  const name = $("#mName").value.trim();
+  const catId = $("#mCat").value;
+  const ytTitle = $("#mYtTitle").value.trim();
+  const ytUrl = $("#mYtUrl").value.trim();
+  const ytDesc = $("#mYtDesc").value.trim();
+
+  m.name = name;
+  m.catId = catId || "all";
+  m.ytTitle = ytTitle;
+  m.ytUrl = ytUrl;
+  m.ytDesc = ytDesc;
+
+  const size = clamp(+$("#mSize").value || 28, 1, 100);
+  const textSize = Math.max(6, +$("#mTextSize").value || 14);
+  const weight = +$("#mWeight").value || 800;
+  const textColor = parseColor($("#mTextColor").value, "#e7eef8");
+
+  // size/text sync: keep ratio already applied
+  m.size = size;
+  m.textSize = textSize;
+  m.weight = weight;
+  m.textColor = textColor;
+
+  // If marker category defines color/size baseline by "1번", we enforce:
+  enforceCategoryBaselineForPage(ACTIVE_PAGE_ID, m.catId);
+
+  // Also update right YouTube panel/selected info
+  touchState(); saveLocal();
+  closeMarkerEditModal();
+  renderAll();
+});
+
+$("#btnMarkerDelete").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  if(!ACTIVE_PAGE_ID || !EDITING_MARKER_ID) return;
+  if(!confirmDanger("이 마커를 삭제하시겠습니까?")) return;
+  deleteMarker(ACTIVE_PAGE_ID, EDITING_MARKER_ID);
+  closeMarkerEditModal();
+});
+
+$("#btnChainNew").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  if(!ACTIVE_PAGE_ID || !EDITING_MARKER_ID) return;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  // next add starts new chain
+  pd.chain.continueFromMarkerId = null;
+  pd.chain.nextChainId = Math.max(1, (pd.chain.nextChainId||1) + 1);
+  touchState(); saveLocal();
+  alert("다음 우클릭 마커부터 새로운 번호(1번)로 시작합니다.");
+});
+
+$("#btnChainContinue").addEventListener("click", ()=>{
+  if(!requireAuth()) return;
+  if(!ACTIVE_PAGE_ID || !EDITING_MARKER_ID) return;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  pd.chain.continueFromMarkerId = EDITING_MARKER_ID;
+  touchState(); saveLocal();
+  alert("해당 마커를 기준으로 다음 번호가 이어서 생성됩니다.");
+});
+
+function renderEditPalette(){
+  const host = $("#editPalette");
+  host.innerHTML = "";
+  QUICK_COLORS.forEach(o=>{
+    const sw = document.createElement("div");
+    sw.className = "swatch";
+    sw.title = o.name + " " + o.c;
+    sw.style.background = o.c;
+    sw.addEventListener("click", ()=>{
+      $("#mTextColor").value = o.c;
+    });
+    host.appendChild(sw);
+  });
+}
+
+function renderPalettes(){
+  // quick palette right
+  const qp = $("#quickPalette");
+  qp.innerHTML = "";
+  QUICK_COLORS.forEach(o=>{
+    const sw = document.createElement("div");
+    sw.className = "swatch";
+    sw.title = o.name + " " + o.c;
+    sw.style.background = o.c;
+    qp.appendChild(sw);
+  });
+
+  // modal palette
+  const p2 = $("#palette2");
+  p2.innerHTML = "";
+  QUICK_COLORS.forEach(o=>{
+    const sw = document.createElement("div");
+    sw.className = "swatch";
+    sw.title = o.name + " " + o.c;
+    sw.style.background = o.c;
+    sw.addEventListener("click", ()=>{
+      if(!requireAuth()) return;
+      if(!UI_SELECTED_MKCAT_FOR_COLOR) return;
+      const cat = STATE.markerCategories.find(c=>c.id===UI_SELECTED_MKCAT_FOR_COLOR);
+      if(!cat) return;
+      cat.color = o.c;
+      $("#colorHexInput").value = o.c;
+      touchState(); saveLocal();
+      renderCatColorList();
+      renderMarkerCats();
+      renderNumHideList();
+      draw();
+    });
+    p2.appendChild(sw);
+  });
+}
+
+/* =========================
+   HELPERS: auth gate
+========================= */
+function requireAuth(){
+  const a = getAuth();
+  if(!a.ok){
+    openLoginModal();
+    return false;
+  }
+  return true;
+}
+
+/* =========================
+   PAGE DATA GETTER
+========================= */
+function getPageData(pageId){
+  return ensurePageData(STATE, pageId);
+}
+
+/* =========================
+   CANVAS ENGINE (map + markers + edges)
+========================= */
+const canvas = $("#c");
+const ctx = canvas.getContext("2d");
+
+let DPR = 1;
+let CW = 0, CH = 0;
+
+// map image
+let mapImg = new Image();
+let mapLoaded = false;
+let mapNaturalW = 0, mapNaturalH = 0;
+
+// view transform
+let view = { x: 0, y: 0, scale: 1 }; // world -> screen: (w*scale + x, w*scale + y)
+let isPanning = false;
+let panStart = { sx:0, sy:0, vx:0, vy:0 };
+
+// drag marker
+let draggingMarkerId = null;
+let dragStart = { sx:0, sy:0, mx:0, my:0 };
+
+// drag edge curve control
+let draggingEdgeId = null;
+let draggingEdgeStart = { sx:0, sy:0, cx:0, cy:0 };
+
+// selection sets (opacity 30%)
+let fadedSet = new Set();
+
+function setupCanvas(){
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  canvas.addEventListener("contextmenu", (e)=> e.preventDefault());
+
+  canvas.addEventListener("pointerdown", onPointerDown, {passive:false});
+  canvas.addEventListener("pointermove", onPointerMove, {passive:false});
+  canvas.addEventListener("pointerup", onPointerUp, {passive:false});
+  canvas.addEventListener("pointercancel", onPointerUp, {passive:false});
+  canvas.addEventListener("wheel", onWheel, {passive:false});
+
+  canvas.addEventListener("dblclick", (e)=>{
+    if(!requireAuth()) return;
+    const p = getPointerPos(e);
+    const w = screenToWorld(p.x, p.y);
+    const hit = hitTestMarker(w.x, w.y);
+    if(hit){
+      SELECTED_MARKER_ID = hit.id;
+      SELECTED_EDGE_ID = null;
+      renderSelectedInfo();
+      openMarkerEditModal(hit.id);
+      draw();
+    }
+  });
+
+  // initial view
+  resetViewToFit();
+}
+
+function resizeCanvas(){
+  const r = canvas.getBoundingClientRect();
+  DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1)); // stable
+  CW = Math.max(1, Math.floor(r.width * DPR));
+  CH = Math.max(1, Math.floor(r.height * DPR));
+  canvas.width = CW;
+  canvas.height = CH;
+  draw();
+}
+
+function loadMapForActivePage(forceResetView){
+  mapLoaded = false;
+  if(!ACTIVE_PAGE_ID){
+    mapImg = new Image();
+    draw();
+    return;
+  }
+  const pages = pagesOfActiveTop();
+  const p = pages.find(x=>x.id===ACTIVE_PAGE_ID);
+  if(!p) return;
+
+  const url = (p.mapUrl || "").trim();
+  if(!url){
+    mapImg = new Image();
+    mapLoaded = false;
+    draw();
+    return;
+  }
+
+  const img = new Image();
+  img.onload = ()=>{
+    mapImg = img;
+    mapLoaded = true;
+    mapNaturalW = img.naturalWidth || img.width;
+    mapNaturalH = img.naturalHeight || img.height;
+    if(forceResetView) resetViewToFit();
+    draw();
+  };
+  img.onerror = ()=>{
+    mapImg = new Image();
+    mapLoaded = false;
+    draw();
+  };
+  img.src = url;
+}
+
+function resetViewToFit(){
+  // fit map into canvas area, keep stable layout
+  if(!mapLoaded || !mapNaturalW || !mapNaturalH || !CW || !CH){
+    view.scale = 1;
+    view.x = 0;
+    view.y = 0;
+    return;
+  }
+  const pad = 24 * DPR;
+  const sx = (CW - pad*2) / mapNaturalW;
+  const sy = (CH - pad*2) / mapNaturalH;
+  const sc = Math.min(sx, sy);
+  view.scale = sc;
+  const mapW = mapNaturalW * sc;
+  const mapH = mapNaturalH * sc;
+  view.x = (CW - mapW) / 2;
+  view.y = (CH - mapH) / 2;
+}
+
+function worldToScreen(wx, wy){
+  return { x: wx*view.scale + view.x, y: wy*view.scale + view.y };
+}
+function screenToWorld(sx, sy){
+  return { x: (sx - view.x)/view.scale, y: (sy - view.y)/view.scale };
+}
+function getPointerPos(ev){
+  const r = canvas.getBoundingClientRect();
+  const x = (ev.clientX - r.left) * DPR;
+  const y = (ev.clientY - r.top) * DPR;
+  return {x,y};
+}
+
+function onWheel(e){
+  e.preventDefault();
+  if(!ACTIVE_PAGE_ID) return;
+
+  const p = getPointerPos(e);
+  const before = screenToWorld(p.x, p.y);
+
+  const delta = -e.deltaY;
+  const factor = Math.pow(1.0018, delta);
+  const next = clamp(view.scale * factor, 0.05, 8);
+
+  view.scale = next;
+
+  const after = worldToScreen(before.x, before.y);
+  // keep mouse point stable
+  view.x += (p.x - after.x);
+  view.y += (p.y - after.y);
+
+  draw();
+}
+
+function onPointerDown(e){
+  e.preventDefault();
+  if(!ACTIVE_PAGE_ID) return;
+
+  const btn = e.button; // 0 left, 2 right
+  const p = getPointerPos(e);
+  const w = screenToWorld(p.x, p.y);
+
+  // Edge hit test first for curve dragging (left only)
+  if(btn===0){
+    const edgeHit = hitTestEdge(w.x, w.y);
+    if(edgeHit){
+      SELECTED_EDGE_ID = edgeHit.id;
+      SELECTED_MARKER_ID = null;
+
+      draggingEdgeId = edgeHit.id;
+      draggingEdgeStart.sx = p.x;
+      draggingEdgeStart.sy = p.y;
+
+      const ed = getPageData(ACTIVE_PAGE_ID).edges.find(x=>x.id===edgeHit.id);
+      draggingEdgeStart.cx = ed.ctrl?.x ?? ((edgeHit.mid?.x) ?? 0);
+      draggingEdgeStart.cy = ed.ctrl?.y ?? ((edgeHit.mid?.y) ?? 0);
+
+      // if ctrl absent, initialize at mid
+      if(!ed.ctrl){
+        ed.ctrl = { x: edgeHit.mid.x, y: edgeHit.mid.y };
+        touchState(); saveLocal();
       }
+      draw();
+      return;
+    }
+  }
 
-      // Current page selection init
-      if(!state.currentPageId && state.pages[0]) state.currentPageId = state.pages[0].id;
-      if(state.currentPageId) syncMapUrlFromCurrentPage();
+  // Marker hit test
+  const hit = hitTestMarker(w.x, w.y);
+  if(btn===2){
+    // right-click add marker
+    if(!requireAuth()) return;
+    addMarkerAt(w.x, w.y);
+    draw();
+    return;
+  }
 
-      // Canvas
-      resizeCanvas();
+  if(btn===0){
+    if(hit){
+      // select marker and drag marker
+      SELECTED_MARKER_ID = hit.id;
+      SELECTED_EDGE_ID = null;
+      draggingMarkerId = hit.id;
+      dragStart.sx = p.x; dragStart.sy = p.y;
+      dragStart.mx = hit.x; dragStart.my = hit.y;
 
-      // Path hint
-      $("#pathHint").textContent = `${location.pathname} → ${REMOTE_STATE_URL.pathname}`;
+      renderSelectedInfo();
+      draw();
+      return;
+    }
 
-      // Allow clicking in right panel selects nothing
-      document.addEventListener("keydown", (e)=>{
-        if(e.key==="Escape"){
-          // close any open modal
-          ["#loginBack","#topCatsBack","#catEditorBack","#markerEditorBack"].forEach(id=>{
-            const el = $(id);
-            if(el && el.style.display==="flex") el.style.display="none";
-          });
-          draggingMode = null;
-        }
+    // else pan
+    isPanning = true;
+    panStart.sx = p.x; panStart.sy = p.y;
+    panStart.vx = view.x; panStart.vy = view.y;
+    canvas.setPointerCapture(e.pointerId);
+    draw();
+  }
+}
+
+function onPointerMove(e){
+  if(!ACTIVE_PAGE_ID) return;
+  const p = getPointerPos(e);
+
+  if(draggingMarkerId){
+    const w = screenToWorld(p.x, p.y);
+    const pd = getPageData(ACTIVE_PAGE_ID);
+    const m = pd.markers.find(x=>x.id===draggingMarkerId);
+    if(m){
+      m.x = w.x;
+      m.y = w.y;
+      touchState(); saveLocal();
+      draw();
+    }
+    return;
+  }
+
+  if(draggingEdgeId){
+    const w = screenToWorld(p.x, p.y);
+    const pd = getPageData(ACTIVE_PAGE_ID);
+    const ed = pd.edges.find(x=>x.id===draggingEdgeId);
+    if(ed){
+      ed.ctrl = { x: w.x, y: w.y };
+      touchState(); saveLocal();
+      draw();
+    }
+    return;
+  }
+
+  if(isPanning){
+    const dx = p.x - panStart.sx;
+    const dy = p.y - panStart.sy;
+    view.x = panStart.vx + dx;
+    view.y = panStart.vy + dy;
+    draw();
+  }
+}
+
+function onPointerUp(e){
+  if(draggingMarkerId || draggingEdgeId || isPanning){
+    draggingMarkerId = null;
+    draggingEdgeId = null;
+    isPanning = false;
+    draw();
+    return;
+  }
+}
+
+function addMarkerAt(wx, wy){
+  if(!ACTIVE_PAGE_ID) return;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+
+  // Choose marker category: first non-all enabled category if any, else all
+  const activeMkCats = STATE.markerCategories.filter(c=>c.id!=="all" && c.enabled);
+  const catId = activeMkCats[0]?.id || "all";
+
+  // Determine chain/seq:
+  let chainId, seq;
+  const contId = pd.chain.continueFromMarkerId;
+  if(contId){
+    const base = pd.markers.find(m=>m.id===contId);
+    if(base){
+      chainId = base.chainId;
+      // next seq is max seq in that chain +1
+      const maxSeq = Math.max(0, ...pd.markers.filter(m=>m.chainId===chainId).map(m=>m.seq));
+      seq = maxSeq + 1;
+    }else{
+      chainId = pd.chain.nextChainId || 1;
+      seq = 1;
+    }
+  }else{
+    chainId = pd.chain.nextChainId || 1;
+    const maxSeq = Math.max(0, ...pd.markers.filter(m=>m.chainId===chainId).map(m=>m.seq));
+    seq = maxSeq > 0 ? (maxSeq + 1) : 1;
+  }
+
+  // if starting new chain, ensure seq=1
+  if(seq===1 && (pd.chain.nextSeqByChain[chainId]||0)===0){
+    pd.chain.nextSeqByChain[chainId] = 1;
+  }
+
+  // baseline size/color by category's 1번
+  const baseline = getCategoryBaseline(ACTIVE_PAGE_ID, catId);
+
+  const m = {
+    id: uid("m"),
+    x: wx, y: wy,
+    chainId,
+    seq,
+    catId,
+    name: "",
+
+    // visual
+    size: baseline.size,
+    textSize: baseline.textSize,
+    weight: baseline.weight,
+    textColor: baseline.textColor,
+
+    // youtube
+    ytTitle: "",
+    ytDesc: "",
+    ytUrl: "",
+
+    createdAt: now()
+  };
+
+  // Add marker
+  pd.markers.push(m);
+
+  // Connect edge with arrow from previous marker in same chain (seq-1)
+  if(seq > 1){
+    const prev = pd.markers.find(mm=>mm.chainId===chainId && mm.seq===seq-1);
+    if(prev){
+      pd.edges.push({
+        id: uid("e"),
+        from: prev.id,
+        to: m.id,
+        ctrl: null,           // becomes curve if dragged
+        visible: true,
+        createdAt: now()
       });
-    })();
+    }
+  }
 
-  </script>
+  // selection
+  SELECTED_MARKER_ID = m.id;
+  SELECTED_EDGE_ID = null;
+
+  // Update chain pointers
+  pd.chain.continueFromMarkerId = m.id;
+  pd.chain.nextChainId = Math.max(pd.chain.nextChainId||1, chainId);
+
+  // ensure baseline enforcement (category 1번)
+  enforceCategoryBaselineForPage(ACTIVE_PAGE_ID, catId);
+
+  touchState(); saveLocal();
+  renderSelectedInfo();
+}
+
+/* Marker hit test */
+function hitTestMarker(wx, wy){
+  if(!ACTIVE_PAGE_ID) return null;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  // filter visible by marker categories
+  const visible = getVisibleMarkerSet(pd);
+  // topmost later markers
+  for(let i=pd.markers.length-1;i>=0;i--){
+    const m = pd.markers[i];
+    if(!visible.has(m.id)) continue;
+    const r = (m.size||28) / 2;
+    const dx = wx - m.x;
+    const dy = wy - m.y;
+    if(dx*dx + dy*dy <= (r*r)){
+      return m;
+    }
+  }
+  return null;
+}
+
+/* Edge hit test: distance to quadratic curve or segment */
+function hitTestEdge(wx, wy){
+  if(!ACTIVE_PAGE_ID) return null;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  if(STATE.settings.hideAllLines) return null;
+
+  const edges = pd.edges.filter(e=>e.visible!==false);
+  for(let i=edges.length-1;i>=0;i--){
+    const e = edges[i];
+    const a = pd.markers.find(m=>m.id===e.from);
+    const b = pd.markers.find(m=>m.id===e.to);
+    if(!a || !b) continue;
+
+    const ctrl = e.ctrl;
+    // approximate distance: sample
+    let minD = Infinity;
+    let mid = null;
+    const steps = 22;
+    let px = a.x, py=a.y;
+    for(let s=1;s<=steps;s++){
+      const t = s/steps;
+      const pt = ctrl ? quadPoint(a.x,a.y, ctrl.x,ctrl.y, b.x,b.y, t) : {x: a.x + (b.x-a.x)*t, y: a.y+(b.y-a.y)*t};
+      const d = distToSegment(wx,wy, px,py, pt.x,pt.y);
+      if(d < minD){
+        minD = d;
+        if(Math.abs(t-0.5)<(1/steps)) mid = pt;
+      }
+      px = pt.x; py = pt.y;
+    }
+    const threshold = 10 / view.scale; // world threshold
+    if(minD <= threshold){
+      if(!mid){
+        mid = ctrl ? quadPoint(a.x,a.y, ctrl.x,ctrl.y, b.x,b.y, 0.5) : {x:(a.x+b.x)/2, y:(a.y+b.y)/2};
+      }
+      return { id:e.id, mid };
+    }
+  }
+  return null;
+}
+function distToSegment(px,py, x1,y1,x2,y2){
+  const vx = x2-x1, vy=y2-y1;
+  const wx = px-x1, wy=py-y1;
+  const c1 = vx*wx + vy*wy;
+  if(c1<=0) return Math.hypot(px-x1, py-y1);
+  const c2 = vx*vx + vy*vy;
+  if(c2<=c1) return Math.hypot(px-x2, py-y2);
+  const t = c1 / c2;
+  const bx = x1 + t*vx, by = y1 + t*vy;
+  return Math.hypot(px-bx, py-by);
+}
+function quadPoint(x0,y0, cx,cy, x1,y1, t){
+  const u=1-t;
+  return {
+    x: u*u*x0 + 2*u*t*cx + t*t*x1,
+    y: u*u*y0 + 2*u*t*cy + t*t*y1
+  };
+}
+function quadTangent(x0,y0, cx,cy, x1,y1, t){
+  // derivative: 2(1-t)(C-P0) + 2t(P1-C)
+  const dx = 2*(1-t)*(cx-x0) + 2*t*(x1-cx);
+  const dy = 2*(1-t)*(cy-y0) + 2*t*(y1-cy);
+  return {dx,dy};
+}
+
+/* Visible marker set based on marker categories enabled + 'all' */
+function getVisibleMarkerSet(pd){
+  const allOn = STATE.markerCategories.find(c=>c.id==="all")?.enabled !== false;
+  const enabledCats = new Set(STATE.markerCategories.filter(c=>c.enabled).map(c=>c.id));
+  const out = new Set();
+  if(!allOn) return out;
+  pd.markers.forEach(m=>{
+    if(m.catId==="all") out.add(m.id);
+    else if(enabledCats.has(m.catId)) out.add(m.id);
+    else out.add(m.id); // categories disabled still should hide? spec: category toggles its markers
+  });
+  // Actually apply: if category disabled => hidden
+  pd.markers.forEach(m=>{
+    if(m.catId!=="all"){
+      const cat = STATE.markerCategories.find(c=>c.id===m.catId);
+      if(cat && cat.enabled===false) out.delete(m.id);
+    }
+  });
+  return out;
+}
+
+/* Category baseline: based on that category's seq==1 marker */
+function getCategoryBaseline(pageId, catId){
+  const pd = getPageData(pageId);
+  const first = pd.markers.find(m=>m.catId===catId && m.seq===1);
+  if(first){
+    return {
+      size: clamp(first.size||28, 1, 100),
+      textSize: Math.max(6, first.textSize||14),
+      weight: first.weight||800,
+      textColor: first.textColor||"#e7eef8"
+    };
+  }
+  // default baseline
+  return { size: 28, textSize: 14, weight: 800, textColor:"#e7eef8" };
+}
+
+function enforceCategoryBaselineForPage(pageId, catId){
+  const pd = getPageData(pageId);
+  if(!pd || !catId) return;
+  // baseline is that category's seq==1 if exists, else keep defaults
+  const first = pd.markers.find(m=>m.catId===catId && m.seq===1);
+  if(!first) return;
+
+  const base = {
+    size: clamp(first.size||28, 1, 100),
+    textSize: Math.max(6, first.textSize||14),
+    weight: first.weight||800,
+    textColor: first.textColor||"#e7eef8"
+  };
+  pd.markers.forEach(m=>{
+    if(m.catId===catId){
+      // Keep size/textColor/weight/textSize consistent with 1번 기준
+      m.size = base.size;
+      m.textSize = base.textSize;
+      m.weight = base.weight;
+      m.textColor = base.textColor;
+    }
+  });
+
+  touchState(); saveLocal();
+}
+
+function deleteMarker(pageId, markerId){
+  const pd = getPageData(pageId);
+  // remove edges connected
+  pd.edges = pd.edges.filter(e=>e.from!==markerId && e.to!==markerId);
+  // remove marker
+  pd.markers = pd.markers.filter(m=>m.id!==markerId);
+
+  // fix sequence numbering within chain (keep requirement: numbers sequential)
+  // We'll re-seq per chain by sort-by-seq then 1..n
+  const chains = new Map();
+  pd.markers.forEach(m=>{
+    if(!chains.has(m.chainId)) chains.set(m.chainId, []);
+    chains.get(m.chainId).push(m);
+  });
+  chains.forEach(list=>{
+    list.sort((a,b)=>a.seq-b.seq);
+    list.forEach((m,i)=>m.seq=i+1);
+  });
+
+  // rebuild edges per chain sequentially
+  pd.edges = rebuildEdgesFromMarkers(pd);
+
+  if(SELECTED_MARKER_ID===markerId) SELECTED_MARKER_ID = null;
+  if(pd.chain.continueFromMarkerId===markerId) pd.chain.continueFromMarkerId = null;
+
+  touchState(); saveLocal();
+  renderAll();
+}
+
+function rebuildEdgesFromMarkers(pd){
+  const edges = [];
+  const chainGroups = new Map();
+  pd.markers.forEach(m=>{
+    if(!chainGroups.has(m.chainId)) chainGroups.set(m.chainId, []);
+    chainGroups.get(m.chainId).push(m);
+  });
+  chainGroups.forEach(list=>{
+    list.sort((a,b)=>a.seq-b.seq);
+    for(let i=1;i<list.length;i++){
+      const prev = list[i-1], cur = list[i];
+      // preserve existing ctrl if edge existed
+      const old = pd.edges.find(e=>e.from===prev.id && e.to===cur.id);
+      edges.push({
+        id: old?.id || uid("e"),
+        from: prev.id,
+        to: cur.id,
+        ctrl: old?.ctrl || null,
+        visible: old?.visible ?? true,
+        createdAt: old?.createdAt || now()
+      });
+    }
+  });
+  return edges;
+}
+
+/* =========================
+   DRAW
+========================= */
+function clear(){
+  ctx.clearRect(0,0,CW,CH);
+}
+
+function draw(){
+  clear();
+
+  // background grid subtle
+  drawGrid();
+
+  // map
+  if(mapLoaded){
+    const p0 = worldToScreen(0,0);
+    const w = mapNaturalW * view.scale;
+    const h = mapNaturalH * view.scale;
+    ctx.save();
+    ctx.globalAlpha = 1;
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(mapImg, p0.x, p0.y, w, h);
+    ctx.restore();
+  }else{
+    // placeholder
+    ctx.save();
+    ctx.fillStyle = "rgba(231,238,248,.04)";
+    ctx.fillRect(0,0,CW,CH);
+    ctx.fillStyle = "rgba(159,176,198,.65)";
+    ctx.font = `${14*DPR}px ${getComputedStyle(document.documentElement).getPropertyValue("--font")}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("지도 이미지 URL을 등록하세요 (좌측 페이지 편집)", CW/2, CH/2);
+    ctx.restore();
+  }
+
+  if(!ACTIVE_PAGE_ID) return;
+
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  const visible = getVisibleMarkerSet(pd);
+
+  // edges
+  if(!STATE.settings.hideAllLines){
+    pd.edges.forEach(e=>{
+      if(e.visible===false) return;
+      const a = pd.markers.find(m=>m.id===e.from);
+      const b = pd.markers.find(m=>m.id===e.to);
+      if(!a || !b) return;
+      if(!visible.has(a.id) || !visible.has(b.id)) return; // hide edge if endpoints hidden
+
+      drawEdge(a,b,e);
+    });
+  }
+
+  // markers
+  pd.markers.forEach(m=>{
+    if(!visible.has(m.id)) return;
+    drawMarker(m);
+  });
+
+  // selection highlight
+  if(SELECTED_MARKER_ID){
+    const m = pd.markers.find(x=>x.id===SELECTED_MARKER_ID);
+    if(m && visible.has(m.id)){
+      const s = worldToScreen(m.x, m.y);
+      ctx.save();
+      ctx.strokeStyle = "rgba(124,196,255,.85)";
+      ctx.lineWidth = 2*DPR;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, ((m.size||28)/2)*view.scale + 6*DPR, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+  if(SELECTED_EDGE_ID && !STATE.settings.hideAllLines){
+    const ed = pd.edges.find(x=>x.id===SELECTED_EDGE_ID);
+    if(ed){
+      const a = pd.markers.find(m=>m.id===ed.from);
+      const b = pd.markers.find(m=>m.id===ed.to);
+      if(a && b && visible.has(a.id) && visible.has(b.id)){
+        // draw ctrl point handle
+        const ctrl = ed.ctrl || quadPoint(a.x,a.y, (a.x+b.x)/2,(a.y+b.y)/2, b.x,b.y, 0.5);
+        const p = worldToScreen(ctrl.x, ctrl.y);
+        ctx.save();
+        ctx.fillStyle = "rgba(124,196,255,.35)";
+        ctx.strokeStyle = "rgba(124,196,255,.85)";
+        ctx.lineWidth = 2*DPR;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 6*DPR, 0, Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+}
+
+function drawGrid(){
+  const step = 80 * DPR;
+  ctx.save();
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = "rgba(39,52,74,.22)";
+  ctx.lineWidth = 1*DPR;
+  ctx.beginPath();
+  for(let x= (view.x % step); x<CW; x+=step){
+    ctx.moveTo(x,0); ctx.lineTo(x,CH);
+  }
+  for(let y= (view.y % step); y<CH; y+=step){
+    ctx.moveTo(0,y); ctx.lineTo(CW,y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawEdge(a,b,e){
+  const sa = worldToScreen(a.x,a.y);
+  const sb = worldToScreen(b.x,b.y);
+
+  const stroke = "rgba(231,238,248,.65)";
+  ctx.save();
+  ctx.strokeStyle = (e.id===SELECTED_EDGE_ID) ? "rgba(124,196,255,.9)" : stroke;
+  ctx.lineWidth = 2.2 * DPR;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  ctx.beginPath();
+  if(e.ctrl){
+    const sc = worldToScreen(e.ctrl.x, e.ctrl.y);
+    ctx.moveTo(sa.x, sa.y);
+    ctx.quadraticCurveTo(sc.x, sc.y, sb.x, sb.y);
+  }else{
+    ctx.moveTo(sa.x, sa.y);
+    ctx.lineTo(sb.x, sb.y);
+  }
+  ctx.stroke();
+
+  // arrow along curve, near end
+  const t = 0.72;
+  let p, tan;
+  if(e.ctrl){
+    const scw = e.ctrl;
+    p = quadPoint(a.x,a.y, scw.x,scw.y, b.x,b.y, t);
+    tan = quadTangent(a.x,a.y, scw.x,scw.y, b.x,b.y, t);
+  }else{
+    p = { x: a.x + (b.x-a.x)*t, y: a.y + (b.y-a.y)*t };
+    tan = { dx: b.x-a.x, dy: b.y-a.y };
+  }
+  const sp = worldToScreen(p.x, p.y);
+  const ang = Math.atan2(tan.dy, tan.dx);
+
+  const arrowLen = 12*DPR;
+  const arrowWid = 7*DPR;
+
+  ctx.fillStyle = "rgba(231,238,248,.78)";
+  ctx.beginPath();
+  ctx.moveTo(sp.x + Math.cos(ang)*arrowLen, sp.y + Math.sin(ang)*arrowLen);
+  ctx.lineTo(sp.x + Math.cos(ang + Math.PI*0.78)*arrowWid, sp.y + Math.sin(ang + Math.PI*0.78)*arrowWid);
+  ctx.lineTo(sp.x + Math.cos(ang - Math.PI*0.78)*arrowWid, sp.y + Math.sin(ang - Math.PI*0.78)*arrowWid);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawMarker(m){
+  const s = worldToScreen(m.x, m.y);
+  const cat = STATE.markerCategories.find(c=>c.id===m.catId) || STATE.markerCategories.find(c=>c.id==="all");
+  const fill = cat?.color || "#7cc4ff";
+  const rWorld = (m.size||28)/2;
+  const r = rWorld * view.scale;
+
+  const isFaded = fadedSet.has(m.id);
+  const alpha = isFaded ? 0.30 : 1.0;
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+
+  // circle
+  ctx.fillStyle = withAlpha(fill, 0.90);
+  ctx.strokeStyle = "rgba(7,11,18,.65)";
+  ctx.lineWidth = 2.0 * DPR;
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, r, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+
+  // number (hide by category option)
+  const hideNum = (STATE.markerCategories.find(c=>c.id===m.catId)?.hideNumber) || false;
+  if(!hideNum){
+    const fontSize = Math.max(8, (m.textSize||14) * view.scale);
+    ctx.fillStyle = parseColor(m.textColor || "#e7eef8", "#e7eef8");
+    ctx.font = `${m.weight||800} ${fontSize}px ${getComputedStyle(document.documentElement).getPropertyValue("--font")}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(String(m.seq||1), s.x, s.y);
+  }
+
+  // text (marker name) — required: 우클릭으로 나오는 마커에는 텍스트도 함께 출력
+  if(m.name){
+    const labelSize = Math.max(10, ((m.textSize||14) * 0.95) * view.scale);
+    ctx.globalAlpha = Math.min(1, alpha);
+    ctx.font = `${Math.min(900, (m.weight||800))} ${labelSize}px ${getComputedStyle(document.documentElement).getPropertyValue("--font")}`;
+    ctx.fillStyle = "rgba(231,238,248,.92)";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    const pad = 10*DPR;
+    const x = s.x + r + pad;
+    const y = s.y;
+    // bg
+    const text = m.name;
+    const w = ctx.measureText(text).width;
+    const bh = labelSize + 10*DPR;
+    ctx.fillStyle = "rgba(11,18,32,.55)";
+    ctx.strokeStyle = "rgba(39,52,74,.65)";
+    roundRect(ctx, x-6*DPR, y-bh/2, w+12*DPR, bh, 10*DPR);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(231,238,248,.92)";
+    ctx.fillText(text, x, y);
+  }
+
+  ctx.restore();
+}
+
+function roundRect(ctx, x,y,w,h,r){
+  r = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+/* =========================
+   CLICK LOGIC: fade toggles
+========================= */
+canvas.addEventListener("click", (e)=>{
+  if(!ACTIVE_PAGE_ID) return;
+  const p = getPointerPos(e);
+  const w = screenToWorld(p.x, p.y);
+  const hit = hitTestMarker(w.x, w.y);
+  if(hit){
+    // Toggle fade 30% on click
+    if(fadedSet.has(hit.id)) fadedSet.delete(hit.id);
+    else fadedSet.add(hit.id);
+
+    SELECTED_MARKER_ID = hit.id;
+    SELECTED_EDGE_ID = null;
+    renderSelectedInfo();
+    draw();
+  }else{
+    // click empty: deselect edge/marker
+    SELECTED_MARKER_ID = null;
+    SELECTED_EDGE_ID = null;
+    renderSelectedInfo();
+    draw();
+  }
+});
+
+/* =========================
+   TICKER
+========================= */
+function startTicker(){
+  // periodic auth badge refresh
+  setInterval(()=>renderAuthBadge(), 1500);
+}
+
+/* =========================
+   MISC
+========================= */
+function enforceAllCategoryBaselines(){
+  if(!ACTIVE_PAGE_ID) return;
+  const pd = getPageData(ACTIVE_PAGE_ID);
+  const catIds = new Set(pd.markers.map(m=>m.catId));
+  catIds.forEach(cid=>enforceCategoryBaselineForPage(ACTIVE_PAGE_ID, cid));
+}
+
+function setupQuickPaletteClick(){
+  // Quick palette is informational; edit palette in modal sets text color only
+}
+setupQuickPaletteClick();
+
+/* =========================
+   UX: close modals by background click
+========================= */
+[modalLoginBack, modalLogoBack, modalCatSubBack, modalCatColorBack, modalMarkerEditBack].forEach(back=>{
+  back.addEventListener("mousedown", (e)=>{
+    if(e.target===back){
+      back.classList.remove("show");
+      if(back===modalMarkerEditBack) EDITING_MARKER_ID = null;
+      if(back===modalCatSubBack) UI_ACTIVE_CAT_SUB_ID = null;
+      if(back===modalCatColorBack) UI_SELECTED_MKCAT_FOR_COLOR = null;
+    }
+  });
+});
+
+/* =========================
+   Boot palettes
+========================= */
+renderPalettes();
+
+/* =========================
+   Keyboard safety
+========================= */
+document.addEventListener("keydown", (e)=>{
+  if(e.key==="Escape"){
+    // close topmost modal if open
+    const modals = [modalMarkerEditBack, modalCatColorBack, modalCatSubBack, modalLogoBack, modalLoginBack];
+    for(const m of modals){
+      if(m.classList.contains("show")){
+        m.classList.remove("show");
+        return;
+      }
+    }
+  }
+});
+</script>
 </body>
 </html>
