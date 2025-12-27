@@ -902,6 +902,11 @@
          - slotGroups[0]은 기존 games/game과 호환(미러링)
          - slotGroups[1~3]은 완전 독립
          =========================== */
+      function buildGameRaw(name, enabled){
+        const nm = String(name ?? "").trim();
+        if(!nm) return "";
+        return enabled ? nm : (nm + "|0");
+      }
       function makeDefaultSlotGroup(name){
         return {
           items: name ? [buildGameRaw(name, true)] : [],
@@ -1120,27 +1125,19 @@
         if(m){ return { raw:s, name:m[1], enabled: m[2] === "1" }; }
         return { raw:s, name:s, enabled:true };
       }
-      function buildGameRaw(name, enabled){
-        const nm = String(name ?? "").trim();
-        if(!nm) return "";
-        return enabled ? nm : (nm + "|0");
-      }
-
       function escapeHtml(s){
         return String(s ?? "")
           .replace(/&/g,"&amp;")
-          .replace(/</g,"&lt;")
+          .replacenplace(/</g,"&lt;")
           .replace(/>/g,"&gt;")
           .replace(/"/g,"&quot;")
           .replace(/'/g,"&#39;");
       }
 
       function normalizeSlotGroups(st){
-        // ✅ migrate old games/game into slotGroups[0] if needed
         const out = Array.isArray(st?.slotGroups) ? st.slotGroups : null;
 
         if(out && out.length === 4){
-          // ensure shape
           for(let i=0;i<4;i++){
             if(!out[i] || typeof out[i] !== "object") out[i] = makeDefaultSlotGroup("");
             if(!Array.isArray(out[i].items)) out[i].items = [];
@@ -1149,7 +1146,6 @@
           return out;
         }
 
-        // fallback: create new based on old games/game
         const gList = Array.isArray(st?.games) && st.games.length ? st.games.slice() : ["아이온2"];
         const gActive = (typeof st?.game === "string" && st.game) ? st.game : gList[0];
         const sg0 = { items: gList.slice(), active: gActive };
@@ -1160,7 +1156,6 @@
       }
 
       function mirrorSlot1ToLegacy(){
-        // slotGroups[0] <-> games/game 호환 유지
         const sg0 = S.slotGroups[0];
         S.games = sg0.items.slice();
         S.game = sg0.active || (sg0.items[0] || "아이온2");
@@ -1189,17 +1184,13 @@
         merged.chains = Array.isArray(st?.chains) ? st.chains : [];
 
         merged.map = Object.assign(structuredClone(defaultState.map), st?.map||{});
-
-        // ✅ slotGroups normalize
         merged.slotGroups = normalizeSlotGroups(st);
 
-        // legacy mirror ensure
         if(!Array.isArray(merged.games) || !merged.games.length) merged.games = ["아이온2"];
         if(typeof merged.game !== "string" || !merged.game) merged.game = merged.games[0];
 
         if(!merged.pages.find(p=>p.id===merged.currentPageId)) merged.currentPageId = merged.pages[0].id;
 
-        // marker defaults
         for(const m of merged.markers){
           if(typeof m.order !== "number") m.order = (typeof m.chainIndex==="number" ? m.chainIndex : null);
           if(typeof m.dim !== "boolean") m.dim = false;
@@ -1302,7 +1293,6 @@
       function setSlotActive(i, raw){
         const sg = slotGroup(i);
         sg.active = raw || "";
-        // ✅ slot1은 기존 game context와 동일하게 동작
         if(i === 0){
           S.game = sg.active || (sg.items[0] || "아이온2");
           $("pathGameTop").textContent = parseGameRaw(S.game).name || "아이온2";
@@ -1327,9 +1317,8 @@
         const prev = sg.items[itemIdx];
         sg.items[itemIdx] = newRaw;
         if(sg.active === prev) sg.active = newRaw;
-        // cleanup: if active becomes empty, set to first
         if(!sg.active && sg.items.length) sg.active = sg.items[0];
-        if(slotIdx === 0) ensureSlot1FromLegacy(); // keep mirrored
+        if(slotIdx === 0) ensureSlot1FromLegacy();
       }
 
       function toggleSlotItemEnabled(slotIdx, raw){
@@ -1346,7 +1335,6 @@
       }
 
       function renderSlotsTop(){
-        // ensure legacy mirrored fields consistent
         ensureSlot1FromLegacy();
 
         const slots = [gSlot1,gSlot2,gSlot3,gSlot4];
@@ -1448,7 +1436,6 @@
             const name = (nn||"").trim();
             if(!name) return;
 
-            // ✅ 슬롯 내부 중복만 금지 (다른 카테고리와는 완전 분리)
             const exists = sg.items.some(x=>{
               if(x === raw) return false;
               return parseGameRaw(x).name === name;
@@ -1469,7 +1456,6 @@
 
           bDel.addEventListener("click", async (e)=>{
             e.stopPropagation();
-            // ✅ 슬롯 내부만 삭제 (다른 카테고리 영향 없음)
             if(sg.items.length <= 1){
               toast("최소 1개는 필요합니다");
               return;
@@ -1503,7 +1489,6 @@
         _openSlotIndex = slotIdx ?? 0;
         _gameDropAnchorEl = anchor || gSlot1;
 
-        // ✅ slotIdx가 비었고 items도 없으면 즉시 "추가" UX 유지
         renderSlotDropList();
         placeGameDropUnderSlot(_gameDropAnchorEl);
         gameDropWrap.classList.add("show");
@@ -1579,7 +1564,6 @@
         const name = (nn||"").trim();
         if(!name) return;
 
-        // ✅ 슬롯 내부에서만 중복 금지
         const exists = sg.items.some(x=>parseGameRaw(x).name === name);
         if(exists){ toast("이미 존재"); return; }
 
@@ -1592,7 +1576,6 @@
         renderSlotDropList();
         toast("추가 완료");
 
-        // ✅ slot1은 즉시 컨텍스트 변경
         if(_openSlotIndex === 0){
           setSlotActive(0, raw);
         }
@@ -1759,7 +1742,6 @@
             if(!isAuthed()) return;
 
             if(c.id === "전체"){
-              // ✅ "전체"는 마스터 표시/숨김
               const nextOn = !c.on;
               c.on = nextOn;
               if(nextOn){
@@ -1767,7 +1749,6 @@
               }
             }else{
               c.on = !c.on;
-              // ✅ 최소 1개 카테고리 ON 보장(전체 제외)
               const anyOn = S.categories.some(x=>x.id!=="전체" && x.on);
               if(!anyOn){
                 c.on = true;
@@ -1932,10 +1913,6 @@
         for(let i=0;i<ms.length;i++) ms[i].order = i+1;
       }
 
-      /* ✅ [MOD#3] 카테고리 비활성화 동작 버그 수정:
-         - "전체"가 OFF면 전부 숨김
-         - 각 카테고리 OFF면 해당 카테고리의 모든 마커 숨김(1개만 사라짐 버그 방지)
-         - 관리자/유저 동일 규칙(여기서는 관리자에서도 동일 적용) */
       function getVisibleMarkers(){
         const curPage = S.currentPageId;
         const allCat = getCat("전체");
@@ -1944,7 +1921,7 @@
           .filter(m=>{
             if(m.pageId !== curPage) return false;
             const c = getCat(m.cat);
-            if(!c) return false;          // 카테고리 없으면 숨김(일관성)
+            if(!c) return false;
             if(c.on === false) return false;
             return true;
           })
@@ -1958,7 +1935,7 @@
         $("kpi").textContent = `표시 중 마커: ${shown} / 페이지 전체: ${total}`;
       }
 
-      // ---------- chain helpers (번호/선 분리) ----------
+      // ---------- chain helpers ----------
       function ensureMarkerChain(m){ if(!m.chainId) m.chainId = "c0"; return m.chainId; }
       function getPageMarkersSorted(pageId){
         return (S.markers||[]).filter(m=>m.pageId===pageId).slice()
@@ -2098,10 +2075,10 @@
         return { sx: wx*S.map.scale + S.map.tx, sy: wy*S.map.scale + S.map.ty };
       }
 
-      let circleHitboxes = []; // {id,sx,sy,rPx}
-      let curveHitboxes = [];  // {aId,bId, chainId, pageId, pts:[{sx,sy}]}
+      let circleHitboxes = [];
+      let curveHitboxes = [];
 
-      // ========== [MOD#5] curve storage helpers ==========
+      // ========== curve storage helpers ==========
       function getChainCurveStore(pageId, chainId){
         if(!Array.isArray(S.chains)) S.chains = [];
         let obj = S.chains.find(x => x && x.pageId===pageId && x.chainId===chainId);
@@ -2146,7 +2123,7 @@
         };
       }
 
-      // ---------- [MOD#4] arrowhead: chevron ">" ----------
+      // ---------- arrowhead: chevron ">" ----------
       function drawChevronArrowWorld(x1,y1,x2,y2, sizeWorld){
         const dx = x2-x1, dy = y2-y1;
         const len = Math.hypot(dx,dy);
@@ -2196,7 +2173,6 @@
 
         recomputeChainIndices(S.currentPageId);
 
-        // ===== [MOD#5] chain lines: quadratic curves per segment =====
         if(S.showLinesWithCatFilter){
           const byChain = new Map();
           for(const m of visible){
@@ -2210,8 +2186,8 @@
             if(ms.length < 2) continue;
 
             const baseR = ms.reduce((acc,m)=>acc + (m.r ?? 10), 0) / Math.max(1, ms.length);
-            const lineW = clamp(baseR * 0.18, 0.9, 2.4);      // world
-            const arrowSize = clamp(baseR * 0.95, 4.5, 18);   // world
+            const lineW = clamp(baseR * 0.18, 0.9, 2.4);
+            const arrowSize = clamp(baseR * 0.95, 4.5, 18);
 
             ctx.save();
             ctx.globalAlpha = 0.92;
@@ -2219,7 +2195,6 @@
             ctx.strokeStyle = "rgba(255,255,255,.78)";
             ctx.fillStyle = "rgba(255,255,255,.78)";
 
-            // draw each segment with its own curve (곡선)
             for(let i=0;i<ms.length-1;i++){
               const aM = ms[i];
               const bM = ms[i+1];
@@ -2229,18 +2204,15 @@
               const params = getCurveParams(S.currentPageId, cid, aM.id, bM.id);
               const CP = getCurveControlPointWorld(A, B, params);
 
-              // stroke curve
               ctx.beginPath();
               ctx.moveTo(A.x, A.y);
               ctx.quadraticCurveTo(CP.x, CP.y, B.x, B.y);
               ctx.stroke();
 
-              // store hitbox samples (screen space) for editing
               const pts = [];
               const steps = 14;
               for(let t=0;t<=steps;t++){
                 const tt = t/steps;
-                // quadratic point
                 const x = (1-tt)*(1-tt)*A.x + 2*(1-tt)*tt*CP.x + tt*tt*B.x;
                 const y = (1-tt)*(1-tt)*A.y + 2*(1-tt)*tt*CP.y + tt*tt*B.y;
                 const sp = screenFromWorld(x, y);
@@ -2248,18 +2220,15 @@
               }
               curveHitboxes.push({ aId:aM.id, bId:bM.id, chainId:cid, pageId:S.currentPageId, pts });
 
-              // arrowhead: chevron, tangent-based trimming
               const ar = (aM.r ?? 10);
               const br = (bM.r ?? 10);
               const halfStroke = (lineW * 0.5);
 
-              // tangent at start: CP - A
               let sdx = CP.x - A.x, sdy = CP.y - A.y;
               let slen = Math.hypot(sdx,sdy);
               if(slen < 1e-6){ sdx = B.x - A.x; sdy = B.y - A.y; slen = Math.hypot(sdx,sdy); }
               const sux = sdx / (slen||1), suy = sdy / (slen||1);
 
-              // tangent at end: B - CP
               let edx = B.x - CP.x, edy = B.y - CP.y;
               let elen = Math.hypot(edx,edy);
               if(elen < 1e-6){ edx = B.x - A.x; edy = B.y - A.y; elen = Math.hypot(edx,edy); }
@@ -2271,7 +2240,6 @@
               const endY   = B.y - euy*(br + halfStroke);
 
               if(Math.hypot(endX-startX, endY-startY) >= 10){
-                // draw chevron at trimmed end
                 drawChevronArrowWorld(startX, startY, endX, endY, arrowSize);
               }
             }
@@ -2280,7 +2248,6 @@
           }
         }
 
-        // markers
         for(const m of visible){
           const p = worldFromNorm(m.x, m.y);
           const r = (m.r ?? 10);
@@ -2340,7 +2307,6 @@
         return best;
       }
 
-      // ✅ [MOD#5] pick curve segment at pointer (screen space)
       function distPointToSeg(px,py, ax,ay, bx,by){
         const vx = bx-ax, vy = by-ay;
         const wx = px-ax, wy = py-ay;
@@ -2354,7 +2320,7 @@
       }
       function pickCurveAt(sx, sy){
         let best=null, bestD=Infinity;
-        const thr = 10; // px
+        const thr = 10;
         for(const seg of curveHitboxes){
           const pts = seg.pts;
           for(let i=0;i<pts.length-1;i++){
@@ -2376,8 +2342,7 @@
       let dragMoved = false;
       let dragPointerId = null;
 
-      // ✅ [MOD#5] curve drag state
-      let draggingCurve = null; // {aId,bId,chainId,pageId}
+      let draggingCurve = null;
       let curveDirty = false;
 
       function screenToWorld(sx, sy){
@@ -2406,7 +2371,6 @@
         dragStartSX = sx;
         dragStartSY = sy;
 
-        // ✅ [MOD#5] 먼저 선(곡선) 히트 체크 → 곡선 편집(관리자 모드에서만)
         const seg = pickCurveAt(sx, sy);
         if(seg){
           draggingCurve = { aId: seg.aId, bId: seg.bId, chainId: seg.chainId, pageId: seg.pageId };
@@ -2435,7 +2399,6 @@
         const sx = e.clientX - rect.left;
         const sy = e.clientY - rect.top;
 
-        // ✅ [MOD#5] curve drag
         if(draggingCurve){
           const dist = Math.hypot(sx - dragStartSX, sy - dragStartSY);
           if(dist > 2) curveDirty = true;
@@ -2456,8 +2419,8 @@
 
           const { wx, wy } = screenToWorld(sx, sy);
           const vx = wx - A.x, vy = wy - A.y;
-          const along = (vx*ux + vy*uy) / len; // normalized
-          const perp  = (vx*px + vy*py) / len; // normalized
+          const along = (vx*ux + vy*uy) / len;
+          const perp  = (vx*px + vy*py) / len;
 
           const sVal = clamp(along, 0.05, 0.95);
           const oVal = clamp(perp, -1.2, 1.2);
@@ -2489,8 +2452,11 @@
         draw();
       });
 
+      // ---------- marker create / select ----------
+      let selectedMarker = null;
+      let insertAfterMarkerId = null;
+
       cv.addEventListener("pointerup", ()=>{
-        // curve end
         if(draggingCurve){
           if(curveDirty){
             saveLocal();
@@ -2550,10 +2516,6 @@
         S.map.ty = my - wy * next;
         draw();
       }, {passive:false});
-
-      // ---------- marker create / select ----------
-      let selectedMarker = null;
-      let insertAfterMarkerId = null;
 
       function nextOrderForPage(pageId){
         const ms = (S.markers||[]).filter(m=>m.pageId===pageId);
@@ -2657,7 +2619,6 @@
         syncSelectedPanel();
       });
 
-      // right-click add marker
       cv.addEventListener("contextmenu", (e)=>{
         e.preventDefault();
         requireAuth();
@@ -2718,7 +2679,6 @@
         }
       }
 
-      // marker label quick colors
       function renderTextColors(){
         const COLORS = [
           "#e7eef8","#ffffff","#0b0b0f","#ffd60a","#ff5d5d","#7cc4ff","#39d98a","#ff9500"
@@ -2812,8 +2772,6 @@
         if(!ok) return;
         const pid = S.currentPageId;
         S.markers = S.markers.filter(m=>m.pageId!==pid);
-
-        // ✅ [MOD#5] 곡선 데이터도 페이지 기준으로 정리(선택적으로)
         S.chains = (S.chains||[]).filter(x => x && x.pageId !== pid);
 
         selectedMarker = null;
@@ -2862,6 +2820,7 @@
         $("mfPos").textContent = `좌표(비율): ${m.x.toFixed(6)}, ${m.y.toFixed(6)}`;
 
         updateColorChip();
+        ytTouched = false; memoTouched = false;
         mMarker.classList.add("show");
         setTimeout(()=>$("mfName").focus(), 0);
       }
@@ -2955,9 +2914,7 @@
 
         applyCatLeaderStyle(m.pageId, prevCat);
         applyCatLeaderStyle(m.pageId, m.cat);
-
         applyAllChainStylesOnPage(m.pageId);
-
         applyAutoNamesForChainOnPage(m.pageId, ensureMarkerChain(m));
 
         saveLocal();
@@ -2975,14 +2932,22 @@
         const m = getEditing();
         if(!m) return;
 
+        const ok = await openPopConfirm({
+          anchor: $("btnDeleteMarker"),
+          title: "삭제",
+          message: `"${m.name || "(이름 없음)"}" 마커를 삭제할까요?`,
+          okText: "삭제",
+          cancelText: "취소",
+          danger: true
+        });
+        if(!ok) return;
+
         const pid = m.pageId;
         const catId = m.cat;
         const cid = ensureMarkerChain(m);
 
-        // ✅ [MOD#5] curve segments cleanup (optional, safe)
         const chainStore = getChainCurveStore(pid, cid);
         if(chainStore && chainStore.segs){
-          // remove segments that include this marker
           for(const k of Object.keys(chainStore.segs)){
             if(k.startsWith(m.id+"|") || k.endsWith("|"+m.id)) delete chainStore.segs[k];
           }
@@ -3004,178 +2969,100 @@
         toast("삭제 완료");
       }
 
+      // ---------- chain controls (modal foot) ----------
       $("btnNewChain").addEventListener("click", ()=>{
         requireAuth();
         if(!isAuthed()) return;
+        if(!editingId){ toast("마커를 선택하세요"); return; }
         const m = getEditing();
         if(!m) return;
-
-        const pid = m.pageId;
-        const newCid = "c_" + uid();
-        m.chainId = newCid;
-        ensureMarkerChain(m);
-        setActiveChainIdForPage(pid, newCid);
-
-        renumberPage(pid);
-        recomputeChainIndices(pid);
-        applyCatLeaderStyle(pid, m.cat);
-        applyAllChainStylesOnPage(pid);
-
+        const newCid = "c" + uid();
+        setActiveChainIdForPage(m.pageId, newCid);
         insertAfterMarkerId = null;
-
-        saveLocal();
-        draw();
-        toast("새로운 번호로 시작");
+        toast("새 번호 체인 시작");
       });
-
       $("btnInsertAfter").addEventListener("click", ()=>{
         requireAuth();
         if(!isAuthed()) return;
         const m = getEditing();
         if(!m) return;
         insertAfterMarkerId = m.id;
-        toast("중간 삽입 모드 활성화");
+        setActiveChainIdForPage(m.pageId, ensureMarkerChain(m));
+        toast("이 마커 뒤로 이어서 시작");
       });
 
-      cv.addEventListener("dblclick", (e)=>{
-        requireAuth();
-        if(!isAuthed()) return;
-        const rect = cv.getBoundingClientRect();
-        const sx = e.clientX - rect.left;
-        const sy = e.clientY - rect.top;
-        const hit = pickCircleAt(sx, sy);
-        if(hit){
-          selectMarker(hit.id);
-          ytTouched = false;
-          memoTouched = false;
-          openMarkerModal(hit.id);
-        }
-      });
-
-      // ---------- category modal ----------
-      let catSelectedRowId = null;
-
-      $("btnEditCats").addEventListener("click", ()=>{
-        requireAuth();
-        if(!isAuthed()) return;
-        openCatsModal();
-      });
-      $("btnCloseCats").addEventListener("click", ()=>mCats.classList.remove("show"));
+      // ---------- cats modal ----------
+      const catRowsEl = $("catRows");
+      const catQuickPalette = $("catQuickPalette");
+      let selectedCatRowId = null;
 
       function openCatsModal(){
-        catSelectedRowId = null;
+        requireAuth();
+        if(!isAuthed()) return;
+        buildCatsEditor();
         setChipToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
-        renderCatRows();
-        renderCatQuickPalette();
         mCats.classList.add("show");
+      }
+      function closeCatsModal(){ mCats.classList.remove("show"); selectedCatRowId = null; }
+
+      $("btnEditCats").addEventListener("click", openCatsModal);
+      $("btnCloseCats").addEventListener("click", closeCatsModal);
+
+      function buildCatsEditor(){
+        catRowsEl.innerHTML = "";
+        selectedCatRowId = null;
+
+        for(const c of S.categories){
+          const row = document.createElement("div");
+          row.className = "card";
+          row.style.marginTop = "10px";
+          row.dataset.cid = c.id;
+          row.innerHTML = `
+            <div class="sectionTitle" style="margin:0 0 10px 0;">
+              <span><b>${escapeHtml(c.name)}</b></span>
+              <span class="subtle">${escapeHtml(c.id)}</span>
+            </div>
+            <div class="grid2">
+              <div>
+                <div class="labelRow">이름</div>
+                <input class="field" data-k="name" value="${escapeHtml(c.name)}" ${c.id==="전체" ? "disabled" : ""}/>
+              </div>
+              <div>
+                <div class="labelRow">색상</div>
+                <input class="field" data-k="color" value="${escapeHtml(c.color)}" />
+              </div>
+            </div>
+            <div class="labelRow" style="margin-top:10px;">표시</div>
+            <div class="checkRow" style="justify-content:flex-start;">
+              <input type="checkbox" data-k="on" ${c.on ? "checked":""}/>
+              <span class="subtle">ON</span>
+              ${c.id==="전체" ? `<span class="subtle" style="opacity:.7; margin-left:auto;">(전체는 마스터)</span>` : ""}
+            </div>
+          `;
+          row.addEventListener("click", ()=>{
+            selectedCatRowId = c.id;
+            toast("카테고리 행 선택");
+          });
+          catRowsEl.appendChild(row);
+        }
+
+        renderCatQuickPalette();
       }
 
       function renderCatQuickPalette(){
-        const wrap = $("catQuickPalette");
-        wrap.innerHTML = "";
+        catQuickPalette.innerHTML = "";
         for(const q of QUICK){
-          const w = document.createElement("div");
-          w.className = "swWrap";
-          w.innerHTML = `<div class="sw" style="--c:${q.c}"></div><div class="swLabel">${q.name}</div>`;
-          w.querySelector(".sw").addEventListener("click", ()=>{
-            if(!catSelectedRowId){ toast("카테고리 행을 먼저 선택하세요"); return; }
-            const c = S.categories.find(x=>x.id===catSelectedRowId);
-            if(!c) return;
-            c.color = q.c;
-            renderCatRows();
+          const wrap = document.createElement("div");
+          wrap.className = "swWrap";
+          wrap.innerHTML = `<div class="sw" style="--c:${q.c}" title="${q.name}"></div><div class="swLabel">${q.name}</div>`;
+          wrap.querySelector(".sw").addEventListener("click", ()=>{
+            if(!selectedCatRowId){ toast("카테고리 행을 먼저 선택"); return; }
+            const row = [...catRowsEl.querySelectorAll(".card")].find(r=>r.dataset.cid===selectedCatRowId);
+            if(!row) return;
+            const input = row.querySelector('input[data-k="color"]');
+            if(input){ input.value = q.c; toast("색상 적용"); }
           });
-          wrap.appendChild(w);
-        }
-      }
-
-      function renderCatRows(){
-        const rows = $("catRows");
-        rows.innerHTML = "";
-        const list = S.categories.filter(c=>c.id!=="전체");
-        for(const c of list){
-          const row = document.createElement("div");
-          row.style.display = "grid";
-          row.style.gridTemplateColumns = "1fr 70px 90px";
-          row.style.gap = "10px";
-          row.style.alignItems = "center";
-          row.style.marginBottom = "10px";
-          row.innerHTML = `
-            <input class="field" value="${escapeHtml(c.name)}" />
-            <div class="colorChip" style="--c:${escapeHtml(c.color)}; cursor:pointer;"></div>
-            <button class="pill danger" type="button">삭제</button>
-          `;
-          const inp = row.querySelector("input");
-          const chip = row.querySelector(".colorChip");
-          const del = row.querySelector("button");
-
-          row.addEventListener("click", ()=>{
-            catSelectedRowId = c.id;
-            toast("카테고리 선택");
-          });
-          inp.addEventListener("input", ()=>{ c.name = inp.value; });
-          chip.addEventListener("click", async (e)=>{
-            e.stopPropagation();
-            catSelectedRowId = c.id;
-            const next = await openPopInput({
-              anchor: chip,
-              title: "카테고리 색상",
-              message: "색상 코드를 입력하세요. (예: #ff0000)",
-              placeholder: "#rrggbb",
-              value: c.color || "",
-              okText: "저장",
-              cancelText: "취소"
-            });
-            if(next === null) return;
-            const v = (next||"").trim();
-            if(v) c.color = v;
-            renderCatRows();
-            renderCats();
-            applyAllChainStylesOnPage(S.currentPageId);
-            saveLocal();
-            draw();
-          });
-
-          del.addEventListener("click", async (e)=>{
-            e.stopPropagation();
-            requireAuth();
-            if(!isAuthed()) return;
-
-            const nonAll = S.categories.filter(x=>x.id!=="전체");
-            if(nonAll.length <= 1){
-              toast("최소 1개 카테고리는 필요합니다");
-              return;
-            }
-
-            const ok = await openPopConfirm({
-              anchor: del,
-              title: "카테고리 삭제",
-              message: `"${c.name}" 카테고리를 삭제할까요?\n(해당 카테고리 마커는 다른 카테고리로 이동됩니다)`,
-              okText: "삭제",
-              cancelText: "취소",
-              danger: true
-            });
-            if(!ok) return;
-
-            // fallback cat
-            const fallback = S.categories.find(x=>x.id!=="전체" && x.id!==c.id) || nonAll[0];
-            for(const m of (S.markers||[])){
-              if(m.cat === c.id) m.cat = fallback.id;
-            }
-
-            S.categories = S.categories.filter(x=>x.id !== c.id);
-            catSelectedRowId = null;
-
-            applyAllCatStylesOnPage(S.currentPageId);
-            applyAllChainStylesOnPage(S.currentPageId);
-            saveLocal();
-            renderCatRows();
-            renderCats();
-            renderKpi();
-            draw();
-            toast("삭제 완료");
-          });
-
-          rows.appendChild(row);
+          catQuickPalette.appendChild(wrap);
         }
       }
 
@@ -3186,7 +3073,7 @@
           anchor: $("btnAddCat"),
           title: "카테고리 추가",
           message: "추가할 카테고리 이름을 입력하세요.",
-          placeholder: "예: 던전",
+          placeholder: "예: 사냥터",
           value: "",
           okText: "추가",
           cancelText: "취소"
@@ -3194,13 +3081,9 @@
         if(name === null) return;
         const n = (name||"").trim();
         if(!n) return;
-        if(S.categories.some(x=>x.id===n)){ toast("이미 존재"); return; }
-        S.categories.push({ id:n, name:n, color:"#ffffff", on:true });
-        catSelectedRowId = n;
-        saveLocal();
-        renderCatRows();
-        renderCats();
-        draw();
+        if(S.categories.some(c=>c.id===n)){ toast("이미 존재"); return; }
+        S.categories.push({ id:n, name:n, color:"#7cc4ff", on:true });
+        buildCatsEditor();
         toast("카테고리 추가");
       });
 
@@ -3211,28 +3094,15 @@
           anchor: $("btnCatsDefault"),
           title: "기본값으로",
           message: "카테고리를 기본값으로 되돌릴까요?",
-          okText: "되돌리기",
+          okText: "적용",
           cancelText: "취소",
           danger: true
         });
         if(!ok) return;
-
-        // reset categories
         S.categories = structuredClone(defaultCats);
-
-        // markers cat normalize (삭제된 카테고리 있을 경우)
-        const exists = new Set(S.categories.map(x=>x.id));
-        const fallback = S.categories.find(x=>x.id!=="전체")?.id || "기텔";
-        for(const m of (S.markers||[])){
-          if(!exists.has(m.cat)) m.cat = fallback;
-        }
-
-        applyAllCatStylesOnPage(S.currentPageId);
-        applyAllChainStylesOnPage(S.currentPageId);
         saveLocal();
-        renderCatRows();
+        buildCatsEditor();
         renderCats();
-        renderKpi();
         draw();
         toast("기본값 적용");
       });
@@ -3241,40 +3111,61 @@
         requireAuth();
         if(!isAuthed()) return;
 
-        // ensure "전체" exists and is first
-        const hasAll = S.categories.some(x=>x.id==="전체");
-        if(!hasAll){
-          S.categories.unshift({ id:"전체", name:"전체", color:"#7cc4ff", on:true });
-        }else{
-          // move to front
-          const all = S.categories.find(x=>x.id==="전체");
-          S.categories = [all, ...S.categories.filter(x=>x.id!=="전체")];
+        const next = [];
+        const rows = [...catRowsEl.querySelectorAll(".card")];
+        for(const row of rows){
+          const cid = row.dataset.cid;
+          const cur = S.categories.find(c=>c.id===cid);
+          if(!cur) continue;
+
+          const nameEl = row.querySelector('input[data-k="name"]');
+          const colorEl = row.querySelector('input[data-k="color"]');
+          const onEl = row.querySelector('input[data-k="on"]');
+
+          const name = (nameEl ? nameEl.value : cur.name) || cur.name;
+          const color = (colorEl ? colorEl.value : cur.color) || cur.color;
+          const on = onEl ? !!onEl.checked : !!cur.on;
+
+          if(cid === "전체"){
+            next.push({ id:"전체", name:"전체", color: color.trim() || "#7cc4ff", on });
+          }else{
+            const id = (name || "").trim();
+            if(!id) continue;
+            next.push({ id, name: id, color: (color||"").trim() || "#7cc4ff", on });
+          }
         }
 
-        // ensure at least one non-전체 exists
-        if(S.categories.filter(x=>x.id!=="전체").length === 0){
-          S.categories.push({ id:"기텔", name:"기텔", color:"#ffd60a", on:true });
+        if(!next.find(c=>c.id==="전체")){
+          next.unshift({ id:"전체", name:"전체", color:"#7cc4ff", on:true });
         }
 
-        // marker cat normalize
-        const exists = new Set(S.categories.map(x=>x.id));
-        const fallback = S.categories.find(x=>x.id!=="전체")?.id || "기텔";
+        const anyOn = next.some(c=>c.id!=="전체" && c.on);
+        if(!anyOn){
+          for(const c of next){
+            if(c.id!=="전체"){ c.on = true; break; }
+          }
+        }
+
+        const mapOldToNew = new Map();
+        for(const c of next) mapOldToNew.set(c.id, c);
+
+        S.categories = next;
+
+        // markers with missing category -> set to first non-전체
+        const fallbackCat = S.categories.find(c=>c.id!=="전체")?.id || "기텔";
         for(const m of (S.markers||[])){
-          if(!exists.has(m.cat)) m.cat = fallback;
+          if(!getCat(m.cat)) m.cat = fallbackCat;
         }
-
-        applyAllCatStylesOnPage(S.currentPageId);
-        applyAllChainStylesOnPage(S.currentPageId);
 
         saveLocal();
         renderCats();
         renderKpi();
         draw();
-        mCats.classList.remove("show");
+        closeCatsModal();
         toast("카테고리 저장");
       });
 
-      // ---------- init / renderAll ----------
+      // ---------- init ----------
       function renderAll(){
         renderLogo();
         renderSlotsTop();
@@ -3286,24 +3177,19 @@
         setChipToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
       }
 
-      // start
       (async ()=>{
-        // canvas
-        resizeCanvas();
-
-        // state load
-        const st = await loadStateRemoteFirst();
-        S = mergeState(st);
-        if(!S.slotGroups) S.slotGroups = normalizeSlotGroups(S);
+        const raw = await loadStateRemoteFirst();
+        S = mergeState(raw);
         ensureSlot1FromLegacy();
+        saveLocal();
 
+        resizeCanvas();
         renderAll();
         loadMap();
+
+        requireAuth();
         renderKpi();
         draw();
-
-        // auth overlay
-        requireAuth();
       })();
     })();
   </script>
