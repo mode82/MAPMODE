@@ -902,11 +902,6 @@
          - slotGroups[0]은 기존 games/game과 호환(미러링)
          - slotGroups[1~3]은 완전 독립
          =========================== */
-      function buildGameRaw(name, enabled){
-        const nm = String(name ?? "").trim();
-        if(!nm) return "";
-        return enabled ? nm : (nm + "|0");
-      }
       function makeDefaultSlotGroup(name){
         return {
           items: name ? [buildGameRaw(name, true)] : [],
@@ -1125,19 +1120,27 @@
         if(m){ return { raw:s, name:m[1], enabled: m[2] === "1" }; }
         return { raw:s, name:s, enabled:true };
       }
+      function buildGameRaw(name, enabled){
+        const nm = String(name ?? "").trim();
+        if(!nm) return "";
+        return enabled ? nm : (nm + "|0");
+      }
+
       function escapeHtml(s){
         return String(s ?? "")
           .replace(/&/g,"&amp;")
-          .replacenplace(/</g,"&lt;")
+          .replace(/</g,"&lt;")
           .replace(/>/g,"&gt;")
           .replace(/"/g,"&quot;")
           .replace(/'/g,"&#39;");
       }
 
       function normalizeSlotGroups(st){
+        // ✅ migrate old games/game into slotGroups[0] if needed
         const out = Array.isArray(st?.slotGroups) ? st.slotGroups : null;
 
         if(out && out.length === 4){
+          // ensure shape
           for(let i=0;i<4;i++){
             if(!out[i] || typeof out[i] !== "object") out[i] = makeDefaultSlotGroup("");
             if(!Array.isArray(out[i].items)) out[i].items = [];
@@ -1146,6 +1149,7 @@
           return out;
         }
 
+        // fallback: create new based on old games/game
         const gList = Array.isArray(st?.games) && st.games.length ? st.games.slice() : ["아이온2"];
         const gActive = (typeof st?.game === "string" && st.game) ? st.game : gList[0];
         const sg0 = { items: gList.slice(), active: gActive };
@@ -1156,6 +1160,7 @@
       }
 
       function mirrorSlot1ToLegacy(){
+        // slotGroups[0] <-> games/game 호환 유지
         const sg0 = S.slotGroups[0];
         S.games = sg0.items.slice();
         S.game = sg0.active || (sg0.items[0] || "아이온2");
@@ -1184,18 +1189,31 @@
         merged.chains = Array.isArray(st?.chains) ? st.chains : [];
 
         merged.map = Object.assign(structuredClone(defaultState.map), st?.map||{});
+
+        // ✅ slotGroups normalize
         merged.slotGroups = normalizeSlotGroups(st);
 
+        // legacy mirror ensure
         if(!Array.isArray(merged.games) || !merged.games.length) merged.games = ["아이온2"];
         if(typeof merged.game !== "string" || !merged.game) merged.game = merged.games[0];
 
         if(!merged.pages.find(p=>p.id===merged.currentPageId)) merged.currentPageId = merged.pages[0].id;
 
+        // marker defaults
         for(const m of merged.markers){
           if(typeof m.order !== "number") m.order = (typeof m.chainIndex==="number" ? m.chainIndex : null);
           if(typeof m.dim !== "boolean") m.dim = false;
           if(m.order == null) m.order = 0;
           if(typeof m.chainId === "undefined") m.chainId = null;
+          if(typeof m.memo !== "string") m.memo = "";
+          if(typeof m.yt !== "string") m.yt = "";
+          if(typeof m.ytTitle !== "string") m.ytTitle = "";
+          if(typeof m.labelColor !== "string") m.labelColor = "#e7eef8";
+          if(typeof m.fw !== "number") m.fw = 900;
+          if(typeof m.r !== "number") m.r = 10;
+          if(typeof m.fs !== "number") m.fs = 15;
+          if(typeof m.useCatColor !== "boolean") m.useCatColor = true;
+          if(typeof m.colorOverride !== "string") m.colorOverride = "";
         }
         return merged;
       }
@@ -1293,6 +1311,7 @@
       function setSlotActive(i, raw){
         const sg = slotGroup(i);
         sg.active = raw || "";
+        // ✅ slot1은 기존 game context와 동일하게 동작
         if(i === 0){
           S.game = sg.active || (sg.items[0] || "아이온2");
           $("pathGameTop").textContent = parseGameRaw(S.game).name || "아이온2";
@@ -1317,8 +1336,9 @@
         const prev = sg.items[itemIdx];
         sg.items[itemIdx] = newRaw;
         if(sg.active === prev) sg.active = newRaw;
+        // cleanup: if active becomes empty, set to first
         if(!sg.active && sg.items.length) sg.active = sg.items[0];
-        if(slotIdx === 0) ensureSlot1FromLegacy();
+        if(slotIdx === 0) ensureSlot1FromLegacy(); // keep mirrored
       }
 
       function toggleSlotItemEnabled(slotIdx, raw){
@@ -1335,6 +1355,7 @@
       }
 
       function renderSlotsTop(){
+        // ensure legacy mirrored fields consistent
         ensureSlot1FromLegacy();
 
         const slots = [gSlot1,gSlot2,gSlot3,gSlot4];
@@ -1436,6 +1457,7 @@
             const name = (nn||"").trim();
             if(!name) return;
 
+            // ✅ 슬롯 내부 중복만 금지 (다른 카테고리와는 완전 분리)
             const exists = sg.items.some(x=>{
               if(x === raw) return false;
               return parseGameRaw(x).name === name;
@@ -1456,6 +1478,7 @@
 
           bDel.addEventListener("click", async (e)=>{
             e.stopPropagation();
+            // ✅ 슬롯 내부만 삭제 (다른 카테고리 영향 없음)
             if(sg.items.length <= 1){
               toast("최소 1개는 필요합니다");
               return;
@@ -1564,6 +1587,7 @@
         const name = (nn||"").trim();
         if(!name) return;
 
+        // ✅ 슬롯 내부에서만 중복 금지
         const exists = sg.items.some(x=>parseGameRaw(x).name === name);
         if(exists){ toast("이미 존재"); return; }
 
@@ -1576,6 +1600,7 @@
         renderSlotDropList();
         toast("추가 완료");
 
+        // ✅ slot1은 즉시 컨텍스트 변경
         if(_openSlotIndex === 0){
           setSlotActive(0, raw);
         }
@@ -1679,6 +1704,8 @@
             S.markers = S.markers.filter(m=>m.pageId !== pid);
             S.pages = S.pages.filter(x=>x.id !== pid);
             if(S.currentPageId === pid) S.currentPageId = S.pages[0].id;
+            // curves clean
+            S.chains = (S.chains||[]).filter(x => x && x.pageId !== pid);
             saveLocal();
             renderPages();
             renderKpi();
@@ -1742,6 +1769,7 @@
             if(!isAuthed()) return;
 
             if(c.id === "전체"){
+              // ✅ "전체"는 마스터 표시/숨김
               const nextOn = !c.on;
               c.on = nextOn;
               if(nextOn){
@@ -1749,6 +1777,7 @@
               }
             }else{
               c.on = !c.on;
+              // ✅ 최소 1개 카테고리 ON 보장(전체 제외)
               const anyOn = S.categories.some(x=>x.id!=="전체" && x.on);
               if(!anyOn){
                 c.on = true;
@@ -1775,12 +1804,6 @@
         saveLocal();
         draw();
       });
-
-      function ensureCat(name, color){
-        if(S.categories.some(c=>c.id===name)) return;
-        S.categories.push({ id:name, name, color:color||"#ffffff", on:true });
-        renderCats();
-      }
 
       // ---------- map upload ----------
       $("fileMap").addEventListener("change", async (e)=>{
@@ -1913,6 +1936,9 @@
         for(let i=0;i<ms.length;i++) ms[i].order = i+1;
       }
 
+      /* ✅ [MOD#3] 카테고리 비활성화 동작 버그 수정:
+         - "전체"가 OFF면 전부 숨김
+         - 각 카테고리 OFF면 해당 카테고리의 모든 마커 숨김 */
       function getVisibleMarkers(){
         const curPage = S.currentPageId;
         const allCat = getCat("전체");
@@ -1935,7 +1961,7 @@
         $("kpi").textContent = `표시 중 마커: ${shown} / 페이지 전체: ${total}`;
       }
 
-      // ---------- chain helpers ----------
+      // ---------- chain helpers (번호/선 분리) ----------
       function ensureMarkerChain(m){ if(!m.chainId) m.chainId = "c0"; return m.chainId; }
       function getPageMarkersSorted(pageId){
         return (S.markers||[]).filter(m=>m.pageId===pageId).slice()
@@ -2078,7 +2104,7 @@
       let circleHitboxes = [];
       let curveHitboxes = [];
 
-      // ========== curve storage helpers ==========
+      // ========== [MOD#5] curve storage helpers ==========
       function getChainCurveStore(pageId, chainId){
         if(!Array.isArray(S.chains)) S.chains = [];
         let obj = S.chains.find(x => x && x.pageId===pageId && x.chainId===chainId);
@@ -2123,7 +2149,7 @@
         };
       }
 
-      // ---------- arrowhead: chevron ">" ----------
+      // ---------- [MOD#4] arrowhead: chevron ">" ----------
       function drawChevronArrowWorld(x1,y1,x2,y2, sizeWorld){
         const dx = x2-x1, dy = y2-y1;
         const len = Math.hypot(dx,dy);
@@ -2173,6 +2199,7 @@
 
         recomputeChainIndices(S.currentPageId);
 
+        // ===== [MOD#5] chain lines: quadratic curves per segment =====
         if(S.showLinesWithCatFilter){
           const byChain = new Map();
           for(const m of visible){
@@ -2186,8 +2213,8 @@
             if(ms.length < 2) continue;
 
             const baseR = ms.reduce((acc,m)=>acc + (m.r ?? 10), 0) / Math.max(1, ms.length);
-            const lineW = clamp(baseR * 0.18, 0.9, 2.4);
-            const arrowSize = clamp(baseR * 0.95, 4.5, 18);
+            const lineW = clamp(baseR * 0.18, 0.9, 2.4);      // world
+            const arrowSize = clamp(baseR * 0.95, 4.5, 18);   // world
 
             ctx.save();
             ctx.globalAlpha = 0.92;
@@ -2204,11 +2231,13 @@
               const params = getCurveParams(S.currentPageId, cid, aM.id, bM.id);
               const CP = getCurveControlPointWorld(A, B, params);
 
+              // stroke curve
               ctx.beginPath();
               ctx.moveTo(A.x, A.y);
               ctx.quadraticCurveTo(CP.x, CP.y, B.x, B.y);
               ctx.stroke();
 
+              // store hitbox samples (screen space)
               const pts = [];
               const steps = 14;
               for(let t=0;t<=steps;t++){
@@ -2220,15 +2249,18 @@
               }
               curveHitboxes.push({ aId:aM.id, bId:bM.id, chainId:cid, pageId:S.currentPageId, pts });
 
+              // arrowhead: chevron, tangent-based trimming
               const ar = (aM.r ?? 10);
               const br = (bM.r ?? 10);
               const halfStroke = (lineW * 0.5);
 
+              // tangent at start: CP - A
               let sdx = CP.x - A.x, sdy = CP.y - A.y;
               let slen = Math.hypot(sdx,sdy);
               if(slen < 1e-6){ sdx = B.x - A.x; sdy = B.y - A.y; slen = Math.hypot(sdx,sdy); }
               const sux = sdx / (slen||1), suy = sdy / (slen||1);
 
+              // tangent at end: B - CP
               let edx = B.x - CP.x, edy = B.y - CP.y;
               let elen = Math.hypot(edx,edy);
               if(elen < 1e-6){ edx = B.x - A.x; edy = B.y - A.y; elen = Math.hypot(edx,edy); }
@@ -2248,6 +2280,7 @@
           }
         }
 
+        // markers
         for(const m of visible){
           const p = worldFromNorm(m.x, m.y);
           const r = (m.r ?? 10);
@@ -2307,6 +2340,7 @@
         return best;
       }
 
+      // ✅ [MOD#5] pick curve segment at pointer (screen space)
       function distPointToSeg(px,py, ax,ay, bx,by){
         const vx = bx-ax, vy = by-ay;
         const wx = px-ax, wy = py-ay;
@@ -2320,7 +2354,7 @@
       }
       function pickCurveAt(sx, sy){
         let best=null, bestD=Infinity;
-        const thr = 10;
+        const thr = 10; // px
         for(const seg of curveHitboxes){
           const pts = seg.pts;
           for(let i=0;i<pts.length-1;i++){
@@ -2342,7 +2376,8 @@
       let dragMoved = false;
       let dragPointerId = null;
 
-      let draggingCurve = null;
+      // ✅ [MOD#5] curve drag state
+      let draggingCurve = null; // {aId,bId,chainId,pageId}
       let curveDirty = false;
 
       function screenToWorld(sx, sy){
@@ -2368,9 +2403,8 @@
         const sy = e.clientY - rect.top;
 
         lastX=e.clientX; lastY=e.clientY;
-        dragStartSX = sx;
-        dragStartSY = sy;
 
+        // ✅ [MOD#5] 선(곡선) 히트 체크 → 곡선 편집
         const seg = pickCurveAt(sx, sy);
         if(seg){
           draggingCurve = { aId: seg.aId, bId: seg.bId, chainId: seg.chainId, pageId: seg.pageId };
@@ -2378,12 +2412,15 @@
           isPanning = false;
           draggingMarkerId = null;
           dragMoved = false;
+          dragStartSX = sx; dragStartSY = sy;
           return;
         }
 
         const hit = pickCircleAt(sx, sy);
         if(hit){
           draggingMarkerId = hit.id;
+          dragStartSX = sx;
+          dragStartSY = sy;
           dragMoved = false;
           isPanning = false;
           return;
@@ -2399,6 +2436,7 @@
         const sx = e.clientX - rect.left;
         const sy = e.clientY - rect.top;
 
+        // ✅ [MOD#5] curve drag
         if(draggingCurve){
           const dist = Math.hypot(sx - dragStartSX, sy - dragStartSY);
           if(dist > 2) curveDirty = true;
@@ -2452,11 +2490,8 @@
         draw();
       });
 
-      // ---------- marker create / select ----------
-      let selectedMarker = null;
-      let insertAfterMarkerId = null;
-
       cv.addEventListener("pointerup", ()=>{
+        // curve end
         if(draggingCurve){
           if(curveDirty){
             saveLocal();
@@ -2516,6 +2551,10 @@
         S.map.ty = my - wy * next;
         draw();
       }, {passive:false});
+
+      // ---------- marker create / select ----------
+      let selectedMarker = null;
+      let insertAfterMarkerId = null;
 
       function nextOrderForPage(pageId){
         const ms = (S.markers||[]).filter(m=>m.pageId===pageId);
@@ -2601,6 +2640,13 @@
         $("btnUseCatColor").disabled = !selectedMarker;
       }
 
+      function syncSelectedPanelLive(){
+        if(!selectedMarker) return;
+        $("selName").textContent = (selectedMarker.name || "(이름 없음)");
+        $("selLink").value = selectedMarker.yt || "";
+        $("selYtTitle").value = selectedMarker.ytTitle || "";
+      }
+
       cv.addEventListener("click", (e)=>{
         requireAuth();
         if(!isAuthed()) return;
@@ -2619,6 +2665,7 @@
         syncSelectedPanel();
       });
 
+      // right-click add marker
       cv.addEventListener("contextmenu", (e)=>{
         e.preventDefault();
         requireAuth();
@@ -2676,24 +2723,6 @@
             toast("색상 선택");
           });
           palette.appendChild(wrap);
-        }
-      }
-
-      function renderTextColors(){
-        const COLORS = [
-          "#e7eef8","#ffffff","#0b0b0f","#ffd60a","#ff5d5d","#7cc4ff","#39d98a","#ff9500"
-        ];
-        textColors.innerHTML = "";
-        for(const c of COLORS){
-          const sw = document.createElement("div");
-          sw.className = "tSw";
-          sw.style.setProperty("--c", c);
-          sw.title = c;
-          sw.addEventListener("click", ()=>{
-            $("mfLabelColor").value = c;
-            toast("글씨색 선택");
-          });
-          textColors.appendChild(sw);
         }
       }
 
@@ -2785,6 +2814,8 @@
 
       // ---------- marker modal ----------
       let editingId = null;
+      function getEditing(){ return editingId ? (S.markers.find(x=>x.id===editingId) || null) : null; }
+
       function openMarkerModal(markerId){
         requireAuth();
         if(!isAuthed()) return;
@@ -2819,8 +2850,10 @@
         $("mfFsVal").textContent = $("mfFs").value;
         $("mfPos").textContent = `좌표(비율): ${m.x.toFixed(6)}, ${m.y.toFixed(6)}`;
 
+        ytTouched = false;
+        memoTouched = false;
+
         updateColorChip();
-        ytTouched = false; memoTouched = false;
         mMarker.classList.add("show");
         setTimeout(()=>$("mfName").focus(), 0);
       }
@@ -2856,70 +2889,169 @@
       $("mfYtTitle").addEventListener("input", ()=>{ ytTouched = true; syncSelectedPanelLive(); });
       $("mfMemo").addEventListener("input", ()=>{ memoTouched = true; syncSelectedPanelLive(); });
       $("mfName").addEventListener("input", ()=>{
-        const v = $("mfName").value;
-        if(!ytTouched) $("mfYtTitle").value = v;
-        if(!memoTouched) $("mfMemo").value = v;
-        syncSelectedPanelLive();
+        const m = getEditing();
+        if(!m) return;
+        m.name = $("mfName").value;
+        $("selName").textContent = m.name || "(이름 없음)";
       });
 
-      function syncSelectedPanelLive(){
-        if(!editingId) return;
-        if(selectedMarker && selectedMarker.id === editingId){
-          $("selName").textContent = $("mfName").value || "(이름 없음)";
-          $("selYtTitle").value = $("mfYtTitle").value || "";
-          $("selLink").value = $("mfYt").value || "";
+      $("mfYt").addEventListener("input", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        m.yt = $("mfYt").value.trim();
+      });
+      $("mfYtTitle").addEventListener("input", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        m.ytTitle = $("mfYtTitle").value;
+      });
+      $("mfMemo").addEventListener("input", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        m.memo = $("mfMemo").value;
+      });
+
+      $("mfR").addEventListener("input", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        const r = Number($("mfR").value);
+        m.r = clamp(r, 2, 40);
+        // 원 크기에 비례해서 글씨크기 기본 동기화
+        const fs = Math.round(m.r * 1.5);
+        m.fs = clamp(fs, 4, 80);
+        $("mfRVal").textContent = String(m.r);
+        $("mfFs").value = String(m.fs);
+        $("mfFsVal").textContent = String(m.fs);
+        draw();
+      });
+      $("mfFs").addEventListener("input", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        m.fs = clamp(Number($("mfFs").value), 4, 80);
+        $("mfFsVal").textContent = String(m.fs);
+        draw();
+      });
+      $("mfFw").addEventListener("change", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        m.fw = Number($("mfFw").value) || 900;
+        draw();
+      });
+      $("mfLabelColor").addEventListener("input", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        m.labelColor = ($("mfLabelColor").value || "").trim() || "#e7eef8";
+        draw();
+      });
+      $("mfLabelDefault").addEventListener("click", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        $("mfLabelColor").value = "#e7eef8";
+        m.labelColor = "#e7eef8";
+        draw();
+      });
+
+      const QUICK_TEXT = [
+        "#e7eef8", "#ffffff", "#000000",
+        "#ffd60a", "#ff5d5d", "#39d98a", "#7cc4ff",
+        "#a86bff", "#ff9500"
+      ];
+      function renderTextColors(){
+        textColors.innerHTML = "";
+        for(const c of QUICK_TEXT){
+          const el = document.createElement("div");
+          el.className = "tSw";
+          el.style.setProperty("--c", c);
+          el.title = c;
+          el.addEventListener("click", ()=>{
+            const m = getEditing();
+            if(!m) return;
+            $("mfLabelColor").value = c;
+            m.labelColor = c;
+            draw();
+            toast("글씨색 적용");
+          });
+          textColors.appendChild(el);
         }
       }
 
-      $("mfR").addEventListener("input", ()=>{
-        $("mfRVal").textContent = $("mfR").value;
-        const r = Number($("mfR").value);
-        const fs = clamp(Math.round(r * 1.5), 4, 80);
-        $("mfFs").value = fs;
-        $("mfFsVal").textContent = fs;
-      });
-      $("mfFs").addEventListener("input", ()=>{ $("mfFsVal").textContent = $("mfFs").value; });
-      $("mfLabelDefault").addEventListener("click", ()=>{ $("mfLabelColor").value = "#e7eef8"; });
-
-      function getEditing(){
-        if(!editingId) return null;
-        return S.markers.find(x=>x.id===editingId) || null;
-      }
-
-      function saveMarkerModal(){
-        requireAuth();
-        if(!isAuthed()) return;
+      $("mfUseCatColor").addEventListener("change", ()=>{
         const m = getEditing();
         if(!m) return;
+        m.useCatColor = !!$("mfUseCatColor").checked;
+        updateColorChip();
+        draw();
+      });
+      $("mfCat").addEventListener("change", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        m.cat = $("mfCat").value;
+        updateColorChip();
+        draw();
+      });
+      $("mfColor").addEventListener("input", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        m.colorOverride = $("mfColor").value.trim();
+        updateColorChip();
+        draw();
+      });
 
-        const prevCat = m.cat;
-
-        m.name = ($("mfName").value || "").trim();
-        m.cat = $("mfCat").value || "기텔";
-        ensureCat(m.cat, "#ffffff");
-
-        m.useCatColor = $("mfUseCatColor").checked;
-        m.colorOverride = ($("mfColor").value || "").trim();
-        m.yt = ($("mfYt").value || "").trim();
-        m.ytTitle = ($("mfYtTitle").value || "").trim();
-        m.memo = ($("mfMemo").value || "").trim();
-
-        m.r = Number($("mfR").value);
-        m.fs = Number($("mfFs").value);
-        m.fw = Number($("mfFw").value);
-        m.labelColor = ($("mfLabelColor").value || "#e7eef8").trim();
+      $("btnNewChain").addEventListener("click", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        // 새로운 체인 생성 후, 이 마커를 새 체인의 1번으로
+        const newId = "c" + uid();
+        m.chainId = newId;
+        setActiveChainIdForPage(m.pageId, newId);
 
         renumberPage(m.pageId);
         recomputeChainIndices(m.pageId);
 
-        applyCatLeaderStyle(m.pageId, prevCat);
-        applyCatLeaderStyle(m.pageId, m.cat);
+        // 곡선은 체인/세그먼트 키 기반이므로 새 체인에는 기본값으로 시작
+        applyAllCatStylesOnPage(m.pageId);
         applyAllChainStylesOnPage(m.pageId);
-        applyAutoNamesForChainOnPage(m.pageId, ensureMarkerChain(m));
-
         saveLocal();
-        selectMarker(m.id);
-        renderCats();
+        draw();
+        toast("새 번호 시작");
+      });
+
+      $("btnInsertAfter").addEventListener("click", ()=>{
+        const m = getEditing();
+        if(!m) return;
+        insertAfterMarkerId = m.id;
+        closeMarkerModal();
+        toast("이 마커 뒤로 추가 모드");
+      });
+
+      function saveMarkerModal(){
+        const m = getEditing();
+        if(!m) return;
+
+        m.name = ($("mfName").value || "");
+        m.cat = $("mfCat").value || m.cat;
+        m.useCatColor = !!$("mfUseCatColor").checked;
+        m.colorOverride = ($("mfColor").value || "").trim();
+        m.yt = ($("mfYt").value || "").trim();
+        m.ytTitle = ($("mfYtTitle").value || "");
+        m.memo = ($("mfMemo").value || "");
+
+        m.r = clamp(Number($("mfR").value) || m.r || 10, 2, 40);
+        m.fs = clamp(Number($("mfFs").value) || m.fs || 15, 4, 80);
+        m.fw = Number($("mfFw").value) || m.fw || 900;
+        m.labelColor = ($("mfLabelColor").value || "").trim() || "#e7eef8";
+
+        // 스타일 전파 규칙 유지
+        renumberPage(m.pageId);
+        recomputeChainIndices(m.pageId);
+
+        applyAutoNamesForChainOnPage(m.pageId, ensureMarkerChain(m));
+        applyAllCatStylesOnPage(m.pageId);
+        applyAllChainStylesOnPage(m.pageId);
+
+        selectedMarker = m;
+        syncSelectedPanel();
+        saveLocal();
         renderKpi();
         draw();
         toast("저장 완료");
@@ -2927,15 +3059,12 @@
       }
 
       async function deleteMarkerModal(){
-        requireAuth();
-        if(!isAuthed()) return;
         const m = getEditing();
         if(!m) return;
-
         const ok = await openPopConfirm({
           anchor: $("btnDeleteMarker"),
           title: "삭제",
-          message: `"${m.name || "(이름 없음)"}" 마커를 삭제할까요?`,
+          message: `이 마커를 삭제할까요?`,
           okText: "삭제",
           cancelText: "취소",
           danger: true
@@ -2943,111 +3072,49 @@
         if(!ok) return;
 
         const pid = m.pageId;
-        const catId = m.cat;
-        const cid = ensureMarkerChain(m);
-
-        const chainStore = getChainCurveStore(pid, cid);
-        if(chainStore && chainStore.segs){
-          for(const k of Object.keys(chainStore.segs)){
-            if(k.startsWith(m.id+"|") || k.endsWith("|"+m.id)) delete chainStore.segs[k];
+        // curves: 세그먼트 키가 마커ID를 포함하므로 해당 ID가 들어간 세그먼트 제거
+        for(const ch of (S.chains||[])){
+          if(!ch || ch.pageId !== pid || !ch.segs) continue;
+          for(const k of Object.keys(ch.segs)){
+            if(k.includes(m.id+"|") || k.includes("|"+m.id)) delete ch.segs[k];
           }
         }
 
-        S.markers = S.markers.filter(x=>x.id!==m.id);
-
+        S.markers = (S.markers||[]).filter(x=>x.id!==m.id);
         renumberPage(pid);
         recomputeChainIndices(pid);
-        applyCatLeaderStyle(pid, catId);
-        applyAllChainStylesOnPage(pid);
 
-        saveLocal();
-        closeMarkerModal();
         selectedMarker = null;
+        insertAfterMarkerId = null;
+        saveLocal();
         syncSelectedPanel();
         renderKpi();
         draw();
         toast("삭제 완료");
+        closeMarkerModal();
       }
 
-      // ---------- chain controls (modal foot) ----------
-      $("btnNewChain").addEventListener("click", ()=>{
-        requireAuth();
-        if(!isAuthed()) return;
-        if(!editingId){ toast("마커를 선택하세요"); return; }
-        const m = getEditing();
-        if(!m) return;
-        const newCid = "c" + uid();
-        setActiveChainIdForPage(m.pageId, newCid);
-        insertAfterMarkerId = null;
-        toast("새 번호 체인 시작");
-      });
-      $("btnInsertAfter").addEventListener("click", ()=>{
-        requireAuth();
-        if(!isAuthed()) return;
-        const m = getEditing();
-        if(!m) return;
-        insertAfterMarkerId = m.id;
-        setActiveChainIdForPage(m.pageId, ensureMarkerChain(m));
-        toast("이 마커 뒤로 이어서 시작");
-      });
-
-      // ---------- cats modal ----------
-      const catRowsEl = $("catRows");
+      // ---------- category modal ----------
+      const catRows = $("catRows");
       const catQuickPalette = $("catQuickPalette");
-      let selectedCatRowId = null;
+      let catEditing = [];
+      let selectedCatRowIndex = -1;
 
       function openCatsModal(){
         requireAuth();
         if(!isAuthed()) return;
-        buildCatsEditor();
+        catEditing = structuredClone(S.categories || structuredClone(defaultCats));
+        selectedCatRowIndex = -1;
+        renderCatModal();
         setChipToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
         mCats.classList.add("show");
       }
-      function closeCatsModal(){ mCats.classList.remove("show"); selectedCatRowId = null; }
+      function closeCatsModal(){
+        mCats.classList.remove("show");
+      }
 
       $("btnEditCats").addEventListener("click", openCatsModal);
       $("btnCloseCats").addEventListener("click", closeCatsModal);
-
-      function buildCatsEditor(){
-        catRowsEl.innerHTML = "";
-        selectedCatRowId = null;
-
-        for(const c of S.categories){
-          const row = document.createElement("div");
-          row.className = "card";
-          row.style.marginTop = "10px";
-          row.dataset.cid = c.id;
-          row.innerHTML = `
-            <div class="sectionTitle" style="margin:0 0 10px 0;">
-              <span><b>${escapeHtml(c.name)}</b></span>
-              <span class="subtle">${escapeHtml(c.id)}</span>
-            </div>
-            <div class="grid2">
-              <div>
-                <div class="labelRow">이름</div>
-                <input class="field" data-k="name" value="${escapeHtml(c.name)}" ${c.id==="전체" ? "disabled" : ""}/>
-              </div>
-              <div>
-                <div class="labelRow">색상</div>
-                <input class="field" data-k="color" value="${escapeHtml(c.color)}" />
-              </div>
-            </div>
-            <div class="labelRow" style="margin-top:10px;">표시</div>
-            <div class="checkRow" style="justify-content:flex-start;">
-              <input type="checkbox" data-k="on" ${c.on ? "checked":""}/>
-              <span class="subtle">ON</span>
-              ${c.id==="전체" ? `<span class="subtle" style="opacity:.7; margin-left:auto;">(전체는 마스터)</span>` : ""}
-            </div>
-          `;
-          row.addEventListener("click", ()=>{
-            selectedCatRowId = c.id;
-            toast("카테고리 행 선택");
-          });
-          catRowsEl.appendChild(row);
-        }
-
-        renderCatQuickPalette();
-      }
 
       function renderCatQuickPalette(){
         catQuickPalette.innerHTML = "";
@@ -3056,109 +3123,185 @@
           wrap.className = "swWrap";
           wrap.innerHTML = `<div class="sw" style="--c:${q.c}" title="${q.name}"></div><div class="swLabel">${q.name}</div>`;
           wrap.querySelector(".sw").addEventListener("click", ()=>{
-            if(!selectedCatRowId){ toast("카테고리 행을 먼저 선택"); return; }
-            const row = [...catRowsEl.querySelectorAll(".card")].find(r=>r.dataset.cid===selectedCatRowId);
-            if(!row) return;
-            const input = row.querySelector('input[data-k="color"]');
-            if(input){ input.value = q.c; toast("색상 적용"); }
+            if(selectedCatRowIndex < 0){ toast("카테고리 행 선택"); return; }
+            const row = catEditing[selectedCatRowIndex];
+            if(!row || row.id==="전체") return;
+            row.color = q.c;
+            renderCatRows();
+            toast("색상 적용");
           });
           catQuickPalette.appendChild(wrap);
         }
       }
 
-      $("btnAddCat").addEventListener("click", async ()=>{
+      function renderCatRows(){
+        catRows.innerHTML = "";
+        catEditing.forEach((c, idx)=>{
+          const isAll = c.id==="전체";
+          const row = document.createElement("div");
+          row.className = "card";
+          row.style.marginTop = "10px";
+          row.style.borderColor = (idx===selectedCatRowIndex) ? "rgba(124,196,255,.55)" : "rgba(39,52,74,.6)";
+          row.innerHTML = `
+            <div class="sectionTitle" style="margin:0 0 10px 0;">
+              <span>${isAll ? "전체(마스터)" : `카테고리 ${idx}`}</span>
+              <span class="subtle">${isAll ? "삭제 불가" : "클릭하여 선택"}</span>
+            </div>
+
+            <div class="grid2">
+              <div>
+                <div class="labelRow">이름</div>
+                <input class="field" data-k="name" value="${escapeHtml(c.name)}" ${isAll ? "disabled" : ""}/>
+              </div>
+              <div>
+                <div class="labelRow">색상</div>
+                <input class="field" data-k="color" value="${escapeHtml(c.color)}" ${isAll ? "disabled" : ""}/>
+              </div>
+            </div>
+
+            <div class="labelRow" style="margin-top:10px;">표시</div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="colorChip" style="--c:${escapeHtml(c.color)};"></div>
+                <div class="subtle">${isAll ? "전체 OFF 시 전부 숨김" : "OFF 시 해당 카테고리 마커 숨김"}</div>
+              </div>
+              <div class="checkRow">
+                <input type="checkbox" data-k="on" ${c.on ? "checked" : ""}/>
+                <label class="subtle" style="cursor:pointer;">ON</label>
+              </div>
+            </div>
+
+            ${isAll ? "" : `
+              <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:12px;">
+                <button class="btnBig danger" data-act="del">삭제</button>
+              </div>
+            `}
+          `;
+
+          row.addEventListener("click", ()=>{
+            if(isAll) return;
+            selectedCatRowIndex = idx;
+            renderCatRows();
+          });
+
+          row.querySelectorAll("input.field").forEach(inp=>{
+            inp.addEventListener("input", ()=>{
+              const key = inp.getAttribute("data-k");
+              if(!key) return;
+              if(isAll) return;
+              c[key] = inp.value;
+              // id는 name 기반으로 다시 만들지 않고, 기존 id 유지(안정)
+              // 단, 기본 동작상 name을 id로 쓰는 케이스가 있으므로, id도 같이 맞춤(전체 제외)
+              if(key==="name"){
+                const nm = (c.name||"").trim();
+                if(nm) c.id = nm;
+              }
+              renderCatRows();
+            });
+          });
+
+          const chk = row.querySelector('input[type="checkbox"][data-k="on"]');
+          if(chk){
+            chk.addEventListener("change", ()=>{
+              c.on = !!chk.checked;
+              // 전체 제외 최소1 보장 로직은 저장 시 한 번 더 체크
+              renderCatRows();
+            });
+          }
+
+          const delBtn = row.querySelector('[data-act="del"]');
+          if(delBtn){
+            delBtn.addEventListener("click", async (e)=>{
+              e.stopPropagation();
+              const ok = await openPopConfirm({
+                anchor: delBtn,
+                title: "카테고리 삭제",
+                message: `"${c.name}" 카테고리를 삭제할까요?\n(해당 카테고리 마커는 숨김 처리될 수 있습니다)`,
+                okText: "삭제",
+                cancelText: "취소",
+                danger: true
+              });
+              if(!ok) return;
+              catEditing = catEditing.filter((x,i)=>i!==idx);
+              selectedCatRowIndex = -1;
+              renderCatRows();
+              toast("삭제 완료");
+            });
+          }
+
+          catRows.appendChild(row);
+        });
+      }
+
+      function renderCatModal(){
+        renderCatQuickPalette();
+        renderCatRows();
+      }
+
+      $("btnAddCat").addEventListener("click", ()=>{
         requireAuth();
         if(!isAuthed()) return;
-        const name = await openPopInput({
-          anchor: $("btnAddCat"),
-          title: "카테고리 추가",
-          message: "추가할 카테고리 이름을 입력하세요.",
-          placeholder: "예: 사냥터",
-          value: "",
-          okText: "추가",
-          cancelText: "취소"
-        });
-        if(name === null) return;
-        const n = (name||"").trim();
-        if(!n) return;
-        if(S.categories.some(c=>c.id===n)){ toast("이미 존재"); return; }
-        S.categories.push({ id:n, name:n, color:"#7cc4ff", on:true });
-        buildCatsEditor();
+        catEditing.push({ id:`새카테고리${catEditing.length}`, name:`새카테고리${catEditing.length}`, color:"#7cc4ff", on:true });
+        selectedCatRowIndex = catEditing.length - 1;
+        renderCatRows();
         toast("카테고리 추가");
       });
 
-      $("btnCatsDefault").addEventListener("click", async ()=>{
+      $("btnCatsDefault").addEventListener("click", ()=>{
         requireAuth();
         if(!isAuthed()) return;
-        const ok = await openPopConfirm({
-          anchor: $("btnCatsDefault"),
-          title: "기본값으로",
-          message: "카테고리를 기본값으로 되돌릴까요?",
-          okText: "적용",
-          cancelText: "취소",
-          danger: true
-        });
-        if(!ok) return;
-        S.categories = structuredClone(defaultCats);
-        saveLocal();
-        buildCatsEditor();
-        renderCats();
-        draw();
-        toast("기본값 적용");
+        catEditing = structuredClone(defaultCats);
+        selectedCatRowIndex = -1;
+        renderCatRows();
+        toast("기본값 복원");
       });
 
       $("btnSaveCats").addEventListener("click", ()=>{
         requireAuth();
         if(!isAuthed()) return;
 
-        const next = [];
-        const rows = [...catRowsEl.querySelectorAll(".card")];
-        for(const row of rows){
-          const cid = row.dataset.cid;
-          const cur = S.categories.find(c=>c.id===cid);
-          if(!cur) continue;
+        // normalize: 전체는 항상 존재/맨 앞
+        const all = catEditing.find(c=>c.id==="전체") || structuredClone(defaultCats[0]);
+        let rest = catEditing.filter(c=>c.id!=="전체");
 
-          const nameEl = row.querySelector('input[data-k="name"]');
-          const colorEl = row.querySelector('input[data-k="color"]');
-          const onEl = row.querySelector('input[data-k="on"]');
+        // sanitize: 공백 제거 + 중복 방지 (id 기준)
+        const seen = new Set();
+        rest = rest.filter(c=>{
+          c.name = (c.name||"").trim();
+          c.id = (c.id||c.name||"").trim();
+          c.color = (c.color||"#7cc4ff").trim();
+          if(!c.name || !c.id) return false;
+          if(seen.has(c.id)) return false;
+          seen.add(c.id);
+          if(typeof c.on !== "boolean") c.on = true;
+          return true;
+        });
 
-          const name = (nameEl ? nameEl.value : cur.name) || cur.name;
-          const color = (colorEl ? colorEl.value : cur.color) || cur.color;
-          const on = onEl ? !!onEl.checked : !!cur.on;
-
-          if(cid === "전체"){
-            next.push({ id:"전체", name:"전체", color: color.trim() || "#7cc4ff", on });
-          }else{
-            const id = (name || "").trim();
-            if(!id) continue;
-            next.push({ id, name: id, color: (color||"").trim() || "#7cc4ff", on });
-          }
+        // 최소 1개(전체 제외) ON 보장
+        const anyOn = rest.some(c=>c.on);
+        if(!anyOn && rest.length){
+          rest[0].on = true;
         }
 
-        if(!next.find(c=>c.id==="전체")){
-          next.unshift({ id:"전체", name:"전체", color:"#7cc4ff", on:true });
-        }
+        all.on = (typeof all.on==="boolean") ? all.on : true;
+        all.color = (all.color||"#7cc4ff").trim();
+        all.name = "전체";
+        all.id = "전체";
 
-        const anyOn = next.some(c=>c.id!=="전체" && c.on);
-        if(!anyOn){
-          for(const c of next){
-            if(c.id!=="전체"){ c.on = true; break; }
-          }
-        }
+        S.categories = [all, ...rest];
 
-        const mapOldToNew = new Map();
-        for(const c of next) mapOldToNew.set(c.id, c);
-
-        S.categories = next;
-
-        // markers with missing category -> set to first non-전체
-        const fallbackCat = S.categories.find(c=>c.id!=="전체")?.id || "기텔";
+        // marker cat 존재 보정: 없는 카테고리는 첫 카테고리(전체 제외)로 이동
+        const fallbackCat = (S.categories.find(c=>c.id!=="전체")?.id) || "기텔";
         for(const m of (S.markers||[])){
-          if(!getCat(m.cat)) m.cat = fallbackCat;
+          if(!S.categories.some(c=>c.id===m.cat)){
+            m.cat = fallbackCat;
+          }
         }
 
         saveLocal();
         renderCats();
+        applyAllCatStylesOnPage(S.currentPageId);
+        applyAllChainStylesOnPage(S.currentPageId);
         renderKpi();
         draw();
         closeCatsModal();
@@ -3173,23 +3316,22 @@
         renderCats();
         renderPalette();
         renderTextColors();
-        syncSelectedPanel();
         setChipToggle(tgShowLinesWithCatFilter, !!S.showLinesWithCatFilter);
+        syncSelectedPanel();
       }
 
-      (async ()=>{
-        const raw = await loadStateRemoteFirst();
-        S = mergeState(raw);
+      (async function init(){
+        resizeCanvas();
+        const st = await loadStateRemoteFirst();
+        S = mergeState(st);
         ensureSlot1FromLegacy();
         saveLocal();
-
-        resizeCanvas();
         renderAll();
         loadMap();
-
-        requireAuth();
         renderKpi();
         draw();
+        // 첫 진입 시 인증 필요 (기존 동작 유지)
+        requireAuth();
       })();
     })();
   </script>
