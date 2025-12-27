@@ -52,7 +52,13 @@
     "naturalH": 1125,
     "scale": 1.036571120136277,
     "tx": 402.46750594638763,
-    "ty": 217.0403562326842
+    "ty": 217.0403562326842,
+    "imageUrl": "https://mode82.github.io/MAPMODE/assets/aion2/maps/aion2map.jpg",
+    "imgW": 1125,
+    "imgH": 1125,
+    "zoom": 1.4135553929670306,
+    "panX": 504.89502282577405,
+    "panY": 60.261219715728366
   },
   "markers": [
     {
@@ -74,7 +80,12 @@
       "chainId": "c_p_c808f23eb9594819b58a59afe",
       "chainIndex": 1,
       "order": 1,
-      "dim": false
+      "dim": false,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_3c1b61079e7db819b58ae00d6",
@@ -95,7 +106,12 @@
       "chainId": "c_p_c808f23eb9594819b58a59afe",
       "chainIndex": 2,
       "order": 2,
-      "dim": false
+      "dim": false,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_d47043658f63d819b58ae11c0",
@@ -116,7 +132,12 @@
       "chainId": "c_p_c808f23eb9594819b58a59afe",
       "chainIndex": 3,
       "order": 3,
-      "dim": false
+      "dim": false,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_zbhvgx46",
@@ -136,8 +157,13 @@
       "labelColor": "#e7eef8",
       "order": 4,
       "dim": false,
-      "chainId": null,
-      "chainIndex": 4
+      "chainId": "hmvgmi1qw3bmjo5otwi",
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_iiz65rah",
@@ -157,8 +183,13 @@
       "labelColor": "#e7eef8",
       "order": 5,
       "dim": false,
-      "chainId": null,
-      "chainIndex": 5
+      "chainId": "onr8u3rvajmjo5otwi",
+      "chainIndex": 5,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_40aas9q9",
@@ -178,8 +209,13 @@
       "labelColor": "#e7eef8",
       "order": 6,
       "dim": false,
-      "chainId": null,
-      "chainIndex": 6
+      "chainId": "96lx6bp0gxamjo5otwi",
+      "chainIndex": 6,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_94id613q",
@@ -199,8 +235,13 @@
       "labelColor": "#e7eef8",
       "order": 7,
       "dim": false,
-      "chainId": null,
-      "chainIndex": 7
+      "chainId": "8b7qxrgbr88mjo5otwi",
+      "chainIndex": 7,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_2cqt4tdf",
@@ -220,14 +261,19 @@
       "labelColor": "#e7eef8",
       "order": 8,
       "dim": false,
-      "chainId": null,
-      "chainIndex": 8
+      "chainId": "ky5s5x5mjo5otwi",
+      "chainIndex": 8,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_kdoq6vzx",
       "pageId": "p_all",
-      "x": 0.3619598034078295,
-      "y": 0.40798481258584984,
+      "x": 97.90778771346882,
+      "y": 148.86545240586378,
       "name": "",
       "cat": "큐브",
       "colorOverride": "",
@@ -242,13 +288,18 @@
       "order": 1,
       "dim": false,
       "chainId": "c0",
-      "chainIndex": 1
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_agtavsup",
       "pageId": "p_all",
-      "x": 0.40867247013936425,
-      "y": 0.4481576333360264,
+      "x": 559.6307755414714,
+      "y": 715.322069647828,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -263,13 +314,18 @@
       "order": 2,
       "dim": false,
       "chainId": "c0",
-      "chainIndex": 2
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_rvehivdg",
       "pageId": "p_all",
-      "x": 0.4201336690993804,
-      "y": 0.48928679565832234,
+      "x": 78.086898744019,
+      "y": 112.99903189403234,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -284,13 +340,18 @@
       "order": 3,
       "dim": false,
       "chainId": "c0",
-      "chainIndex": 3
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_w8hksu3m",
       "pageId": "p_all",
-      "x": 0.46330884644760084,
-      "y": 0.509355059648071,
+      "x": 97.90778771346882,
+      "y": 105.44823926883171,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -305,13 +366,18 @@
       "order": 4,
       "dim": false,
       "chainId": "c0",
-      "chainIndex": 4
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_faqrweig",
       "pageId": "p_all",
-      "x": 0.5096429265415797,
-      "y": 0.5055184797676779,
+      "x": 52.602876420136596,
+      "y": 146.97775424956362,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -326,13 +392,18 @@
       "order": 5,
       "dim": false,
       "chainId": "c0",
-      "chainIndex": 5
+      "chainIndex": 5,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_i8f3potk",
       "pageId": "p_all",
-      "x": 0.594047683910229,
-      "y": 0.5098688023931915,
+      "x": 157.37045462181828,
+      "y": 178.1248710423465,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -347,13 +418,18 @@
       "order": 6,
       "dim": false,
       "chainId": "c0",
-      "chainIndex": 6
+      "chainIndex": 6,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_l9rpfxnj",
       "pageId": "p_all",
-      "x": 0.600813647583387,
-      "y": 0.5753092815757345,
+      "x": 272.5205476680453,
+      "y": 193.22653406381198,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -368,13 +444,18 @@
       "order": 7,
       "dim": false,
       "chainId": "c0",
-      "chainIndex": 7
+      "chainIndex": 7,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_n56qtzoh",
       "pageId": "p_all",
-      "x": 0.5332308173826154,
-      "y": 0.6192823894356252,
+      "x": 173.416025049732,
+      "y": 486.76470560615167,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -389,13 +470,18 @@
       "order": 8,
       "dim": false,
       "chainId": "c0",
-      "chainIndex": 8
+      "chainIndex": 8,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_v9i9dddy",
       "pageId": "p_all",
-      "x": 0.7072104347697314,
-      "y": 0.3989577762046076,
+      "x": 52.602876420136596,
+      "y": 151.69701908308008,
       "name": "",
       "cat": "큐브",
       "colorOverride": "",
@@ -410,13 +496,18 @@
       "order": 9,
       "dim": true,
       "chainId": "c_thctqy2j",
-      "chainIndex": 1
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_pilt3iv1",
       "pageId": "p_all",
-      "x": 0.6838958339581115,
-      "y": 0.41341873113839717,
+      "x": 61.09749868072125,
+      "y": 168.6863802608457,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -431,13 +522,18 @@
       "order": 11,
       "dim": false,
       "chainId": "c_thctqy2j",
-      "chainIndex": 2
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_vx5snz9f",
       "pageId": "p_all",
-      "x": 0.6331349309252176,
-      "y": 0.4016138699679567,
+      "x": 63.92906535793754,
+      "y": 186.6196488450596,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -452,13 +548,18 @@
       "order": 12,
       "dim": false,
       "chainId": "c_thctqy2j",
-      "chainIndex": 3
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_90sj6de8",
       "pageId": "p_all",
-      "x": 0.6871421707799826,
-      "y": 0.4379138180670611,
+      "x": 35.613476356838845,
+      "y": 133.7638282699304,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -473,13 +574,18 @@
       "order": 13,
       "dim": false,
       "chainId": "c_thctqy2j",
-      "chainIndex": 4
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_mi98ks83",
       "pageId": "p_all",
-      "x": 0.6948153305407689,
-      "y": 0.46860645711020626,
+      "x": 62.98523572255352,
+      "y": 154.52858576029638,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -494,13 +600,18 @@
       "order": 14,
       "dim": false,
       "chainId": "c_thctqy2j",
-      "chainIndex": 5
+      "chainIndex": 5,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_n5cqe20s",
       "pageId": "p_all",
-      "x": 0.5716454671592062,
-      "y": 0.328820454132671,
+      "x": 65.30322221934348,
+      "y": 107.06218669687385,
       "name": "1번 깃털",
       "cat": "기텔",
       "colorOverride": "",
@@ -515,13 +626,18 @@
       "order": 15,
       "dim": true,
       "chainId": "c_il1j9bwh",
-      "chainIndex": 1
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_d5pj4r1b",
       "pageId": "p_all",
-      "x": 0.45090978130618525,
-      "y": 0.3504336377713678,
+      "x": 72.08747770741195,
+      "y": 114.81559872381277,
       "name": "1번 깃털2",
       "cat": "보스",
       "colorOverride": "",
@@ -536,13 +652,18 @@
       "order": 16,
       "dim": false,
       "chainId": "c_il1j9bwh",
-      "chainIndex": 2
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_psetdea5",
       "pageId": "p_all",
-      "x": 0.5284447392801702,
-      "y": 0.41886728954606794,
+      "x": 53.67306424994126,
+      "y": 98.82411654251202,
       "name": "1번 깃털3",
       "cat": "보스",
       "colorOverride": "",
@@ -557,13 +678,18 @@
       "order": 17,
       "dim": false,
       "chainId": "c_il1j9bwh",
-      "chainIndex": 3
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_c210s48t",
       "pageId": "p_all",
-      "x": 0.6315063458093224,
-      "y": 0.4825095365898117,
+      "x": 70.14912470067722,
+      "y": 95.43202872747163,
       "name": "1번 깃털4",
       "cat": "보스",
       "colorOverride": "",
@@ -578,13 +704,18 @@
       "order": 18,
       "dim": false,
       "chainId": "c_il1j9bwh",
-      "chainIndex": 4
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_6hbeim09",
       "pageId": "p_all",
-      "x": 0.4181769110806257,
-      "y": 0.34512455561255456,
+      "x": 82.74843920894989,
+      "y": 128.86872789837878,
       "name": "5번 깃털",
       "cat": "보스",
       "colorOverride": "",
@@ -599,13 +730,18 @@
       "order": 19,
       "dim": false,
       "chainId": "c_a9u81di2",
-      "chainIndex": 1
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_fpemodvs",
       "pageId": "p_all",
-      "x": 0.4911826481344068,
-      "y": 0.24392256961290362,
+      "x": 73.05663424628239,
+      "y": 113.84644218494233,
       "name": "6번 깃털",
       "cat": "보스",
       "colorOverride": "",
@@ -620,13 +756,18 @@
       "order": 20,
       "dim": false,
       "chainId": "c_a9u81di2",
-      "chainIndex": 2
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_cozehe7g",
       "pageId": "p_all",
-      "x": 0.5511206413032256,
-      "y": 0.2981845991688074,
+      "x": 85.6559886835489,
+      "y": 125.96117842377977,
       "name": "7번 깃털",
       "cat": "보스",
       "colorOverride": "",
@@ -641,13 +782,18 @@
       "order": 21,
       "dim": false,
       "chainId": "c_a9u81di2",
-      "chainIndex": 3
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_160igm7k",
       "pageId": "p_all",
-      "x": 0.6084930360997851,
-      "y": 0.26728474443963607,
+      "x": 679.8598674627269,
+      "y": 488.10798558973204,
       "name": "8번 깃털",
       "cat": "보스",
       "colorOverride": "",
@@ -662,13 +808,18 @@
       "order": 22,
       "dim": false,
       "chainId": "c_a9u81di2",
-      "chainIndex": 4
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_wfzp0zrl",
       "pageId": "p_all",
-      "x": 0.7005114476132316,
-      "y": 0.2847893635794327,
+      "x": 104.55502033944867,
+      "y": 135.16840511701204,
       "name": "9번 깃털",
       "cat": "기텔",
       "colorOverride": "",
@@ -683,13 +834,18 @@
       "order": 23,
       "dim": true,
       "chainId": "c_ayzqp4m5",
-      "chainIndex": 1
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_e6gmpsir",
       "pageId": "p_all",
-      "x": 0.6488254448152667,
-      "y": 0.3264349714005558,
+      "x": 62.39567274474446,
+      "y": 111.42351090877239,
       "name": "10번 깃털",
       "cat": "보스",
       "colorOverride": "",
@@ -704,13 +860,18 @@
       "order": 24,
       "dim": false,
       "chainId": "c_ayzqp4m5",
-      "chainIndex": 2
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_94s12g1c",
       "pageId": "p_all",
-      "x": 0.6106045326893325,
-      "y": 0.31975318045635537,
+      "x": 60.94189800744495,
+      "y": 100.27789127981153,
       "name": "11번 깃털",
       "cat": "보스",
       "colorOverride": "",
@@ -725,13 +886,18 @@
       "order": 25,
       "dim": false,
       "chainId": "c_ayzqp4m5",
-      "chainIndex": 3
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_7saeclxi",
       "pageId": "p_all",
-      "x": 0.4221323004958006,
-      "y": 0.39760126186390277,
+      "x": 46.40423049243757,
+      "y": 101.24704781868196,
       "name": "12번 깃털",
       "cat": "보스",
       "colorOverride": "",
@@ -746,13 +912,18 @@
       "order": 26,
       "dim": false,
       "chainId": "c_ab7b8j7j",
-      "chainIndex": 1
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
     },
     {
       "id": "m_y9k81jmb",
       "pageId": "p_all",
-      "x": 0.5329426365288964,
-      "y": 0.6506765029286353,
+      "x": 246.0926179377147,
+      "y": 244.1945787115768,
       "name": "",
       "cat": "보스",
       "colorOverride": "",
@@ -767,9 +938,165 @@
       "order": 10,
       "dim": false,
       "chainId": "c0",
-      "chainIndex": 9
+      "chainIndex": 9,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "32dohoedahbmjo5pobu",
+      "pageId": "p_all",
+      "catId": "fkga2bl7flvmjo5rf7c",
+      "chainId": "9awm6sg7rdmjo5otwi",
+      "seq": 1,
+      "x": 785.7642790803761,
+      "y": 505.10921867462224,
+      "name": "마커 1",
+      "ytDisplay": "마커 1",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "wtzru2h8t1cmjo5pp4r",
+      "pageId": "p_all",
+      "catId": "7f7l581ckgxmjo5otwi",
+      "chainId": "9awm6sg7rdmjo5otwi",
+      "seq": 2,
+      "x": 670.5654351112943,
+      "y": 531.7181192056465,
+      "name": "마커 2",
+      "ytDisplay": "마커 2",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "nxye7nklkm9mjo5qy3i",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "catId": "7f7l581ckgxmjo5otwi",
+      "chainId": "6svbl707p2nmjo5otwi",
+      "seq": 1,
+      "x": 1684.2023001623445,
+      "y": 592.2377473130033,
+      "name": "마커 1",
+      "ytDisplay": "마커 1",
+      "ytDesc": "",
+      "ytUrl": ""
     }
   ],
   "chains": [],
-  "markerLabelDefault": "#e7eef8"
+  "markerLabelDefault": "#e7eef8",
+  "v": "admin99",
+  "ui": {
+    "showAllLines": true,
+    "dimOpacity": 0.3
+  },
+  "topCats": [
+    {
+      "id": "top1",
+      "name": "카테고리1",
+      "items": [
+        {
+          "id": "u3f2qnffdurmjo5otwi",
+          "name": "게임1"
+        },
+        {
+          "id": "l7oy159dtpqmjo5otwi",
+          "name": "게임2"
+        }
+      ]
+    },
+    {
+      "id": "top2",
+      "name": "카테고리2",
+      "items": [
+        {
+          "id": "gyjnanmxe3pmjo5otwi",
+          "name": "아이온2"
+        }
+      ]
+    },
+    {
+      "id": "top3",
+      "name": "카테고리3",
+      "items": []
+    },
+    {
+      "id": "top4",
+      "name": "카테고리4",
+      "items": []
+    }
+  ],
+  "markerCategories": [
+    {
+      "id": "7f7l581ckgxmjo5otwi",
+      "name": "기본",
+      "color": "#7cc4ff",
+      "visible": true,
+      "hideNumber": false,
+      "defaults": {
+        "size": 1,
+        "textSize": 6,
+        "weight": 800,
+        "textColor": "#e7eef8"
+      }
+    },
+    {
+      "id": "fkga2bl7flvmjo5rf7c",
+      "name": "카테고리2",
+      "color": "#ff9f43",
+      "visible": true,
+      "hideNumber": false,
+      "defaults": {
+        "size": 11,
+        "textSize": 11,
+        "weight": 800,
+        "textColor": "#e7eef8"
+      }
+    },
+    {
+      "id": "dq46sjwxq2mjo5rgaz",
+      "name": "카테고리3",
+      "color": "#ffd60a",
+      "visible": true,
+      "hideNumber": false,
+      "defaults": {
+        "size": 1,
+        "textSize": 6,
+        "weight": 800,
+        "textColor": "#e7eef8"
+      }
+    },
+    {
+      "id": "fl59bibzowmmjo5rgg6",
+      "name": "카테고리4",
+      "color": "#39d98a",
+      "visible": true,
+      "hideNumber": false,
+      "defaults": {
+        "size": 1,
+        "textSize": 6,
+        "weight": 800,
+        "textColor": "#e7eef8"
+      }
+    }
+  ],
+  "edges": {
+    "p_all:9awm6sg7rdmjo5otwi:32dohoedahbmjo5pobu->wtzru2h8t1cmjo5pp4r": {
+      "cx": 774.3735729440625,
+      "cy": 536.2691947593086
+    }
+  },
+  "chainByPage": {
+    "p_all": {
+      "currentChainId": "9awm6sg7rdmjo5otwi",
+      "continueFromMarkerId": null
+    },
+    "p_c808f23eb9594819b58a59afe": {
+      "currentChainId": "6svbl707p2nmjo5otwi",
+      "continueFromMarkerId": null
+    }
+  },
+  "updatedAt": 1766831411975
 }
