@@ -1,1149 +1,1102 @@
-<!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>MAPMODE · INDEX99</title>
-  <style>
-    :root{
-      color-scheme: dark;
-      --bg:#0a0f18;
-      --bg2:#070b12;
-
-      --panel:#0b1220cc;
-      --card:#0e1626cc;
-      --stroke:#1f2a3a;
-      --stroke2:#27344a;
-
-      --text:#e7eef8;
-      --muted:#9fb0c6;
-      --accent:#7cc4ff;
-      --danger:#ff5d5d;
-      --ok:#39d98a;
-      --warn:#ffd60a;
-
-      --r12:12px;
-      --r14:14px;
-      --r16:16px;
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --shadow2: 0 8px 24px rgba(0,0,0,.35);
-      --blur: 14px;
-
-      --topH:58px;
-      --sideW:320px;
-      --sideW2:350px;
-
-      /* ✅ 모바일에서도 PC와 동일 레이아웃을 유지하기 위한 스케일 */
-      --uiScale: 1;
-      --centerMinW: 1000px; /* 기존 코드의 center min-width 기준 */
+{
+  "version": 99,
+  "game": "아이온2",
+  "logoUrl": "https://mode82.github.io/MAPMODE/assets/logo/MAPMODELOGO2.png",
+  "games": [
+    "아이온2",
+    "패스오브엑자일|0"
+  ],
+  "pages": [
+    {
+      "id": "p_all",
+      "name": "전체지도",
+      "url": "https://mode82.github.io/MAPMODE/assets/aion2/maps/aion2map.jpg"
+    },
+    {
+      "id": "p_c808f23eb9594819b58a59afe",
+      "name": "도망자마을",
+      "url": "https://mode82.github.io/MAPMODE/assets/aion2/maps/aion2test.jpg"
     }
-
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
-      background: radial-gradient(1200px 700px at 50% -10%, rgba(124,196,255,.18), transparent 55%),
-                  radial-gradient(800px 600px at 90% 10%, rgba(57,217,138,.12), transparent 55%),
-                  radial-gradient(800px 600px at 10% 10%, rgba(255,214,10,.08), transparent 55%),
-                  linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
-      color:var(--text);
-
-      /* ✅ 페이지 자체 스크롤/좌우 밀림 방지 */
-      overflow:hidden;
-      overscroll-behavior: none;
-      touch-action: none;
+  ],
+  "currentPageId": "p_all",
+  "categories": [
+    {
+      "id": "전체",
+      "name": "전체",
+      "color": "#7cc4ff",
+      "on": true
+    },
+    {
+      "id": "보스",
+      "name": "보스",
+      "color": "#ff5d5d",
+      "on": true
+    },
+    {
+      "id": "기텔",
+      "name": "기텔",
+      "color": "#ffd60a",
+      "on": true
+    },
+    {
+      "id": "큐브",
+      "name": "큐브",
+      "color": "#2b8cff",
+      "on": true
     }
-
-    /* ✅ 앱 전체를 스케일로 축소/확대 (모바일에서도 3컬럼을 한 화면에) */
-    #app{
-      position:fixed;
-      inset:0;
-      transform: scale(var(--uiScale));
-      transform-origin: 0 0;
-
-      /* 스케일 후에도 내부 레이아웃이 "원래 크기 기준"으로 계산되도록 보정 */
-      width: calc(100% / var(--uiScale));
-      height: calc(100% / var(--uiScale));
-      overflow:hidden;
+  ],
+  "showLinesWithCatFilter": true,
+  "map": {
+    "imgDataUrl": "",
+    "naturalW": 1125,
+    "naturalH": 1125,
+    "scale": 1.036571120136277,
+    "tx": 402.46750594638763,
+    "ty": 217.0403562326842,
+    "imageUrl": "https://mode82.github.io/MAPMODE/assets/aion2/maps/aion2map.jpg",
+    "imgW": 1125,
+    "imgH": 1125,
+    "zoom": 1.4135553929670306,
+    "panX": 504.89502282577405,
+    "panY": 60.261219715728366
+  },
+  "markers": [
+    {
+      "id": "m_5aaca0dacd82f19b58ad2fef",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "x": 0,
+      "y": 0,
+      "cat": "큐브",
+      "name": "",
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "useCatColor": true,
+      "colorOverride": "",
+      "chainId": "c_p_c808f23eb9594819b58a59afe",
+      "chainIndex": 1,
+      "order": 1,
+      "dim": false,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_3c1b61079e7db819b58ae00d6",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "x": 0,
+      "y": 0,
+      "cat": "큐브",
+      "name": "",
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "useCatColor": true,
+      "colorOverride": "",
+      "chainId": "c_p_c808f23eb9594819b58a59afe",
+      "chainIndex": 2,
+      "order": 2,
+      "dim": false,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_d47043658f63d819b58ae11c0",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "x": 0,
+      "y": 0,
+      "cat": "큐브",
+      "name": "",
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "useCatColor": true,
+      "colorOverride": "",
+      "chainId": "c_p_c808f23eb9594819b58a59afe",
+      "chainIndex": 3,
+      "order": 3,
+      "dim": false,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_zbhvgx46",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "x": 0.3516703139977847,
+      "y": 0.25970670086094294,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 4,
+      "dim": false,
+      "chainId": "hmvgmi1qw3bmjo5otwi",
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_iiz65rah",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "x": 0.22729562816554616,
+      "y": 0.2823099744384956,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 5,
+      "dim": false,
+      "chainId": "onr8u3rvajmjo5otwi",
+      "chainIndex": 5,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_40aas9q9",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "x": 0.38380240124272835,
+      "y": 0.4454115156261418,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 6,
+      "dim": false,
+      "chainId": "96lx6bp0gxamjo5otwi",
+      "chainIndex": 6,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_94id613q",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "x": 0.48748156538158666,
+      "y": 0.3847897143821091,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 7,
+      "dim": false,
+      "chainId": "8b7qxrgbr88mjo5otwi",
+      "chainIndex": 7,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_2cqt4tdf",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "x": 0.45425153648254707,
+      "y": 0.17648164982546705,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 10,
+      "fs": 15,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 8,
+      "dim": false,
+      "chainId": "ky5s5x5mjo5otwi",
+      "chainIndex": 8,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_kdoq6vzx",
+      "pageId": "p_all",
+      "x": 97.90778771346882,
+      "y": 148.86545240586378,
+      "name": "",
+      "cat": "큐브",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 4,
+      "fs": 6,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 1,
+      "dim": false,
+      "chainId": "c0",
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_agtavsup",
+      "pageId": "p_all",
+      "x": 559.6307755414714,
+      "y": 715.322069647828,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 2,
+      "dim": false,
+      "chainId": "c0",
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_rvehivdg",
+      "pageId": "p_all",
+      "x": 78.086898744019,
+      "y": 112.99903189403234,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 3,
+      "dim": false,
+      "chainId": "c0",
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_w8hksu3m",
+      "pageId": "p_all",
+      "x": 97.90778771346882,
+      "y": 105.44823926883171,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 4,
+      "dim": false,
+      "chainId": "c0",
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_faqrweig",
+      "pageId": "p_all",
+      "x": 52.602876420136596,
+      "y": 146.97775424956362,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 5,
+      "dim": false,
+      "chainId": "c0",
+      "chainIndex": 5,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_i8f3potk",
+      "pageId": "p_all",
+      "x": 157.37045462181828,
+      "y": 178.1248710423465,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 6,
+      "dim": false,
+      "chainId": "c0",
+      "chainIndex": 6,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_l9rpfxnj",
+      "pageId": "p_all",
+      "x": 272.5205476680453,
+      "y": 193.22653406381198,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 7,
+      "dim": false,
+      "chainId": "c0",
+      "chainIndex": 7,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_n56qtzoh",
+      "pageId": "p_all",
+      "x": 173.416025049732,
+      "y": 486.76470560615167,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 8,
+      "dim": false,
+      "chainId": "c0",
+      "chainIndex": 8,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_v9i9dddy",
+      "pageId": "p_all",
+      "x": 52.602876420136596,
+      "y": 151.69701908308008,
+      "name": "",
+      "cat": "큐브",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 4,
+      "fs": 6,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 9,
+      "dim": true,
+      "chainId": "c_thctqy2j",
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_pilt3iv1",
+      "pageId": "p_all",
+      "x": 61.09749868072125,
+      "y": 168.6863802608457,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 11,
+      "dim": false,
+      "chainId": "c_thctqy2j",
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_vx5snz9f",
+      "pageId": "p_all",
+      "x": 63.92906535793754,
+      "y": 186.6196488450596,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 12,
+      "dim": false,
+      "chainId": "c_thctqy2j",
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_90sj6de8",
+      "pageId": "p_all",
+      "x": 35.613476356838845,
+      "y": 133.7638282699304,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 13,
+      "dim": false,
+      "chainId": "c_thctqy2j",
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_mi98ks83",
+      "pageId": "p_all",
+      "x": 62.98523572255352,
+      "y": 154.52858576029638,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 14,
+      "dim": false,
+      "chainId": "c_thctqy2j",
+      "chainIndex": 5,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_n5cqe20s",
+      "pageId": "p_all",
+      "x": 65.30322221934348,
+      "y": 107.06218669687385,
+      "name": "1번 깃털",
+      "cat": "기텔",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "1번 깃털",
+      "memo": "1번 깃털",
+      "r": 4,
+      "fs": 6,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 15,
+      "dim": true,
+      "chainId": "c_il1j9bwh",
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_d5pj4r1b",
+      "pageId": "p_all",
+      "x": 72.08747770741195,
+      "y": 114.81559872381277,
+      "name": "1번 깃털2",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 16,
+      "dim": false,
+      "chainId": "c_il1j9bwh",
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_psetdea5",
+      "pageId": "p_all",
+      "x": 53.67306424994126,
+      "y": 98.82411654251202,
+      "name": "1번 깃털3",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 17,
+      "dim": false,
+      "chainId": "c_il1j9bwh",
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_c210s48t",
+      "pageId": "p_all",
+      "x": 70.14912470067722,
+      "y": 95.43202872747163,
+      "name": "1번 깃털4",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 18,
+      "dim": false,
+      "chainId": "c_il1j9bwh",
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_6hbeim09",
+      "pageId": "p_all",
+      "x": 82.74843920894989,
+      "y": 128.86872789837878,
+      "name": "5번 깃털",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 19,
+      "dim": false,
+      "chainId": "c_a9u81di2",
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_fpemodvs",
+      "pageId": "p_all",
+      "x": 73.05663424628239,
+      "y": 113.84644218494233,
+      "name": "6번 깃털",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 20,
+      "dim": false,
+      "chainId": "c_a9u81di2",
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_cozehe7g",
+      "pageId": "p_all",
+      "x": 85.6559886835489,
+      "y": 125.96117842377977,
+      "name": "7번 깃털",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 21,
+      "dim": false,
+      "chainId": "c_a9u81di2",
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_160igm7k",
+      "pageId": "p_all",
+      "x": 679.8598674627269,
+      "y": 488.10798558973204,
+      "name": "8번 깃털",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 22,
+      "dim": false,
+      "chainId": "c_a9u81di2",
+      "chainIndex": 4,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_wfzp0zrl",
+      "pageId": "p_all",
+      "x": 104.55502033944867,
+      "y": 135.16840511701204,
+      "name": "9번 깃털",
+      "cat": "기텔",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 4,
+      "fs": 6,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 23,
+      "dim": true,
+      "chainId": "c_ayzqp4m5",
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_e6gmpsir",
+      "pageId": "p_all",
+      "x": 62.39567274474446,
+      "y": 111.42351090877239,
+      "name": "10번 깃털",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 24,
+      "dim": false,
+      "chainId": "c_ayzqp4m5",
+      "chainIndex": 2,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_94s12g1c",
+      "pageId": "p_all",
+      "x": 60.94189800744495,
+      "y": 100.27789127981153,
+      "name": "11번 깃털",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 25,
+      "dim": false,
+      "chainId": "c_ayzqp4m5",
+      "chainIndex": 3,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_7saeclxi",
+      "pageId": "p_all",
+      "x": 46.40423049243757,
+      "y": 101.24704781868196,
+      "name": "12번 깃털",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 26,
+      "dim": false,
+      "chainId": "c_ab7b8j7j",
+      "chainIndex": 1,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "m_y9k81jmb",
+      "pageId": "p_all",
+      "x": 246.0926179377147,
+      "y": 244.1945787115768,
+      "name": "",
+      "cat": "보스",
+      "colorOverride": "",
+      "useCatColor": true,
+      "yt": "",
+      "ytTitle": "",
+      "memo": "",
+      "r": 2,
+      "fs": 4,
+      "fw": 900,
+      "labelColor": "#e7eef8",
+      "order": 10,
+      "dim": false,
+      "chainId": "c0",
+      "chainIndex": 9,
+      "catId": "7f7l581ckgxmjo5otwi",
+      "seq": 1,
+      "ytDisplay": "",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "32dohoedahbmjo5pobu",
+      "pageId": "p_all",
+      "catId": "fkga2bl7flvmjo5rf7c",
+      "chainId": "9awm6sg7rdmjo5otwi",
+      "seq": 1,
+      "x": 785.7642790803761,
+      "y": 505.10921867462224,
+      "name": "마커 1",
+      "ytDisplay": "마커 1",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "wtzru2h8t1cmjo5pp4r",
+      "pageId": "p_all",
+      "catId": "7f7l581ckgxmjo5otwi",
+      "chainId": "9awm6sg7rdmjo5otwi",
+      "seq": 2,
+      "x": 670.5654351112943,
+      "y": 531.7181192056465,
+      "name": "마커 2",
+      "ytDisplay": "마커 2",
+      "ytDesc": "",
+      "ytUrl": ""
+    },
+    {
+      "id": "nxye7nklkm9mjo5qy3i",
+      "pageId": "p_c808f23eb9594819b58a59afe",
+      "catId": "7f7l581ckgxmjo5otwi",
+      "chainId": "6svbl707p2nmjo5otwi",
+      "seq": 1,
+      "x": 1684.2023001623445,
+      "y": 592.2377473130033,
+      "name": "마커 1",
+      "ytDisplay": "마커 1",
+      "ytDesc": "",
+      "ytUrl": ""
     }
-
-    /* TOPBAR */
-    .topbar{
-      position:absolute; inset:0 0 auto 0;
-      height:var(--topH);
-      display:flex; align-items:center; justify-content:space-between;
-      padding:10px 14px;
-      z-index:80;
-      background: linear-gradient(180deg, rgba(9,14,23,.88), rgba(9,14,23,.58));
-      backdrop-filter: blur(var(--blur));
-      border-bottom:1px solid rgba(39,52,74,.65);
-    }
-    .top-left, .top-right{ display:flex; align-items:center; gap:10px; }
-
-    .slot{
-      height:38px;
-      display:flex; align-items:center;
-      padding:0 10px;
-      border-radius:999px;
-      background: rgba(14,22,38,.55);
-      border:1px solid rgba(39,52,74,.65);
-      box-shadow: var(--shadow2);
-      gap:8px;
-      white-space:nowrap;
-    }
-    .slot.fixed{ width:170px; justify-content:center; }
-    .slot.logo{
-      justify-content:flex-start;
-      border:none;
-      background: transparent;
-      box-shadow:none;
-      padding:0;
-      width:170px;
-    }
-    .logoBox{
-      width:170px; height:38px;
-      border-radius:999px;
-      display:flex; align-items:center; justify-content:center;
-      overflow:hidden;
-      background: transparent;
-      border:none;
-      cursor:pointer;
-      user-select:none;
-    }
-    .logoBox img{ height:26px; width:auto; display:block; opacity:.98; }
-    .brand{ display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.5px; }
-    .brand .word{ font-size:20px; line-height:1; display:flex; align-items:center; }
-    .brand .word .o{
-      display:inline-block;
-      width:12px; height:12px; border-radius:999px;
-      margin:0 2px;
-      background:#fff;
-      box-shadow: 0 0 0 2px rgba(255,255,255,.12);
-      transform: translateY(1px);
-    }
-
-    .select{
-      appearance:none; border:none; background:transparent; color:var(--text);
-      font-weight:900; padding-right:18px; outline:none; cursor:pointer;
-    }
-    .chev{
-      width:0; height:0;
-      border-left:5px solid transparent;
-      border-right:5px solid transparent;
-      border-top:6px solid rgba(231,238,248,.7);
-      margin-left:-8px;
-      pointer-events:none;
-    }
-
-    .pill{
-      height:34px;
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:8px;
-      padding:0 12px;
-      border-radius:999px;
-      background: rgba(14,22,38,.55);
-      border:1px solid rgba(39,52,74,.65);
-      color:var(--text);
-      box-shadow: var(--shadow2);
-      cursor:pointer;
-      user-select:none;
-      text-decoration:none;
-      font-weight:900;
-    }
-    .pill:hover{ border-color: rgba(124,196,255,.55); }
-    .pill:active{ transform: translateY(1px); }
-    .pill.small{ height:32px; padding:0 10px; font-size:13px; font-weight:900; }
-    .pill.ghost{ background: rgba(14,22,38,.25); }
-    .pill.danger{ border-color: rgba(255,93,93,.55); }
-
-    /* LAYOUT */
-    .layout{
-      position:absolute;
-      inset:var(--topH) 0 0 0;
-      display:grid;
-      grid-template-columns: var(--sideW) 1fr var(--sideW2);
-      height:calc(100% - var(--topH));
-      min-width: calc(var(--sideW) + var(--centerMinW) + var(--sideW2)); /* ✅ PC 기준 레이아웃 폭 */
-    }
-
-    .side{
-      overflow:hidden;
-      border-right:1px solid rgba(39,52,74,.55);
-      background: rgba(8,12,20,.35);
-      backdrop-filter: blur(var(--blur));
-    }
-    .side.right{ border-right:none; border-left:1px solid rgba(39,52,74,.55); }
-
-    .sideInner{
-      height:100%;
-      padding:12px;
-      overflow:auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .card{
-      background: rgba(14,22,38,.50);
-      border:1px solid rgba(39,52,74,.6);
-      border-radius: var(--r16);
-      padding:12px;
-      box-shadow: var(--shadow2);
-    }
-    .card + .card{ margin-top:12px; }
-
-    .sectionTitle{
-      font-size:12px; letter-spacing:.3px;
-      color: rgba(231,238,248,.8);
-      margin:4px 0 10px 0;
-      display:flex; justify-content:space-between; align-items:center;
-      gap:10px;
-    }
-    .subtle{ color: rgba(159,176,198,.92); font-size:12px; line-height:1.45; }
-
-    /* LEFT pages */
-    .pageList{ display:flex; flex-direction:column; gap:10px; }
-    .pageItem{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 10px;
-      border-radius: var(--r14);
-      border:1px solid rgba(39,52,74,.6);
-      background: rgba(14,22,38,.35);
-      cursor:pointer;
-    }
-    .pageItem.active{
-      outline:2px solid rgba(57,217,138,.35);
-      border-color: rgba(57,217,138,.55);
-      background: rgba(14,22,38,.55);
-    }
-    .pageItem .name{ font-weight:900; font-size:13px; }
-
-    /* CENTER canvas */
-    .center{
-      position:relative;
-      overflow:hidden;
-      background:
-        radial-gradient(900px 700px at 50% 15%, rgba(124,196,255,.08), transparent 60%),
-        radial-gradient(900px 700px at 50% 80%, rgba(57,217,138,.05), transparent 60%);
-      min-width: var(--centerMinW);
-    }
-    .canvasWrap{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-    }
-    canvas{ background: transparent; touch-action:none; }
-
-    .hintToast{
-      position:absolute;
-      left:50%;
-      transform: translateX(-50%);
-      top:14px;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.6);
-      background: rgba(14,22,38,.55);
-      color: rgba(231,238,248,.9);
-      box-shadow: var(--shadow2);
-      font-size:12px;
-      display:none;
-      z-index:40;
-    }
-    .hintToast.show{ display:block; }
-
-    /* RIGHT categories */
-    .chipRow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-    .chip{
-      display:flex; align-items:center; gap:8px;
-      padding:7px 10px;
-      border-radius:999px;
-      border:1px solid rgba(39,52,74,.6);
-      background: rgba(10,15,24,.35);
-      cursor:pointer;
-      font-size:12px;
-      user-select:none;
-    }
-    .chip.on{ border-color: rgba(124,196,255,.6); background: rgba(124,196,255,.10); }
-    .dotc{ width:9px; height:9px; border-radius:999px; box-shadow:0 0 0 2px rgba(255,255,255,.06); }
-    .hr{ height:1px; background: rgba(39,52,74,.55); margin:10px 0; }
-
-    .kpi{
-      margin-top:10px;
-      font-size:12px;
-      color: rgba(231,238,248,.85);
-      display:flex; justify-content:space-between;
-    }
-    .btnFull{ width:100%; height:42px; border-radius:14px; justify-content:center; }
-
-    /* Tooltip (memo + youtube) */
-    .tip{
-      position:fixed;
-      z-index:120;
-      max-width:min(420px, calc(100vw - 24px));
-      background: linear-gradient(180deg, rgba(14,22,38,.95), rgba(10,15,24,.90));
-      border:1px solid rgba(39,52,74,.75);
-      border-radius:16px;
-      box-shadow: var(--shadow);
-      padding:12px;
-      display:none;
-      pointer-events:auto;
-    }
-    .tip.show{ display:block; }
-    .tip .tTitle{
-      font-weight:900;
-      margin:0 0 8px 0;
-      font-size:13px;
-      color: rgba(231,238,248,.95);
-    }
-    .tip .tRow{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      margin-bottom:8px;
-    }
-    .tip a{
-      color: rgba(124,196,255,.95);
-      font-weight:900;
-      text-decoration:none;
-      border-bottom:1px solid rgba(124,196,255,.35);
-    }
-    .tip .memo{
-      white-space:pre-wrap;
-      color: rgba(231,238,248,.88);
-      font-size:12px;
-      line-height:1.5;
-      margin:0;
-    }
-    .tip .close{
-      width:32px; height:32px;
-      border-radius:12px;
-      border:1px solid rgba(39,52,74,.65);
-      background: rgba(10,15,24,.35);
-      color: rgba(231,238,248,.9);
-      cursor:pointer;
-      font-weight:900;
-      display:flex; align-items:center; justify-content:center;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="app">
-
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <div class="top-left">
-        <!-- Slot 1: Logo (no border) -->
-        <div class="slot fixed logo">
-          <div class="logoBox" id="logoBox" title="MAPMODE">
-            <div class="brand"><div class="word">MAPM<span class="o"></span>DE</div></div>
-          </div>
-        </div>
-
-        <!-- Slot 2: Game -->
-        <div class="slot fixed">
-          <select id="gameSelect" class="select" title="게임 선택">
-            <option value="아이온2">아이온2</option>
-          </select>
-          <div class="chev"></div>
-        </div>
-
-        <!-- Slot 3: Mode label -->
-        <div class="slot fixed">
-          <div style="font-weight:900; color:rgba(231,238,248,.92);">유저</div>
-        </div>
-
-        <!-- Slot 4: Controls (user only) -->
-        <div class="slot fixed" style="justify-content:center;">
-          <button class="pill small ghost" id="btnReload" title="새로고침">새로고침</button>
-          <button class="pill small danger" id="btnResetView" title="화면 초기화">전체 초기화</button>
-        </div>
-      </div>
-
-      <div class="top-right">
-        <a class="pill small ghost" id="btnOpenAdmin" href="#" target="_blank" rel="noopener">ADMIN</a>
-      </div>
-    </div>
-
-    <div class="layout">
-      <!-- LEFT: Pages -->
-      <aside class="side left">
-        <div class="sideInner">
-          <div class="card">
-            <div class="sectionTitle">
-              <span>페이지</span>
-              <span class="subtle"><b id="pathGame">아이온2</b> / <b id="pathPage">전체지도</b></span>
-            </div>
-
-            <div class="pageList" id="pageList"></div>
-
-            <div class="subtle" style="margin-top:10px;">
-              • 페이지를 선택하면 해당 페이지 마커만 표시됩니다.
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- CENTER: Canvas -->
-      <main class="center">
-        <div class="hintToast" id="toast"></div>
-        <div class="canvasWrap">
-          <canvas id="cv" width="1200" height="900"></canvas>
-        </div>
-      </main>
-
-      <!-- RIGHT: Categories -->
-      <aside class="side right">
-        <div class="sideInner">
-          <div class="card">
-            <div class="sectionTitle">
-              <span>카테고리</span>
-              <span class="subtle">필터</span>
-            </div>
-
-            <div class="chipRow" id="catChips"></div>
-
-            <div class="hr"></div>
-
-            <button class="pill btnFull danger" id="btnClearDim" type="button" style="border-color:rgba(255,93,93,.65);">
-              마커 초기화
-            </button>
-
-            <div class="hr"></div>
-
-            <div class="kpi">
-              <span id="kpiShown">표시 중: 0</span>
-              <span id="kpiTotal">마커: 0</span>
-            </div>
-
-            <div style="margin-top:10px;">
-              <button class="pill btnFull" id="btnFit" type="button">화면 맞춤</button>
-            </div>
-
-            <div class="subtle" style="margin-top:10px;">
-              • 마커 클릭: <b>원만</b> 30% 불투명<br/>
-              • 마커 텍스트에 마우스를 올리면: 메모/유튜브 표시
-            </div>
-          </div>
-        </div>
-      </aside>
-    </div>
-
-    <!-- Hover/Click tooltip -->
-    <div class="tip" id="tip" role="dialog" aria-hidden="true">
-      <div class="tRow">
-        <div class="tTitle" id="tipTitle">-</div>
-        <button class="close" id="tipClose" type="button">닫기</button>
-      </div>
-      <div class="subtle" style="margin-bottom:8px;">
-        <a href="#" id="tipLink" target="_blank" rel="noopener">유튜브 열기</a>
-      </div>
-      <p class="memo" id="tipMemo"></p>
-    </div>
-
-  </div>
-
-<script>
-(() => {
-  /******************************************************************
-   * ✅ UI 스케일: 모바일에서도 PC와 동일한 3컬럼 화면을 "한 화면"에 표시
-   ******************************************************************/
-  function applyUIScale(){
-    const rs = getComputedStyle(document.documentElement);
-    const sideW = parseFloat(rs.getPropertyValue("--sideW")) || 320;
-    const sideW2 = parseFloat(rs.getPropertyValue("--sideW2")) || 350;
-    const centerMinW = parseFloat(rs.getPropertyValue("--centerMinW")) || 1000;
-
-    const baseW = sideW + centerMinW + sideW2;      // PC 기준 전체 폭
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    const scaleW = vw / baseW;
-    const scaleH = vh / (700);
-    let s = Math.min(1, scaleW, scaleH);
-
-    s = Math.max(0.35, s);
-    document.documentElement.style.setProperty("--uiScale", String(s));
-  }
-
-  window.addEventListener("resize", applyUIScale, {passive:true});
-  window.addEventListener("orientationchange", applyUIScale, {passive:true});
-  applyUIScale();
-
-  /******************************************************************
-   * ✅ 깃허브 구조 대응 (root에 index를 두든 /aion2/에 두든 둘 다 작동)
-   * - /MAPMODE/      에 있으면: state는 /MAPMODE/aion2/data/state.json
-   * - /MAPMODE/aion2/에 있으면: state는 /MAPMODE/aion2/data/state.json (./data/state.json)
-   ******************************************************************/
-  const IN_AION2_DIR = /\/aion2\//i.test(location.pathname);
-  const BASE_DIR = IN_AION2_DIR ? "." : "./aion2"; // ✅ 인덱스 위치에 따라 자동
-
-  const LS_KEY = "mapmode_state_v99"; // ✅ admin99와 동일 (v99 전용)
-
-  // ✅ remote state 후보들 (한 번에 맞추기 어려운 경우를 대비해 순차 시도)
-  const REMOTE_STATE_CANDIDATES = [
-    new URL(`${BASE_DIR}/data/state.json`, location.href).toString(),
-    new URL(`./data/state.json`, location.href).toString(),
-    new URL(`./aion2/data/state.json`, location.href).toString(),
-    new URL(`../aion2/data/state.json`, location.href).toString(),
-  ].filter((v, i, a) => a.indexOf(v) === i);
-
-  // ✅ ADMIN 링크도 같은 기준으로 자동 세팅
-  const ADMIN_URL = new URL(`${BASE_DIR}/admin99.html`, location.href).toString();
-
-  const defaultCats = [
-    { id:"전체", name:"전체", color:"#7cc4ff", on:true },
-    { id:"보스", name:"보스", color:"#ff5d5d", on:true },
-    { id:"기텔", name:"기텔", color:"#ffd60a", on:true },
-    { id:"큐브", name:"큐브", color:"#2b8cff", on:true },
-  ];
-
-  // ✅ 기본 페이지 URL을 "깃허브 구조(assets/aion2/maps)"에 맞춰 미리 넣어둠
-  // (admin에서 저장된 state가 있으면 그 값이 덮어씀)
-  const defaultState = {
-    version:99,
-    game:"아이온2",
-    logoUrl:"",
-    pages: [
-      { id:"p_all", name:"전체지도", url:"assets/aion2/maps/aion2map.jpg" }
-    ],
-    currentPageId:"p_all",
-    categories: defaultCats,
-    markerLabelDefault:"#e7eef8",
-    map:{ imgDataUrl:"", naturalW:1, naturalH:1, scale:0, tx:0, ty:0 },
-    markers:[],
-    chains:[]
-  };
-
-  const $ = (id)=>document.getElementById(id);
-  const cv = $("cv");
-  const ctx = cv.getContext("2d");
-  const toastEl = $("toast");
-  const pageList = $("pageList");
-  const catChips = $("catChips");
-
-  const tip = $("tip");
-  const tipTitle = $("tipTitle");
-  const tipLink = $("tipLink");
-  const tipMemo = $("tipMemo");
-  const tipClose = $("tipClose");
-
-  // ✅ ADMIN 버튼 링크 적용
-  $("btnOpenAdmin").href = ADMIN_URL;
-
-  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
-  const safeParse = (json, fallback) => { try{ return JSON.parse(json); }catch(e){ return fallback; } };
-  const escapeHtml = (s)=>String(s)
-    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;").replaceAll("'","&#39;");
-
-  function toast(msg, ms=1200){
-    toastEl.textContent = msg;
-    toastEl.classList.add("show");
-    clearTimeout(toast._t);
-    toast._t = setTimeout(()=>toastEl.classList.remove("show"), ms);
-  }
-
-  // state
-  let S = structuredClone(defaultState);
-  let mapImg = new Image();
-  mapImg.crossOrigin = "anonymous";
-
-  async function fetchFirstOkJson(urls){
-    for(const u of urls){
-      try{
-        const r = await fetch(u, { cache:"no-store" });
-        if(r.ok){
-          const st = await r.json();
-          return { st, url:u };
+  ],
+  "chains": [],
+  "markerLabelDefault": "#e7eef8",
+  "v": "admin99",
+  "ui": {
+    "showAllLines": true,
+    "dimOpacity": 0.3
+  },
+  "topCats": [
+    {
+      "id": "top1",
+      "name": "카테고리1",
+      "items": [
+        {
+          "id": "u3f2qnffdurmjo5otwi",
+          "name": "게임1"
+        },
+        {
+          "id": "l7oy159dtpqmjo5otwi",
+          "name": "게임2"
         }
-      }catch(e){}
-    }
-    return { st:null, url:null };
-  }
-
-  async function loadStateRemoteFirst(){
-    // 1) remote (순차 시도)
-    const { st, url } = await fetchFirstOkJson(REMOTE_STATE_CANDIDATES);
-    if(st){
-      localStorage.setItem(LS_KEY, JSON.stringify(st));
-      // 필요하면 어디서 읽었는지 확인용
-      // toast("state 로드: " + (url || "remote"), 1200);
-      return st;
-    }
-
-    // 2) local
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? safeParse(raw, structuredClone(defaultState)) : structuredClone(defaultState);
-  }
-
-  function mergeState(st){
-    const merged = structuredClone(defaultState);
-    if(st && typeof st === "object") Object.assign(merged, st);
-
-    merged.pages = Array.isArray(st?.pages) && st.pages.length ? st.pages : structuredClone(defaultState.pages);
-    merged.categories = Array.isArray(st?.categories) && st.categories.length ? st.categories : structuredClone(defaultCats);
-    merged.markers = Array.isArray(st?.markers) ? st.markers : [];
-    merged.chains = Array.isArray(st?.chains) ? st.chains : [];
-    merged.map = Object.assign(structuredClone(defaultState.map), st?.map||{});
-
-    if(!merged.pages.find(p=>p.id===merged.currentPageId)) merged.currentPageId = merged.pages[0]?.id || "p_all";
-    return merged;
-  }
-
-  /******************************************************************
-   * UI: logo
-   ******************************************************************/
-  const logoBox = $("logoBox");
-  function renderLogo(){
-    logoBox.innerHTML = "";
-    if(S.logoUrl){
-      const img = document.createElement("img");
-      img.src = S.logoUrl;
-      img.alt = "logo";
-      img.onerror = () => {
-        logoBox.innerHTML = `<div class="brand"><div class="word">MAPM<span class="o"></span>DE</div></div>`;
-      };
-      logoBox.appendChild(img);
-    }else{
-      logoBox.innerHTML = `<div class="brand"><div class="word">MAPM<span class="o"></span>DE</div></div>`;
-    }
-  }
-
-  /******************************************************************
-   * Pages & Categories
-   ******************************************************************/
-  function renderPages(){
-    pageList.innerHTML = "";
-    const cur = S.pages.find(p=>p.id===S.currentPageId) || S.pages[0];
-    $("pathPage").textContent = cur ? cur.name : "전체지도";
-
-    for(const p of S.pages){
-      const item = document.createElement("div");
-      item.className = "pageItem" + (p.id===S.currentPageId ? " active" : "");
-      item.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>`;
-      item.addEventListener("click", ()=>{
-        S.currentPageId = p.id;
-        hideTip(true);
-        saveLocal();
-        renderPages();
-        renderKPIs();
-
-        // ✅ 페이지 바뀌면 지도도 해당 페이지 URL로 로드 (admin 구조 대응)
-        loadMapForCurrentPage(true);
-      });
-      pageList.appendChild(item);
-    }
-  }
-
-  function renderCats(){
-    catChips.innerHTML = "";
-    for(const c of S.categories){
-      const chip = document.createElement("div");
-      chip.className = "chip" + (c.on ? " on" : "");
-      chip.innerHTML = `<div class="dotc" style="background:${c.color};"></div><div style="font-weight:900;">${escapeHtml(c.name)}</div>`;
-      chip.addEventListener("click", ()=>{
-        c.on = !c.on;
-        if(!S.categories.some(x=>x.on)){
-          c.on = true;
-          toast("최소 1개 카테고리는 켜져야 합니다");
+      ]
+    },
+    {
+      "id": "top2",
+      "name": "카테고리2",
+      "items": [
+        {
+          "id": "gyjnanmxe3pmjo5otwi",
+          "name": "아이온2"
         }
-        hideTip(true);
-        saveLocal();
-        renderCats();
-        renderKPIs();
-        draw();
-      });
-      catChips.appendChild(chip);
+      ]
+    },
+    {
+      "id": "top3",
+      "name": "카테고리3",
+      "items": []
+    },
+    {
+      "id": "top4",
+      "name": "카테고리4",
+      "items": []
     }
-  }
-
-  /******************************************************************
-   * Local save
-   ******************************************************************/
-  function saveLocal(){
-    localStorage.setItem(LS_KEY, JSON.stringify(S));
-  }
-
-  /******************************************************************
-   * Map load (✅ admin 구조: 페이지 URL 기반 지도 로드 지원)
-   ******************************************************************/
-  function getCurrentPage(){
-    return S.pages.find(p=>p.id===S.currentPageId) || S.pages[0] || null;
-  }
-
-  function toAbsUrlMaybe(url){
-    if(!url) return "";
-    try{ return new URL(url, location.href).toString(); }catch(e){ return url; }
-  }
-
-  function loadPlaceholder(){
-    mapImg = new Image();
-    mapImg.onload = ()=>draw();
-    mapImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000">
-        <defs>
-          <radialGradient id="g" cx="50%" cy="40%" r="70%">
-            <stop offset="0%" stop-color="#ffffff"/>
-            <stop offset="100%" stop-color="#e8edf7"/>
-          </radialGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#g)"/>
-        <text x="50%" y="50%" text-anchor="middle" font-family="Arial" font-size="28" fill="#7a889e">지도 URL 또는 state.json 경로를 확인해주세요</text>
-      </svg>`
-    );
-  }
-
-  function loadMapForCurrentPage(fitAfter=false){
-    const p = getCurrentPage();
-
-    // 1) state에 dataURL이 있으면 최우선
-    let src = S.map?.imgDataUrl ? String(S.map.imgDataUrl) : "";
-
-    // 2) 없으면 현재 페이지 URL 사용 (✅ 지금 깃허브 구조에 맞는 핵심)
-    if(!src && p?.url){
-      src = toAbsUrlMaybe(p.url);
-    }
-
-    if(!src){
-      loadPlaceholder();
-      return;
-    }
-
-    mapImg = new Image();
-    mapImg.crossOrigin = "anonymous";
-    mapImg.onload = ()=>{
-      S.map.naturalW = mapImg.naturalWidth || 1;
-      S.map.naturalH = mapImg.naturalHeight || 1;
-
-      if(fitAfter || !S.map.scale || S.map.scale<=0){
-        fitToScreen();
-        saveLocal();
+  ],
+  "markerCategories": [
+    {
+      "id": "7f7l581ckgxmjo5otwi",
+      "name": "기본",
+      "color": "#7cc4ff",
+      "visible": true,
+      "hideNumber": false,
+      "defaults": {
+        "size": 1,
+        "textSize": 6,
+        "weight": 800,
+        "textColor": "#e7eef8"
       }
-      draw();
-    };
-    mapImg.onerror = ()=>{
-      loadPlaceholder();
-    };
-    mapImg.src = src;
-  }
-
-  /******************************************************************
-   * Canvas sizing & fit
-   ******************************************************************/
-  function resizeCanvas(){
-    const wrap = cv.parentElement;
-    const w = wrap.clientWidth - 32;
-    const h = wrap.clientHeight - 32;
-    cv.width = Math.max(900, Math.floor(w));
-    cv.height = Math.max(650, Math.floor(h));
-  }
-  window.addEventListener("resize", ()=>{ resizeCanvas(); draw(); });
-
-  function fitToScreen(){
-    const pad = 40;
-    const iw = S.map.naturalW || (mapImg.naturalWidth||1);
-    const ih = S.map.naturalH || (mapImg.naturalHeight||1);
-    const cw = cv.width, ch = cv.height;
-    const scale = Math.min((cw - pad)/iw, (ch - pad)/ih);
-    S.map.scale = clamp(scale, 0.05, 10);
-    S.map.tx = (cw - iw*S.map.scale)/2;
-    S.map.ty = (ch - ih*S.map.scale)/2;
-  }
-
-  $("btnFit").addEventListener("click", ()=>{
-    fitToScreen();
-    saveLocal();
-    draw();
-    toast("화면 맞춤");
-  });
-
-  $("btnReload").addEventListener("click", async ()=>{
-    hideTip(true);
-    const st = await loadStateRemoteFirst();
-    S = mergeState(st);
-
-    renderLogo();
-    renderPages();
-    renderCats();
-    resizeCanvas();
-    loadMapForCurrentPage(true);
-    renderKPIs();
-    toast("새로고침 완료");
-  });
-
-  $("btnResetView").addEventListener("click", ()=>{
-    hideTip(true);
-    fitToScreen();
-    saveLocal();
-    draw();
-    toast("화면 초기화");
-  });
-
-  /******************************************************************
-   * Markers: filtering, drawing, picking
-   ******************************************************************/
-  let dimmedMarkerIds = new Set();
-  let hoveredLabelMarkerId = null;
-
-  function getCat(id){ return S.categories.find(c=>c.id===id); }
-  function markerColor(m){
-    if(!m) return "#7cc4ff";
-    if(m.useCatColor){
-      const c = getCat(m.cat);
-      return (c && c.color) ? c.color : "#7cc4ff";
-    }
-    if(m.colorOverride && m.colorOverride.trim()) return m.colorOverride.trim();
-    const c = getCat(m.cat);
-    return (c && c.color) ? c.color : "#7cc4ff";
-  }
-
-  function getVisibleMarkers(){
-    const curPage = S.currentPageId;
-    const onCats = new Set(S.categories.filter(c=>c.on).map(c=>c.id));
-    const allOn = onCats.has("전체");
-    return (S.markers||[]).filter(m=>{
-      if(m.pageId !== curPage) return false;
-      if(allOn) return true;
-      return onCats.has(m.cat);
-    });
-  }
-
-  function renderKPIs(){
-    const curPage = S.currentPageId;
-    const total = (S.markers||[]).filter(m=>m.pageId===curPage).length;
-    const shown = getVisibleMarkers().length;
-    $("kpiTotal").textContent = "마커: " + total;
-    $("kpiShown").textContent = "표시 중: " + shown;
-  }
-
-  function worldFromNorm(nx, ny){
-    const iw = S.map.naturalW || (mapImg.naturalWidth||1);
-    const ih = S.map.naturalH || (mapImg.naturalHeight||1);
-    return { x:nx*iw, y:ny*ih };
-  }
-  function screenFromWorld(wx, wy){
-    return { sx: wx*S.map.scale + S.map.tx, sy: wy*S.map.scale + S.map.ty };
-  }
-
-  let labelHitboxes = [];
-  let circleHitboxes = [];
-
-  function draw(){
-    ctx.clearRect(0,0,cv.width,cv.height);
-    labelHitboxes = [];
-    circleHitboxes = [];
-
-    ctx.save();
-    ctx.fillStyle = "rgba(0,0,0,.22)";
-    ctx.fillRect(0,0,cv.width,cv.height);
-    ctx.restore();
-
-    ctx.save();
-    ctx.translate(S.map.tx, S.map.ty);
-    ctx.scale(S.map.scale, S.map.scale);
-
-    if(mapImg && mapImg.complete){
-      const iw = S.map.naturalW || (mapImg.naturalWidth||1);
-      const ih = S.map.naturalH || (mapImg.naturalHeight||1);
-      ctx.drawImage(mapImg, 0,0, iw, ih);
-    }
-
-    const ms = getVisibleMarkers();
-
-    const byChain = new Map();
-    for(const m of ms){
-      if(!m.chainId || !m.chainIndex) continue;
-      if(!byChain.has(m.chainId)) byChain.set(m.chainId, []);
-      byChain.get(m.chainId).push(m);
-    }
-    ctx.lineWidth = 2 / S.map.scale;
-    ctx.strokeStyle = "rgba(255,255,255,.78)";
-    ctx.globalAlpha = 0.9;
-    for(const arr of byChain.values()){
-      arr.sort((a,b)=>(a.chainIndex||0)-(b.chainIndex||0));
-      if(arr.length<2) continue;
-      ctx.beginPath();
-      for(let i=0;i<arr.length;i++){
-        const p = worldFromNorm(arr[i].x, arr[i].y);
-        if(i===0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
+    },
+    {
+      "id": "fkga2bl7flvmjo5rf7c",
+      "name": "카테고리2",
+      "color": "#ff9f43",
+      "visible": true,
+      "hideNumber": false,
+      "defaults": {
+        "size": 11,
+        "textSize": 11,
+        "weight": 800,
+        "textColor": "#e7eef8"
       }
-      ctx.stroke();
-    }
-
-    for(const m of ms){
-      const p = worldFromNorm(m.x, m.y);
-      const r = (m.r ?? 10);
-      const col = markerColor(m);
-      const circleAlpha = dimmedMarkerIds.has(m.id) ? 0.30 : 1.0;
-
-      ctx.save();
-      ctx.globalAlpha = circleAlpha;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-      ctx.fillStyle = col;
-      ctx.fill();
-      ctx.lineWidth = 2 / S.map.scale;
-      ctx.strokeStyle = "rgba(0,0,0,.35)";
-      ctx.stroke();
-      ctx.restore();
-
-      const num = (m.chainIndex != null) ? String(m.chainIndex) : "";
-      if(num){
-        ctx.save();
-        ctx.globalAlpha = 0.98;
-        ctx.fillStyle = "rgba(0,0,0,.75)";
-        ctx.font = `${m.fw ?? 900} ${Math.max(10, Math.round((m.fs ?? 15) * 0.95))}px ui-sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(num, p.x, p.y + 0.5);
-        ctx.restore();
+    },
+    {
+      "id": "dq46sjwxq2mjo5rgaz",
+      "name": "카테고리3",
+      "color": "#ffd60a",
+      "visible": true,
+      "hideNumber": false,
+      "defaults": {
+        "size": 1,
+        "textSize": 6,
+        "weight": 800,
+        "textColor": "#e7eef8"
       }
-
-      if(m.name){
-        ctx.save();
-        ctx.globalAlpha = 0.98;
-        ctx.fillStyle = m.labelColor || (S.markerLabelDefault || "#e7eef8");
-        ctx.font = `${m.fw ?? 900} ${m.fs ?? 15}px ui-sans-serif`;
-        ctx.textAlign = "left";
-        ctx.textBaseline = "middle";
-        const off = r + 8;
-        ctx.fillText(m.name, p.x + off, p.y);
-        ctx.restore();
-
-        const size = (m.fs ?? 15);
-        const textW = ctx.measureText(m.name).width;
-        const labelWorldX = p.x + off;
-        const labelWorldY = p.y;
-        const a = screenFromWorld(labelWorldX, labelWorldY);
-        const h = size * S.map.scale;
-        const w = textW * S.map.scale;
-        labelHitboxes.push({
-          id:m.id,
-          x1:a.sx,
-          y1:a.sy - h*0.6,
-          x2:a.sx + w,
-          y2:a.sy + h*0.6,
-          anchorX:a.sx,
-          anchorY:a.sy
-        });
-      }
-
-      const sp = screenFromWorld(p.x, p.y);
-      circleHitboxes.push({ id:m.id, sx:sp.sx, sy:sp.sy, rPx: r*S.map.scale });
-    }
-
-    ctx.restore();
-  }
-
-  function pickLabelAt(sx, sy){
-    for(let i=labelHitboxes.length-1;i>=0;i--){
-      const b = labelHitboxes[i];
-      if(sx>=b.x1 && sx<=b.x2 && sy>=b.y1 && sy<=b.y2) return b;
-    }
-    return null;
-  }
-
-  function pickCircleAt(sx, sy){
-    let best=null, bestD=Infinity;
-    for(const c of circleHitboxes){
-      const d = Math.hypot(c.sx - sx, c.sy - sy);
-      if(d <= c.rPx*1.25 && d < bestD){
-        best = c;
-        bestD = d;
+    },
+    {
+      "id": "fl59bibzowmmjo5rgg6",
+      "name": "카테고리4",
+      "color": "#39d98a",
+      "visible": true,
+      "hideNumber": false,
+      "defaults": {
+        "size": 1,
+        "textSize": 6,
+        "weight": 800,
+        "textColor": "#e7eef8"
       }
     }
-    return best;
-  }
-
-  /******************************************************************
-   * Tooltip
-   ******************************************************************/
-  function hideTip(force=false){
-    tip.classList.remove("show");
-    tip.setAttribute("aria-hidden","true");
-    hoveredLabelMarkerId = null;
-    if(force) return;
-  }
-
-  function showTipForMarker(markerId, anchorX, anchorY){
-    const m = (S.markers||[]).find(x=>x.id===markerId);
-    if(!m) return;
-
-    const title = (m.ytTitle || m.name || "(이름 없음)").trim();
-    const memo = (m.memo || "").trim();
-    const yt = (m.yt || "").trim();
-
-    tipTitle.textContent = title || "(제목 없음)";
-    tipMemo.textContent = memo || "(메모 없음)";
-    if(yt){
-      tipLink.style.display = "";
-      tipLink.href = yt;
-    }else{
-      tipLink.style.display = "none";
-      tipLink.href = "#";
+  ],
+  "edges": {
+    "p_all:9awm6sg7rdmjo5otwi:32dohoedahbmjo5pobu->wtzru2h8t1cmjo5pp4r": {
+      "cx": 774.3735729440625,
+      "cy": 536.2691947593086
     }
-
-    const pad = 10;
-    tip.style.left = "0px";
-    tip.style.top = "0px";
-    tip.classList.add("show");
-    tip.setAttribute("aria-hidden","false");
-
-    const r2 = tip.getBoundingClientRect();
-    let left = anchorX + 12;
-    let top = anchorY + 12;
-
-    left = clamp(left, pad, window.innerWidth - r2.width - pad);
-    top = clamp(top, pad + 60, window.innerHeight - r2.height - pad);
-    tip.style.left = left + "px";
-    tip.style.top = top + "px";
-
-    hoveredLabelMarkerId = markerId;
-  }
-
-  tipClose.addEventListener("click", ()=>hideTip(true));
-  document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") hideTip(true); });
-
-  document.addEventListener("pointerdown", (e)=>{
-    if(!tip.classList.contains("show")) return;
-    if(tip.contains(e.target)) return;
-    hideTip(true);
-  });
-
-  /******************************************************************
-   * Pan/Zoom
-   ******************************************************************/
-  let isPanning=false, lastX=0,lastY=0;
-
-  cv.addEventListener("pointerdown", (e)=>{
-    cv.setPointerCapture(e.pointerId);
-    lastX=e.clientX; lastY=e.clientY;
-    isPanning=true;
-  });
-
-  cv.addEventListener("pointermove", (e)=>{
-    if(e.pointerType !== "touch"){
-      const rect = cv.getBoundingClientRect();
-      const sx = e.clientX - rect.left;
-      const sy = e.clientY - rect.top;
-      const hit = pickLabelAt(sx, sy);
-      if(hit){
-        if(hoveredLabelMarkerId !== hit.id){
-          showTipForMarker(hit.id, hit.anchorX + rect.left, hit.anchorY + rect.top);
-        }
-      }else{
-        if(!tip.matches(":hover")) hideTip();
-      }
+  },
+  "chainByPage": {
+    "p_all": {
+      "currentChainId": "9awm6sg7rdmjo5otwi",
+      "continueFromMarkerId": null
+    },
+    "p_c808f23eb9594819b58a59afe": {
+      "currentChainId": "6svbl707p2nmjo5otwi",
+      "continueFromMarkerId": null
     }
-
-    if(!isPanning) return;
-    const dx=e.clientX-lastX, dy=e.clientY-lastY;
-    lastX=e.clientX; lastY=e.clientY;
-    S.map.tx += dx;
-    S.map.ty += dy;
-    draw();
-  });
-
-  cv.addEventListener("pointerup", ()=>{ isPanning=false; });
-  cv.addEventListener("pointercancel", ()=>{ isPanning=false; });
-
-  cv.addEventListener("wheel", (e)=>{
-    e.preventDefault();
-    hideTip();
-    const rect = cv.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
-
-    const old = S.map.scale || 1;
-    const zoom = Math.exp(-e.deltaY * 0.0012);
-    const next = clamp(old * zoom, 0.05, 10);
-
-    const wx = (mx - S.map.tx) / old;
-    const wy = (my - S.map.ty) / old;
-
-    S.map.scale = next;
-    S.map.tx = mx - wx * next;
-    S.map.ty = my - wy * next;
-
-    draw();
-  }, {passive:false});
-
-  /******************************************************************
-   * Click interactions
-   ******************************************************************/
-  cv.addEventListener("click", (e)=>{
-    const rect = cv.getBoundingClientRect();
-    const sx = e.clientX - rect.left;
-    const sy = e.clientY - rect.top;
-
-    const labelHit = pickLabelAt(sx, sy);
-    if(labelHit){
-      const anchorX = labelHit.anchorX + rect.left;
-      const anchorY = labelHit.anchorY + rect.top;
-      if(tip.classList.contains("show") && hoveredLabelMarkerId === labelHit.id){
-        hideTip(true);
-      }else{
-        showTipForMarker(labelHit.id, anchorX, anchorY);
-      }
-      return;
-    }
-
-    const hit = pickCircleAt(sx, sy);
-    if(hit){
-      if(dimmedMarkerIds.has(hit.id)) dimmedMarkerIds.delete(hit.id);
-      else dimmedMarkerIds.add(hit.id);
-      draw();
-      return;
-    }
-
-    hideTip(true);
-  });
-
-  $("btnClearDim").addEventListener("click", ()=>{
-    dimmedMarkerIds.clear();
-    hideTip(true);
-    draw();
-    toast("마커 초기화");
-  });
-
-  /******************************************************************
-   * INIT
-   ******************************************************************/
-  async function init(){
-    $("gameSelect").value = "아이온2";
-    $("gameSelect").addEventListener("change", ()=>{
-      $("gameSelect").value = "아이온2";
-      toast("현재는 아이온2만 사용합니다");
-    });
-
-    const st = await loadStateRemoteFirst();
-    S = mergeState(st);
-
-    renderLogo();
-    renderPages();
-    renderCats();
-    renderKPIs();
-
-    resizeCanvas();
-
-    // ✅ 가장 중요한 부분: "페이지 URL 기반"으로 지도 로드
-    loadMapForCurrentPage(true);
-
-    if(!S.map.scale || S.map.scale<=0){
-      setTimeout(()=>{
-        fitToScreen();
-        saveLocal();
-        draw();
-      }, 0);
-    }
-
-    cv.addEventListener("contextmenu", (e)=>e.preventDefault());
-  }
-
-  init();
-})();
-</script>
-</body>
-</html>
+  },
+  "updatedAt": 1766831411975
+}
